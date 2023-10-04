@@ -11,7 +11,7 @@ const Map = () => {
 
   const [locations, setLocations] = useState<Location[]>([]); // API로 받아온 위치 정보
 
-  const [currentArea, setCurrentArea] = useState<string | null>(null);
+  const [currentArea, setCurrentArea] = useState<string | null>(null); // 선택한 지역(area)을 저장하는 상태
 
   // API로부터 위치 정보를 받아옴
   useEffect(() => {
@@ -43,13 +43,15 @@ const Map = () => {
               onLoad={onLoad}
               position={{ lat: location.lat, lng: location.lng }}
               onClick={(e) => {
+                // 마커 클릭시 현재 지역(area)을 저장
                 setCurrentArea(location.area);
               }}
             />
           ))}
         </GoogleMap>
       </LoadScript>
-      {currentArea && <Album area={currentArea} />}
+      {currentArea && <Album area={currentArea} />}{" "}
+      {/* 현재 지역(area)이 있을 경우 앨범 컴포넌트를 렌더링 */}
     </Wrapper>
   );
 };
