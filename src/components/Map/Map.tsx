@@ -54,7 +54,7 @@ const Wrapper = styled.div`
   .map-container {
     width: 80%;
     height: 500px;
-    margin: 5rem auto;
+    margin: auto;
   }
 `;
 
