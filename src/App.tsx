@@ -1,10 +1,10 @@
 import React from "react";
-import logo from "./logo.svg";
+import Map from "./components/Map/Map";
 
 function App() {
   return (
     <div className="App">
-      <button>Map</button>
+      <Map />
     </div>
   );
 }
