@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { getAllPoints } from "../../API";
 import { Location } from "../../types";
 
+
 const Map = () => {
   const center = useMemo(() => ({ lat: 33.59, lng: 130.401 }), []); // 고정 위치(Fukuoka)
 
@@ -52,7 +53,7 @@ const Wrapper = styled.div`
   .map-container {
     width: 80%;
     height: 500px;
-    margin: 5rem auto;
+    margin: auto;
   }
 `;
 
