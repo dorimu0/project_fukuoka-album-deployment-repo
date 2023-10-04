@@ -1,7 +1,12 @@
+// Album.tsx
 import React from "react";
 
-const Album = () => {
-  return <div>Album</div>;
+interface Props {
+  area?: string | null;
+}
+
+const Album: React.FC<Props> = ({ area }) => {
+  return <div>{area}</div>;
 };
 
 export default Album;

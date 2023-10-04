@@ -4,10 +4,14 @@ import styled from "styled-components";
 import { getAllPoints } from "../../API";
 import { Location } from "../../types";
 
+import Album from "../Album/Album";
+
 const Map = () => {
   const center = useMemo(() => ({ lat: 33.59, lng: 130.401 }), []); // 고정 위치(Fukuoka)
 
   const [locations, setLocations] = useState<Location[]>([]); // API로 받아온 위치 정보
+
+  const [currentArea, setCurrentArea] = useState<string | null>(null);
 
   // API로부터 위치 정보를 받아옴
   useEffect(() => {
@@ -39,12 +43,13 @@ const Map = () => {
               onLoad={onLoad}
               position={{ lat: location.lat, lng: location.lng }}
               onClick={(e) => {
-                console.log(location.area);
+                setCurrentArea(location.area);
               }}
             />
           ))}
         </GoogleMap>
       </LoadScript>
+      {currentArea && <Album area={currentArea} />}
     </Wrapper>
   );
 };
