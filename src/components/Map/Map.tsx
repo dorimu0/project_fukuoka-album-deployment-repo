@@ -38,6 +38,7 @@ const Map = () => {
               key={location.id}
               onLoad={onLoad}
               position={{ lat: location.lat, lng: location.lng }}
+              onClick={(e) => {console.log(location.area+'입니다')}}
             />
           ))}
         </GoogleMap>
@@ -51,6 +52,7 @@ const Wrapper = styled.div`
   .map-container {
     width: 80%;
     height: 500px;
+    margin: 5rem auto;
   }
 `;
 
