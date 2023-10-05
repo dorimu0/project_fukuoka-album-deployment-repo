@@ -4,3 +4,9 @@ export type Location = {
   lat: number;
   lng: number;
 };
+
+export type Post = {
+  postAreaId: string;
+  title: string;
+  content: string;
+};
