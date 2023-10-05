@@ -3,5 +3,22 @@
     { "id": 1, "area": "fukuoka-shi", "lat": 33.59, "lng": 130.401 },
     { "id": 2, "area": "kitakyushu-shi", "lat": 33.883, "lng": 130.875 },
     { "id": 3, "area": "nagasaki-shi", "lat": 32.75, "lng": 129.877 }
+  ],
+  "post": [
+    {
+      "postAreaId": "fukuoka-shi1",
+      "title": "fukuokaTest1",
+      "content": "test1"
+    },
+    {
+      "postAreaId": "kitakyushu-shi1",
+      "title": "kitakyushuTest1",
+      "content": "test"
+    },
+    {
+      "postAreaId": "nagasaki-shi1",
+      "title": "nagasakiTest1",
+      "content": "test"
+    }
   ]
 }
