@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { GoogleMap, LoadScript, MarkerF } from "@react-google-maps/api";
-import styled from "styled-components";
+import styled from "styled-components";          
 import { getAllPoints } from "../../API";
 import { Location } from "../../types";
 

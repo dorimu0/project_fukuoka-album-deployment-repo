@@ -12,23 +12,31 @@ const Header = () => {
       setView(!view)
   })
 
+  const handleSearchUpdate = (e : React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.value)
+  }
+
   return (
-      <Container>
-        <LogoBox>
-          <Logo src="/logo.svg" alt="" />
-        </LogoBox>
-        <IconBox ref={containerRef}>
-          <IconButton  onClick={() => { setView(!view) }}>
-            <Icon src="/menu.svg" alt="" />
-          </IconButton>
-          { view ? 
-            <Menu>
-              <MenuItem>로그인</MenuItem>
-              <MenuItem>내정보</MenuItem>
-            </Menu>
-            : ''}
-        </IconBox>
-      </Container>
+    <Container>
+      <LogoBox>
+        <Logo src="/logo.svg" alt="" />
+      </LogoBox>
+      <SearchBox>
+        <SearchImage src="./search.svg" />
+        <Search type="text" onChange = { handleSearchUpdate }/>
+      </SearchBox>
+      <IconBox ref={containerRef}>
+        <IconButton  onClick={() => { setView(!view) }}>
+          <Icon src="/menu.svg" alt="" />
+        </IconButton>
+        { view ? 
+          <Menu>
+            <MenuItem>로그인</MenuItem>
+            <MenuItem>내정보</MenuItem>
+          </Menu>
+          : ''}
+      </IconBox>
+    </Container>
   )
 }
 
@@ -50,12 +58,41 @@ const Logo = styled.img`
 `
 
 const IconBox = styled.div`
+  display: flex;
+  align-items: center;
   position: absolute;
   top: 50%;
   right: 0;
   transform: translate(0%, -50%);
   margin-right: 20px;
   text-align: center;
+`
+
+const SearchBox = styled.div`
+  display: flex;
+  align-items: center;
+  position: absolute;
+  top: 50%;
+  right: 10%;
+  transform: translate(0, -50%);
+  border: 1px solid black;
+  border-radius: 20px;
+  overflow: hidden;
+`
+
+const SearchImage = styled.img`
+  width: 30px;
+  padding-left: 5px;
+
+`
+
+const Search = styled.input`
+  width: 150px;
+  display: block;
+  padding: 5px;
+  border: none;
+  outline: none;
+  font-size: 1.2rem;
 `
 
 const IconButton = styled.button`
