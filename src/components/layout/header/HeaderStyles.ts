@@ -22,18 +22,17 @@ export const SearchBox = styled.div`
   align-items: center;
   position: absolute;
   top: 50%;
-  right: 10%;
+  right: 5%;
   transform: translate(0, -50%);
   border: 1px solid black;
   border-radius: 20px;
   overflow: hidden;
-`
+`;
 
 export const SearchImage = styled.img`
   width: 30px;
   padding-left: 5px;
-
-`
+`;
 
 export const Search = styled.input`
   width: 150px;
@@ -42,7 +41,7 @@ export const Search = styled.input`
   border: none;
   outline: none;
   font-size: 1.2rem;
-`
+`;
 
 export const IconBox = styled.div`
   position: absolute;
@@ -74,7 +73,7 @@ export const Menu = styled.ul`
 `;
 
 export const MenuItem = styled.li`
-  width: 80px;
+  width: 70px;
   padding: 10px;
   &:hover {
     background-color: rgb(200, 200, 200);
