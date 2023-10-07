@@ -5,7 +5,7 @@ import { getAllPoints } from "../../services/location.service";
 import { Location } from "../../types/location.interface";
 
 // Album import 추가
-import Album from "../Album/Album";
+import Album from "../album";
 
 const Map = () => {
   const center = useMemo(() => ({ lat: 33.59, lng: 130.401 }), []); // 고정 위치(Fukuoka)

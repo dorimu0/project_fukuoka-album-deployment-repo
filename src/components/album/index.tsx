@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Post as PostType } from "../../types/post.interface";
-import AreaPost from '../Post/Post';
+import AreaPost from '../post';
 
 interface Props {
   areaId: number;
