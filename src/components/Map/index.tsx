@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { GoogleMap, LoadScript, MarkerF } from "@react-google-maps/api";
-import styled from "styled-components";
-import { getAllPoints } from "../../API";
-import { Location } from "../../types";
-
+import { Wrapper, Styles } from "../Map/MapStyles";
+import { getAllPoints } from "../../services/location.service";
+import { Location } from "../../types/location.interface";
 import Album from "../Album/Album";
 
 const Map = () => {
@@ -55,23 +54,5 @@ const Map = () => {
     </Wrapper>
   );
 };
-
-// 지도 사이즈
-const Wrapper = styled.div`
-  .map-container {
-    width: 80%;
-    height: 500px;
-    margin: auto;
-  }
-`;
-
-// 지도 스타일 옵션
-const Styles = [
-  {
-    featureType: "poi",
-    elementType: "labels",
-    stylers: [{ visibility: "off" }],
-  },
-];
 
 export default Map;

@@ -1,25 +1,12 @@
-import React from "react";
-import Map from "./components/Map/Map";
-import Header from "./components/Header/Header";
-import Album from "./components/Album/Album";
-import Footer from "./Layout/Footer";
-// import Profile from "./components/Profile/Profile";
+import Router from "./Router";
 import "./fonts/font.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Layout from "./components/layout";
 
-function App() {
+function App(): JSX.Element {
   return (
-    <div className="App">
-      <Router>
-        <Header />
-        <Routes>
-          <Route path="/" element={<Map />} />
-          <Route path="/album" element={<Album />} />
-        </Routes>
-        <hr />
-        <Footer />
-      </Router>
-    </div>
+    <Layout>
+      <Router />
+    </Layout>
   );
 }
 export default App;
