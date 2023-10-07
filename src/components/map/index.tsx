@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { Wrapper, Styles } from "./MapStyles";
 import { getAllPoints } from "../../services/location.service";
