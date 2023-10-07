@@ -1,24 +1,16 @@
 import React from "react";
-import Map from "./components/Map/Map";
-import Header from "./components/Header/Header";
-import Footer from "./Layout/Footer";
-// import Profile from "./components/Profile/Profile";
-import './fonts/font.css'
-import { Routes, Route } from 'react-router-dom'
+import Modal from "react-modal";
+import Router from "./Router";
+import "./fonts/font.css";
+import Layout from "./components/layout";
 
-function App() {
+Modal.setAppElement("#root");
+
+function App(): JSX.Element {
   return (
-    <div className="App">
-      <Header />
-      <Map />
-      {/* <Profile /> */}
-      <hr />
-      <Footer />
-      <Routes>
-        {/* <Route index element={<HomePage />} />  HomePage컴포넌트 -> album컴포넌트 수정 필요 나머진 알아서하세요  */}
-      </Routes>
-
-    </div>
+    <Layout>
+      <Router />
+    </Layout>
   );
 }
 

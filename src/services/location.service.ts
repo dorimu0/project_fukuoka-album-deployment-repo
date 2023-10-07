@@ -1,4 +1,4 @@
-import { Location } from "./types";
+import { Location } from "../types/location.interface";
 
 export const getAllPoints = async (): Promise<Location[]> => {
   const res = await fetch(`http://localhost:3004/location`);
