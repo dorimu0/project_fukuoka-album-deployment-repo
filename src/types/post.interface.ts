@@ -1,6 +1,8 @@
 export type Post = {
+  id: number;
+  postAreaId: number;
+  userId: number;
   title: string;
-  content: string;  
-  postAreaId?: string;
+  content: string;
   image: string[];
 };
