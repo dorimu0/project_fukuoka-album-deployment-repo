@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Card from "../card";
+import Card from "../Card";
 import { getUser } from "../../services/user.service";
 import { User } from "../../types/user.interface";
 
@@ -16,7 +16,7 @@ const Profile = () => {
 
   return (
     <div className="bg-gray-100">
-      <Card />
+      {/* <Card /> */}
     </div>
   );
 };
