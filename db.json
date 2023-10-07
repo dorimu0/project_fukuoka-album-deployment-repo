@@ -1,7 +1,0 @@
-{
-  "location": [
-    { "id": 1, "area": "fukuoka-shi", "lat": 33.59, "lng": 130.401 },
-    { "id": 2, "area": "kitakyushu-shi", "lat": 33.883, "lng": 130.875 },
-    { "id": 3, "area": "nagasaki-shi", "lat": 32.75, "lng": 129.877 }
-  ]
-}
