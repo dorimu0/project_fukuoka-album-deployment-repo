@@ -1,5 +1,5 @@
 import React from "react";
-import Map from "../components/Map/";
+import Map from "../components/map";
 
 const MainPage: React.FC = () => {
   return (
