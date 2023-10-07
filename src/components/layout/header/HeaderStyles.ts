@@ -79,3 +79,13 @@ export const MenuItem = styled.li`
     background-color: rgb(200, 200, 200);
   }
 `;
+
+export const FakeBox = styled.div`
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  overflow-x: hidden;
+`;
