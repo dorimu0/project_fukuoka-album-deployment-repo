@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, CardContainer } from "./MyPageStyles";
 import Card from "../card";
-import Modal from "../modal";
 import { getUser } from "../../services/user.service";
 import { User } from "../../types/user.interface";
 
