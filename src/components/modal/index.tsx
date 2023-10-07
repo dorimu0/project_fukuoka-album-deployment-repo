@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Modal from "react-modal";
 import {
   ModalEdit,
+  ButtonContainer,
   SaveBtn,
   CancelBtn,
   InputField,
@@ -83,7 +84,7 @@ export const DefaultModal = ({
             backgroundColor: "rgba(0,0,0,0.5)",
           },
           content: {
-            top: "50%",
+            top: "30%",
             left: "50%",
             right: "auto",
             bottom: "auto",
@@ -131,10 +132,12 @@ export const DefaultModal = ({
           />
           <br />
 
-          <SaveBtn disabled={isLoading}>
-            {isLoading ? "Saving..." : "Save"}
-          </SaveBtn>
-          <CancelBtn onClick={closeModal}>close</CancelBtn>
+          <ButtonContainer>
+            <CancelBtn onClick={closeModal}>close</CancelBtn>
+            <SaveBtn disabled={isLoading}>
+              {isLoading ? "Saving..." : "Save"}
+            </SaveBtn>
+          </ButtonContainer>
         </form>
         <br />
       </Modal>
