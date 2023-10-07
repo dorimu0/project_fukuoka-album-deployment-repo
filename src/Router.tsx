@@ -1,13 +1,13 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import MainPage from "./pages";
-// import LoginPage from "./pages/login";
+import MyPage from "./pages/mypage";
 
 const Router: React.FC = () => {
   return (
     <Routes>
       <Route path="/" element={<MainPage />} />
-      {/* <Route path="login" element={<LoginPage />} /> */}
+      <Route path="/mypage" element={<MyPage />} />
     </Routes>
   );
 };
