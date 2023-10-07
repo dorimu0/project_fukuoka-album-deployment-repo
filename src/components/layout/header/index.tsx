@@ -1,5 +1,7 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { GoogleOAuthProvider } from '@react-oauth/google'
+import { GoogleLogin } from '@react-oauth/google'
 import {
   Container,
   LogoBox,
@@ -12,6 +14,7 @@ import {
   Icon,
   Menu,
   MenuItem,
+  FakeBox,
 } from "./HeaderStyles";
 
 const Header = () => {
@@ -48,12 +51,17 @@ const Header = () => {
         </IconButton>
         {view ? (
           <Menu>
-            <MenuItem
-              onClick={() => {
-                navigate("/login");
-              }}
-            >
+            <MenuItem>
               로그인
+              <FakeBox>
+                <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID as string}>
+                  <GoogleLogin
+                    type={"standard"}
+                    size="medium"
+                    onSuccess={(res) => console.log(res)}
+                  />
+                </GoogleOAuthProvider>
+              </FakeBox>
             </MenuItem>
             <MenuItem
               onClick={() => {
