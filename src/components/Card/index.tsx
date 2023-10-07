@@ -7,7 +7,7 @@ import {
   CardStatWrapper,
   CardStats,
   LinkText,
-} from "./CardStyles";
+} from "../Card/CardStyles";
 import { CardType } from "../../types/card.interface";
 
 export default function Card({ title, imgUrl }: CardType) {

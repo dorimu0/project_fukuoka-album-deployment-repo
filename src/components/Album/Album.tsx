@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Post } from "../../types";
+import { Post } from "../../types/location.interface";
 interface Props {
   area?: string | null;
 }
