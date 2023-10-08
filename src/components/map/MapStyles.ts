@@ -6,6 +6,7 @@ export const Wrapper = styled.div`
     width: 80%;
     height: 500px;
     margin: auto;
+    z-index: 1;
   }
 `;
 

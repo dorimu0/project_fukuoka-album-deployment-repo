@@ -3,6 +3,7 @@ import styled from "styled-components";
 export const Container = styled.div`
   position: relative;
   height: 80px;
+  z-index: 2;
 `;
 
 export const LogoBox = styled.div`
@@ -22,11 +23,15 @@ export const SearchBox = styled.div`
   align-items: center;
   position: absolute;
   top: 50%;
-  right: 5%;
+  right: 10%;
   transform: translate(0, -50%);
   border: 1px solid black;
   border-radius: 20px;
   overflow: hidden;
+
+  @media (max-width: 767px){
+    display: none;
+  }
 `;
 
 export const SearchImage = styled.img`
@@ -69,7 +74,7 @@ export const Menu = styled.ul`
   padding: 0;
   margin: 0;
   font-size: 1.2rem;
-  z-index: 999;
+  background-color: white;
 `;
 
 export const MenuItem = styled.li`
