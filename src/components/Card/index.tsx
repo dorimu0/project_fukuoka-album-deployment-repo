@@ -1,36 +1,35 @@
+import Modal from "../modal";
 import {
   CardWrapper,
   CardImage,
   CardTextWrapper,
   CardTextTitle,
   CardTextBody,
-  CardStatWrapper,
-  CardStats,
-  LinkText,
-} from "../Card/CardStyles";
-import { CardType } from "../../types/card.interface";
+} from "./CardStyles";
+import { User } from "../../types/user.interface";
 
-export default function Card({ title, imgUrl }: CardType) {
+export default function Card({
+  user,
+  onUserUpdated,
+}: {
+  user: User;
+  onUserUpdated: (user: User) => void;
+}) {
   return (
-    <CardWrapper>
-      {/* <CardImage background={imgUrl} /> */}
-      <CardImage background={imgUrl} />
-      <CardTextWrapper>
-        {/* <CardTextDate>{date} days ago</CardTextDate> */}
-        <CardTextTitle>{title}</CardTextTitle>
-        <CardTextBody>
-          Lorem ipsum dolor sit amet consectetur, Ducimus, repudiandae
-          temporibus omnis illum maxime quod deserunt eligendi dolor
-        </CardTextBody>
-      </CardTextWrapper>
-      <CardStatWrapper>
-        <CardStats>
-          <LinkText href="#">edit</LinkText>
-        </CardStats>
-        <CardStats>
-          <LinkText href="#">github</LinkText>
-        </CardStats>
-      </CardStatWrapper>
-    </CardWrapper>
+    <>
+      <CardWrapper>
+        <CardImage background={user.imageUrl} />
+        <CardTextWrapper>
+          <CardTextTitle>{user.name}</CardTextTitle>
+          <Modal
+            name={user.name}
+            comment={user.comment}
+            imgUrl={user.imageUrl}
+            onUserUpdated={onUserUpdated}
+          />
+          <CardTextBody>{user.comment}</CardTextBody>
+        </CardTextWrapper>
+      </CardWrapper>
+    </>
   );
 }
