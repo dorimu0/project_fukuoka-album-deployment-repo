@@ -4,6 +4,9 @@ import {
   Container,
   LogoBox,
   Logo,
+  SearchBox,
+  SearchImage,
+  Search,
   IconBox,
   IconButton,
   Icon,
@@ -22,11 +25,19 @@ const Header = () => {
     if (container && view && !container.contains(clickElement)) setView(!view);
   });
 
+  const handleSearchUpdate = (e : React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.value)
+  }
+
   return (
     <Container>
       <LogoBox onClick={() => navigate("/")}>
         <Logo src="/logo.svg" alt="" />
       </LogoBox>
+      <SearchBox>
+        <SearchImage src="./search.svg" />
+        <Search type="text" onChange = { handleSearchUpdate }/>
+      </SearchBox>
       <IconBox ref={containerRef}>
         <IconButton
           onClick={() => {
