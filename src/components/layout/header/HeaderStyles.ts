@@ -5,6 +5,7 @@ export const Container = styled.div`
   width: 80%;
   height: 80px;
   margin: 0 auto;
+  z-index: 2;
 `;
 
 export const LogoBox = styled.div`
