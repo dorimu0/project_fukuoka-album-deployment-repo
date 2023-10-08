@@ -2,8 +2,9 @@ import styled from "styled-components";
 
 export const Container = styled.div`
   position: relative;
+  width: 80%;
   height: 80px;
-  z-index: 2;
+  margin: 0 auto;
 `;
 
 export const LogoBox = styled.div`

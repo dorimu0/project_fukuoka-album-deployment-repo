@@ -11,7 +11,9 @@ const Map = () => {
   const center = useMemo(() => ({ lat: 33.59, lng: 130.401 }), []); // 고정 위치(Fukuoka)
 
   const [locations, setLocations] = useState<Location[]>([]); // API로 받아온 위치 정보
-  const [selectedLocationId,setSelectedLocationId] = useState<number | null>(null); // 선택된 location id
+  const [selectedLocationId, setSelectedLocationId] = useState<number | null>(
+    null
+  ); // 선택된 location id
 
   // API로부터 위치 정보를 받아옴
   useEffect(() => {
@@ -36,7 +38,7 @@ const Map = () => {
             <MarkerF
               key={location.id}
               position={{ lat: location.lat, lng: location.lng }}
-              onClick={() => setSelectedLocationId(location.id)} // 클릭 시 선택된 id 설정 
+              onClick={() => setSelectedLocationId(location.id)} // 클릭 시 선택된 id 설정
             />
           ))}
         </GoogleMap>

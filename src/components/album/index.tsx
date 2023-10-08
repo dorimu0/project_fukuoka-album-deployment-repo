@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Post as PostType } from "../../types/post.interface";
 import AreaPost from "../post";
 import { fetchPosts } from "../../services/album.service";
+import { AlbumWrapper, AlbumStyle } from "./AlbumStyles";
 
 interface Props {
   areaId: number;
@@ -19,20 +20,22 @@ const Album: React.FC<Props> = ({ areaId }) => {
   }, [areaId]);
 
   return (
-    <div>
-      {posts.map((post, index) => (
-        // FIXME: 수정 요함
-        <AreaPost
-          key={index}
-          title={post.title}
-          content={post.content}
-          image={post.image}
-          id={0}
-          postAreaId={0}
-          userId={0}
-        />
-      ))}
-    </div>
+    <AlbumWrapper>
+      <AlbumStyle>
+        {posts.map((post, index) => (
+          // FIXME: 수정 요함
+          <AreaPost
+            key={index}
+            title={post.title}
+            content={post.content}
+            image={post.image}
+            id={0}
+            postAreaId={0}
+            userId={0}
+          />
+        ))}
+      </AlbumStyle>
+    </AlbumWrapper>
   );
 };
 

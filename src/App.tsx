@@ -13,5 +13,4 @@ function App(): JSX.Element {
     </Layout>
   );
 }
-
 export default App;
