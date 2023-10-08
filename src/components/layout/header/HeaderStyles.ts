@@ -2,7 +2,9 @@ import styled from "styled-components";
 
 export const Container = styled.div`
   position: relative;
+  width: 80%;
   height: 80px;
+  margin: 0 auto;
 `;
 
 export const LogoBox = styled.div`
@@ -22,7 +24,7 @@ export const SearchBox = styled.div`
   align-items: center;
   position: absolute;
   top: 50%;
-  right: 5%;
+  right: 8%;
   transform: translate(0, -50%);
   border: 1px solid black;
   border-radius: 20px;
