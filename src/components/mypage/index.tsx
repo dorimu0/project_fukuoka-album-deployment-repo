@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Container, CardContainer } from "./MyPageStyles";
 import Card from "../card";
-import { getUser, getUserPost } from "../../services/user.service";
+import { getUser } from "../../services/user.service";
+import { getUserPosts } from "../../services/post.service";
 import { User } from "../../types/user.interface";
 import { AlbumStyle, AlbumWrapper } from "../album/AlbumStyles";
 import AreaPost from "../post";
@@ -17,7 +18,7 @@ const Profile = () => {
       const user = await getUser("1"); // TODO: 로그인 기능 구현 후, 로그인한 유저의 id로 변경
       setUser(user);
     })();
-    getUserPost(1)
+    getUserPosts(1)
       .then((matchedPosts) => {
         setPosts(matchedPosts);
       })
