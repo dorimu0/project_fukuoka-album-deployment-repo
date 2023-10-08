@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Post as PostType } from "../../types/post.interface";
 import AreaPost from "../post";
-import { fetchPosts } from "../../services/album.service";
+import { getLocationPosts } from "../../services/post.service";
 import { AlbumWrapper, AlbumStyle } from "./AlbumStyles";
 
 interface Props {
@@ -12,7 +12,7 @@ const Album: React.FC<Props> = ({ areaId }) => {
   const [posts, setPosts] = useState<PostType[]>([]);
 
   useEffect(() => {
-    fetchPosts(areaId)
+    getLocationPosts(areaId)
       .then((matchedPosts) => {
         setPosts(matchedPosts);
       })
