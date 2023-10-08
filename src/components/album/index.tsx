@@ -27,9 +27,9 @@ const Album: React.FC<Props> = ({ areaId }) => {
           title={post.title}
           content={post.content}
           image={post.image}
-          id={0}
-          postAreaId={0}
-          userId={0}
+          id={post.id}
+          postAreaId={post.postAreaId}
+          userId={post.userId}
         />
       ))}
     </div>
