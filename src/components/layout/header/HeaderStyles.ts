@@ -61,6 +61,7 @@ export const IconBox = styled.div`
 
 export const IconButton = styled.button`
   border: none;
+  cursor: pointer;
   background-color: transparent;
 `;
 
@@ -82,7 +83,18 @@ export const Menu = styled.ul`
 export const MenuItem = styled.li`
   width: 70px;
   padding: 10px;
+  cursor: pointer;
   &:hover {
     background-color: rgb(200, 200, 200);
   }
+`;
+
+export const FakeBox = styled.div`
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  overflow-x: hidden;
 `;
