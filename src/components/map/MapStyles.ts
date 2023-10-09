@@ -3,9 +3,10 @@ import styled from "styled-components";
 // 지도 사이즈
 export const Wrapper = styled.div`
   .map-container {
-    width: 80%;
+    width: 90%;
     height: 500px;
     margin: auto;
+    z-index: 1;
   }
 `;
 

@@ -2,7 +2,10 @@ import styled from "styled-components";
 
 export const Container = styled.div`
   position: relative;
+  width: 80%;
   height: 80px;
+  margin: 0 auto;
+  z-index: 2;
 `;
 
 export const LogoBox = styled.div`
@@ -27,6 +30,10 @@ export const SearchBox = styled.div`
   border: 1px solid black;
   border-radius: 20px;
   overflow: hidden;
+
+  @media (max-width: 767px){
+    display: none;
+  }
 `;
 
 export const SearchImage = styled.img`
@@ -70,7 +77,7 @@ export const Menu = styled.ul`
   padding: 0;
   margin: 0;
   font-size: 1.2rem;
-  z-index: 999;
+  background-color: white;
 `;
 
 export const MenuItem = styled.li`

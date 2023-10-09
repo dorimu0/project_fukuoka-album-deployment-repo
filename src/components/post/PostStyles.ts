@@ -1,8 +1,9 @@
 import styled from "styled-components";
 
 export const PostStyles = styled.div`
-width: 200px; 
-border: 1px solid black;
-padding: 10px; 
-margin: 10px; 
+  width: 250px;
+  border: 11px solid white;
+  padding: 0;
+  margin-right: 10px;
+  margin-bottom: 10px;
 `;
