@@ -22,7 +22,7 @@ export const SearchBox = styled.div`
   align-items: center;
   position: absolute;
   top: 50%;
-  right: 5%;
+  right: 10%;
   transform: translate(0, -50%);
   border: 1px solid black;
   border-radius: 20px;
@@ -54,6 +54,7 @@ export const IconBox = styled.div`
 
 export const IconButton = styled.button`
   border: none;
+  cursor: pointer;
   background-color: transparent;
 `;
 
@@ -75,6 +76,7 @@ export const Menu = styled.ul`
 export const MenuItem = styled.li`
   width: 70px;
   padding: 10px;
+  cursor: pointer;
   &:hover {
     background-color: rgb(200, 200, 200);
   }
