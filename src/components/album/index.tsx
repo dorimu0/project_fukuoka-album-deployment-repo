@@ -29,6 +29,7 @@ const Album: React.FC<Props> = ({ areaId }) => {
             title={post.title}
             content={post.content}
             image={post.image}
+            like={post.like}
             id={0}
             postAreaId={0}
             userId={0}
