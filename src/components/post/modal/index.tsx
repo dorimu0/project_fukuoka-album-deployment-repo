@@ -1,36 +1,29 @@
-import React from 'react';
-import { Post } from '../../../types/post.interface'; // Assuming the path is correct
-import { StyledModal } from './ModalStyles'; 
+import React from "react";
+import { Post as PostType } from "../../../types/post.interface";
+import { ModalStyles, Icon } from "./ModalStyles";
+import likeIcon from "./like.svg";
+import commentIcon from "./comment.svg";
 
-type ModalProps = {
-   post : Post,
-   isOpen : boolean,
-   onClose : () => void,
+interface ModalProps {
+  post: PostType;
+  onClose: () => void;
 }
 
-StyledModal.setAppElement('#root');
-
-const CustomModal = ({post, isOpen, onClose}: ModalProps) => {
-
-return (
-   <StyledModal 
-       isOpen={isOpen}
-       onRequestClose={onClose}
-       contentLabel="Post Modal"
-   >
-       <div>
-           <h2>{post.title}</h2>
-           {post.image.map((imgSrc:string,index:number)=>(
-               <img key={index} src={imgSrc} alt={`Post ${post.id}`}/>
-           ))}
-           <p>User ID : {post.userId}</p>
-           <p>{post.content}</p>
-
-           {/* Close button */}
-           <button onClick={onClose}>Close</button>
-       </div> 
-   </StyledModal> 
-);
+const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
+  return (
+    <ModalStyles onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <h2>{post.title}</h2>
+        {post.image && <img className="post-image" src={post.image[0]} alt={post.title} />}
+        <div style={{width: '24px', height: '24px', display:"flex"}}>
+            <Icon src={likeIcon} alt="like" />
+            <Icon src={commentIcon} alt="comment" />
+        </div>
+        <h3>좋아요  {post.like}개</h3>
+        <p>{post.content}</p>
+      </div>
+    </ModalStyles>
+  );
 };
 
-export default CustomModal;
+export default Modal;
