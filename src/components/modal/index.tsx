@@ -58,7 +58,7 @@ export const DefaultModal = ({
         name,
         comment,
         imageUrl: imageUrlToUpdate || imageUrl,
-        isSignIn: false
+        isSignIn: true
       });
 
       if (onUserUpdated) {
