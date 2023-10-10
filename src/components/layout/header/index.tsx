@@ -68,6 +68,13 @@ const Header = () => {
                 </MenuItem>
                 <MenuItem
                   onClick={() => {
+                    navigate("/");
+                  }}
+                >
+                  글쓰기
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
                     store.dispatch(clearUser());
                     store.dispatch(clearToken());
                   }}

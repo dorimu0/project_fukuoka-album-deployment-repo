@@ -29,7 +29,6 @@ const Album: React.FC<Props> = ({ areaId }) => {
     setIsLoading(true);
     getLocationPosts(areaId)
       .then(async (matchedPosts) => {
-        // Load all images before setting the posts.
         await Promise.all(
           matchedPosts.map((post) =>
             post.image.map((imageUrl) => loadImage(imageUrl))
