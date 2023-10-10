@@ -54,11 +54,11 @@ export const DefaultModal = ({
       }
 
       const updatedUser = await updateUser({
-        id: "1", // TODO: 로그인 기능 구현 후, 로그인한 유저의 id로 변경
+        id: "1",
         name,
         comment,
         imageUrl: imageUrlToUpdate || imageUrl,
-        isSignIn: true
+        isSignIn: true,
       });
 
       if (onUserUpdated) {
