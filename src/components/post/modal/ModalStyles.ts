@@ -39,10 +39,34 @@ export const ModalStyles = styled.div`
         padding-left :10px; 
       }
    }
+   .user-info {
+    display: flex;
+    align-items: center;
+
+    img.user-image {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
 `;
 
 export const Icon = styled.img`
   width: 100%;
   height: 100%;
   border: none;
+`;
+
+export const ImageContainer = styled.div`
+    width: 485px;
+    height: 323.325px;
+
+    .post-image {
+      width:100%;
+      height:100%;
+      object-fit: contain;
+      border :0.1px solid gray;
+      border-radius:5px;
+      margin:auto;
+    }
 `;
