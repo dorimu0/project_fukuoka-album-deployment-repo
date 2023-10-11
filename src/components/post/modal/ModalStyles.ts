@@ -19,6 +19,7 @@ export const ModalStyles = styled.div`
     max-height: 585px;
     border-radius: 12px;
 
+
     .post-image {
       width: 100%;
       height: 100%;
@@ -27,13 +28,15 @@ export const ModalStyles = styled.div`
       border-radius: 5px;
       margin: auto;
     }
-
-    h3,
     h2,
     p {
       padding-left: 10px;
     }
+    h3{
+      margin: 10px;
+    }
   }
+
   .user-info {
     display: flex;
     align-items: center;
@@ -48,8 +51,10 @@ export const ModalStyles = styled.div`
 `;
 
 export const Icon = styled.img`
-  width: 100%;
-  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  margin : 0px 5px;
+  display : flex;
   border: none;
 `;
 
@@ -65,4 +70,21 @@ export const ImageContainer = styled.div`
     border-radius: 5px;
     margin: auto;
   }
+`;
+
+export const LikeComment = styled.div`
+  margin:5px;
+  width: 30px;
+  height: 30px;
+  display : flex;
+`;
+
+export const Comment = styled.div`
+  width: 485px;
+  padding : 0px 15px 10px 15px;
+  box-sizing: border-box;
+  height: auto; 
+  display : flex;
+  flex-direction: column;
+  overflow-wrap: break-word;
 `;
