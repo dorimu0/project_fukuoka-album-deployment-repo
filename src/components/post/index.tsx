@@ -21,11 +21,10 @@
 
 // export default Posts;
 
-import React from "react";
+import React, { useState } from "react";
 import { Post as PostType } from "../../types/post.interface";
 import { PostStyles } from "./PostStyles";
 import Modal from "./modal";
-import { useState } from "react";
 
 interface Props extends PostType {
   isLoading?: boolean;
