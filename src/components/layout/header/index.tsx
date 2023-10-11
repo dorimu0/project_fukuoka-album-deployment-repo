@@ -19,8 +19,7 @@ import {
 import { RootState, store } from "../../../store";
 import { signInByGoogle } from "../../../services/signIn.service";
 import { useSelector } from "react-redux";
-import { clearUser } from "../../../store/user";
-import { clearToken } from "../../../store/token";
+import { signOut } from "../../../services/auth.service";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -56,7 +55,9 @@ const Header = () => {
           <Icon src="/menu.svg" alt="" />
         </IconButton>
         {view ? (
-          <Menu>
+          <Menu
+            onClick={() => setView(false)}
+          >
             {isSignIn
               ?
               <>
@@ -65,12 +66,15 @@ const Header = () => {
                     navigate("/mypage");
                   }}
                 >
-                  내정보
+                  내 정보
                 </MenuItem>
                 <MenuItem
                   onClick={() => {
-                    store.dispatch(clearUser())
-                    store.dispatch(clearToken())
+                    const isSingOut = window.confirm("로그아웃 하시겠습니까?");
+                    if (!isSingOut) {
+                      return;
+                    }
+                    signOut();
                   }}
                 >
                   로그아웃
