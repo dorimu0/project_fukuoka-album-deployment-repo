@@ -7,7 +7,9 @@ export const AlbumWrapper = styled.div`
 `;
 
 export const AlbumStyle = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
   flex-wrap: wrap;
   justify-content: space-between;
   img {

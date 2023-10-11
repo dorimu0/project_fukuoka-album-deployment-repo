@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { GoogleOAuthProvider } from '@react-oauth/google'
-import { GoogleLogin } from '@react-oauth/google'
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { GoogleLogin } from "@react-oauth/google";
 import {
   Container,
   LogoBox,
@@ -16,7 +16,7 @@ import {
   MenuItem,
   FakeBox,
 } from "./HeaderStyles";
-import { RootState, store } from "../../../store";
+import { RootState } from "../../../store";
 import { signInByGoogle } from "../../../services/signIn.service";
 import { useSelector } from "react-redux";
 import { signOut } from "../../../services/auth.service";
@@ -25,7 +25,7 @@ const Header = () => {
   const navigate = useNavigate();
   const [view, setView] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const isSignIn = useSelector((state: RootState) => state.user.isSignIn);
+  const isSignIn = useSelector((state: RootState) => state.user.isSignIn); // 로그인 여부 (user만 사용해서 유저 정보를 원하는대로 이용 가능)
 
   window.addEventListener("mousedown", (event: MouseEvent) => {
     const clickElement = event.target as HTMLElement;
@@ -34,8 +34,8 @@ const Header = () => {
   });
 
   const handleSearchUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value)
-  }
+    console.log(e.target.value);
+  };
 
   return (
     <Container>
@@ -80,21 +80,24 @@ const Header = () => {
                   로그아웃
                 </MenuItem>
               </>
-              : <MenuItem>
-                로그인
-                <FakeBox>
-                  <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID as string}>
-                    <GoogleLogin
-                      type={"standard"}
-                      size="medium"
-                      onSuccess={async (res) => {
-                        await signInByGoogle(res);
-                      }
-                      }
-                    />
-                  </GoogleOAuthProvider>
-                </FakeBox>
-              </MenuItem>}
+              : (
+                <MenuItem>
+                  로그인
+                  <FakeBox>
+                    <GoogleOAuthProvider
+                      clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID as string}
+                    >
+                      <GoogleLogin
+                        type={"standard"}
+                        size="medium"
+                        onSuccess={async (res) => {
+                          await signInByGoogle(res);
+                        }}
+                      />
+                    </GoogleOAuthProvider>
+                  </FakeBox>
+                </MenuItem>
+              )}
           </Menu>
         ) : null}
       </IconBox>

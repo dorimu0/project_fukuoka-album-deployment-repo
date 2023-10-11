@@ -52,6 +52,7 @@ const Profile = () => {
                 id={post.id}
                 postAreaId={post.postAreaId}
                 userId={post.userId}
+                like={post.like}
               />
             ))
             :
