@@ -68,7 +68,7 @@ const Header = () => {
                 </MenuItem>
                 <MenuItem
                   onClick={() => {
-                    navigate("/");
+                    navigate("/write");
                   }}
                 >
                   글쓰기
