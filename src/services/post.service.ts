@@ -1,5 +1,17 @@
 import { Post } from "../types/post.interface";
 
+export const getAllPosts = async (): Promise<Post[]> => {
+  const res = await fetch(`http://localhost:3004/post`);
+
+  if (!res.ok) {
+    throw new Error("エラーが発生しました。");
+  }
+
+  const posts = await res.json();
+
+  return posts;
+};
+
 export const getLocationPosts = async (areaId: number): Promise<Post[]> => {
   const response = await fetch("http://localhost:3004/post");
   if (!response.ok) {
