@@ -22,6 +22,8 @@ export default function Card({
         <CardTextWrapper>
           <CardTextTitle>{user.name}</CardTextTitle>
           <Modal
+            id={user.id}
+            email={user.email}
             name={user.name}
             comment={user.comment}
             imgUrl={user.imageUrl}
