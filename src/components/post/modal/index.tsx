@@ -4,6 +4,8 @@ import { ModalStyles, Icon, ImageContainer, LikeComment, Comment } from "./Modal
 import likeIcon from "./like.svg";
 import commentIcon from "./comment.svg";
 import { getUser } from "../../../services/user.service";
+import { getCommentsByPostId } from "../../../services/comment.service";
+import { CommentInterface } from "../../../types/comment.interface";
 
 interface ModalProps {
   post: PostType;
@@ -12,12 +14,19 @@ interface ModalProps {
 
 const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
   const [user, setUser] = useState({ name: '', imageUrl: '' });
+  const [comments, setComments] = useState<CommentInterface[]>([]);
 
   useEffect(() => {
     getUser(Number(post.userId))
     .then(user => setUser({ name: user.name, imageUrl: user.imageUrl }))
       .catch(err => console.error(err));
   }, [post.userId]);
+
+  useEffect(() => {
+    getCommentsByPostId(post.id)
+      .then(comments => setComments(comments))
+      .catch(err => console.error(err));
+  }, [post.id]);
 
   return (
     <ModalStyles onClick={onClose}>
@@ -48,6 +57,11 @@ const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
         <Comment>
           {post.content}
         </Comment>
+      </div>
+      <div className="modal-comment-content">
+      {comments.map(comment =>
+        <p key={comment.id}>{comment.content}</p>
+      )}
       </div>
     </ModalStyles>
   );
