@@ -3,6 +3,7 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import MainPage from "./pages";
 import MyPage from "./pages/mypage";
 import { verify } from "./services/auth.service";
+import WritePage from "./pages/write"
 
 const Router: React.FC = () => {
   const location = useLocation();
@@ -21,6 +22,7 @@ const Router: React.FC = () => {
     <Routes>
       <Route path="/" element={<MainPage />} />
       <Route path="/mypage" element={<MyPage />} />
+      <Route path="/write" element={<WritePage />} />
     </Routes>
   );
 };
