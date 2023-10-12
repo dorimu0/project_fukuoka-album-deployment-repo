@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Post as PostType } from "../../../types/post.interface";
-import { ModalStyles, Icon, ImageContainer } from "./ModalStyles";
+import { ModalStyles, Icon, ImageContainer, LikeComment, Comment } from "./ModalStyles";
 import likeIcon from "./like.svg";
 import commentIcon from "./comment.svg";
-import { getUser } from "../../../services/user.service"; // getUser import
+import { getUser } from "../../../services/user.service";
 
 interface ModalProps {
   post: PostType;
@@ -37,12 +37,14 @@ const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
             <img className="post-image" src={post.image[0]} alt={post.title} />
           </ImageContainer>
         }
-        <div style={{width: '24px', height: '24px', display:"flex"}}>
+        <LikeComment>
             <Icon src={likeIcon} alt="like" />
             <Icon src={commentIcon} alt="comment" />
-        </div>
+        </LikeComment>
         <h3>좋아요  {post.like}개</h3>
-        <p>{post.content}</p>
+        <Comment>
+          {post.content}
+        </Comment>
       </div>
     </ModalStyles>
   );
