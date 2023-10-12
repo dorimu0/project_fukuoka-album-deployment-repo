@@ -1,14 +1,22 @@
 import { Location } from "../types/location.interface";
+import { getAllPosts } from "./post.service";
 
 export const getAllPoints = async (): Promise<Location[]> => {
-  const res = await fetch(`http://localhost:3004/location`);
+  const posts = await getAllPosts();
+
+  const areaIds = Array.from(new Set(posts.map((post) => post.postAreaId)));
+
+  let res = await fetch(`http://localhost:3004/location`);
 
   if (!res.ok) {
-    throw new Error("エラーが発生しました。");
+    throw new Error("Failed to fetch locations.");
   }
 
-  await new Promise((resolve) => setTimeout(resolve, 1500));
+  let locations = await res.json();
 
-  const locations = await res.json();
+  locations = locations.filter((location: Location) =>
+    areaIds.includes(location.id)
+  );
+
   return locations;
 };

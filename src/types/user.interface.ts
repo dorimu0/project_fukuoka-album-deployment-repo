@@ -1,5 +1,5 @@
 export type User = {
-  id: string;
+  id: number;
   email: string;
   name: string;
   comment: string;
@@ -7,4 +7,4 @@ export type User = {
   isSignIn: boolean;
 };
 
-export type UserUpdate = Omit<User, "email" | "password">;
+export type UserUpdate = Omit<User, "isSignIn">;
