@@ -6,8 +6,8 @@ export const CardWrapper = styled.div`
   grid-template-rows: 210px 210px 80px;
   grid-template-areas: "image" "text" "stats";
   border-radius: 18px;
-  background: #000;
-  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.9);
+  background: #FDFCFC;
+  box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5);
   text-align: center;
 `;
 
@@ -16,7 +16,9 @@ export const CardImage = styled.div<{ background: string }>`
   background-image: url(${({ background }) => background});
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
-  background-size: cover;
+  background-size: cover;	
+  background-position: center;
+  background-repeat: no-repeat;
 `;
 
 export const CardTextWrapper = styled.div`
@@ -46,8 +48,7 @@ export const CardTextTitle = styled.h2`
   color: transparent;
 `;
 
-export const CardTextBody = styled.p`
-  color: white;
+export const CardTextBody = styled.p`  
   font-size: 15px;
   font-weight: 300;
 `;
