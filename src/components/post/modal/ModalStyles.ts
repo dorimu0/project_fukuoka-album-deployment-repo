@@ -8,17 +8,32 @@ export const ModalStyles = styled.div`
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 9999; // 1000으로 되긴 하는데 일단 9999로 고정해주세요
+  display:flex;
+  justify-content:center;
+  align-items:center;
 
-  .modal-content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    max-width: 485px;
-    max-height: 585px;
-    border-radius: 12px;
+  
+  .modal-comment-content{
+    height :100% ;
+    max-height :585px ;
+    width:250px;
+    display :flex ; 
+    flex-direction :column ; 
+    justify-content :center ;
+    background-color:white;
+    border: 0.1px solid gray;
+    border-radius : 0px 12px 12px 0px ;
+  }
 
+  .modal-content{
+    height :100% ;
+    display :flex ; 
+    flex-direction :column ; 
+    justify-content :center ;
+    background-color:white;
+    max-width :485px ;
+    max-height :585px ;
+    border-radius :12px 0px 0px 12px ;
 
     .post-image {
       width: 100%;
