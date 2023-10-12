@@ -30,6 +30,7 @@ export const ModalStyles = styled.div`
     }
     h2,
     p {
+      margin : 1px 0px;
       padding-left: 10px;
     }
     h3{
@@ -45,7 +46,9 @@ export const ModalStyles = styled.div`
       width: 35px;
       height: 35px;
       border-radius: 50%;
-      margin-right: 10px;
+      border: 0.1px solid rgba(0,0,0,.1);
+      box-shadow:2px 2px 3px 0px gray;
+      margin: 10px;
     }
   }
 `;
