@@ -13,6 +13,8 @@ import { ModalType } from "../../types/modal.interface";
 import { updateUser, uploadProfileImage } from "../../services/user.service";
 
 export const DefaultModal = ({
+  id,
+  email,
   name: initialName,
   comment: initialComment,
   imgUrl,
@@ -35,7 +37,7 @@ export const DefaultModal = ({
   const closeModal = () => {
     setModalIsOpen(false);
   };
-
+  
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setSelectedFile(e.target.files[0]);
@@ -43,7 +45,7 @@ export const DefaultModal = ({
       setSelectedFile(null);
     }
   };
-
+  
   const saveInfo = async () => {
     setIsLoading(true);
 
@@ -54,18 +56,22 @@ export const DefaultModal = ({
       }
 
       const updatedUser = await updateUser({
-        id: "1",
+        id,
+        email,
         name,
         comment,
         imageUrl: imageUrlToUpdate || imageUrl,
-        isSignIn: true,
       });
+
+      if (!updatedUser) {
+        return;
+      }
 
       if (onUserUpdated) {
         onUserUpdated(updatedUser);
       }
 
-      alert("수정 완료!");
+      window.alert("수정 완료!");
       closeModal();
     } catch (error) {
       console.error("Failed to update user", error);
@@ -135,7 +141,7 @@ export const DefaultModal = ({
 
           <ButtonContainer>
             <CancelBtn onClick={closeModal}>close</CancelBtn>
-            <SaveBtn disabled={isLoading}>
+            <SaveBtn disabled={isLoading} type="submit">
               {isLoading ? "Saving..." : "Save"}
             </SaveBtn>
           </ButtonContainer>

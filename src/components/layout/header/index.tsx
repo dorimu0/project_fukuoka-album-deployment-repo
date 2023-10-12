@@ -19,6 +19,7 @@ import {
 import { RootState, store } from "../../../store";
 import { signInByGoogle } from "../../../services/signIn.service";
 import { useSelector } from "react-redux";
+import { signOut } from "../../../services/auth.service";
 import { clearUser } from "../../../store/user";
 import { clearToken } from "../../../store/token";
 
@@ -56,19 +57,22 @@ const Header = () => {
           <Icon src="/menu.svg" alt="" />
         </IconButton>
         {view ? (
-          <Menu>
-            {isSignIn ? (
+          <Menu
+            onClick={() => setView(false)}
+          >
+            {isSignIn
+              ?
               <>
                 <MenuItem
                   onClick={() => {
                     navigate("/mypage");
                   }}
                 >
-                  내정보
+                  내 정보
                 </MenuItem>
                 <MenuItem
                   onClick={() => {
-                    navigate("/");
+                    navigate("/write");
                   }}
                 >
                   글쓰기
@@ -77,29 +81,34 @@ const Header = () => {
                   onClick={() => {
                     store.dispatch(clearUser());
                     store.dispatch(clearToken());
+                    const isSingOut = window.confirm("로그아웃 하시겠습니까?");
+                    if (!isSingOut) {
+                      return;
+                    }
+                    signOut();
                   }}
                 >
                   로그아웃
                 </MenuItem>
               </>
-            ) : (
-              <MenuItem>
-                로그인
-                <FakeBox>
-                  <GoogleOAuthProvider
-                    clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID as string}
-                  >
-                    <GoogleLogin
-                      type={"standard"}
-                      size="medium"
-                      onSuccess={async (res) => {
-                        await signInByGoogle(res);
-                      }}
-                    />
-                  </GoogleOAuthProvider>
-                </FakeBox>
-              </MenuItem>
-            )}
+              : (
+                <MenuItem>
+                  로그인
+                  <FakeBox>
+                    <GoogleOAuthProvider
+                      clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID as string}
+                    >
+                      <GoogleLogin
+                        type={"standard"}
+                        size="medium"
+                        onSuccess={async (res) => {
+                          await signInByGoogle(res);
+                        }}
+                      />
+                    </GoogleOAuthProvider>
+                  </FakeBox>
+                </MenuItem>
+              )}
           </Menu>
         ) : null}
       </IconBox>
