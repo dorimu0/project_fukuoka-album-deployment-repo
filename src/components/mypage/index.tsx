@@ -51,6 +51,7 @@ const Profile = () => {
               id={post.id}
               postAreaId={post.postAreaId}
               userId={post.userId}
+              location={post.location}
             />
           ))}
         </AlbumStyle>

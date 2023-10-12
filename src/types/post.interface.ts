@@ -6,4 +6,5 @@ export type Post = {
   content: string;
   image: string[];
   like: number;
+  location: string;
 };

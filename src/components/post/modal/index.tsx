@@ -30,7 +30,10 @@ const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
               className="user-image"
             />
           }
-          <h2>{user.name}</h2>
+          <div>
+            <h2>{user.name}</h2>
+            <p>{post.location}</p>
+          </div>
         </div>
         {post.image && 
           <ImageContainer>
