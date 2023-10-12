@@ -7,25 +7,26 @@ import { User } from "../../types/user.interface";
 import { AlbumStyle, AlbumWrapper } from "../album/AlbumStyles";
 import AreaPost from "../post";
 import { Post as PostType } from "../../types/post.interface";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store";
 
 const Profile = () => {
   const [user, setUser] = useState<User>(); // API로 받아온 위치 정보
   const [posts, setPosts] = useState<PostType[]>([]);
+  const userInfo = useSelector((state: RootState) => state.user);
 
   // API로부터 위치 정보를 받아옴
   useEffect(() => {
     (async () => {
-      const user = await getUser("1"); // TODO: 로그인 기능 구현 후, 로그인한 유저의 id로 변경
+      const user = await getUser(userInfo.id);
       setUser(user);
     })();
-    getUserPosts(1)
+    getUserPosts(user?.id || 0)
       .then((matchedPosts) => {
         setPosts(matchedPosts);
       })
       .catch((error) => console.error("Error:", error)); // 네트워크 요청 중 발생한 에러 출력
   }, []);
-
-  useEffect(() => {}, []);
 
   if (!user) return null;
 
@@ -40,20 +41,24 @@ const Profile = () => {
       <hr />
       <AlbumWrapper>
         <AlbumStyle>
-          {posts.map((post, index) => (
-            // FIXME: 수정 요함
-            <AreaPost
-              key={index}
-              title={post.title}
-              content={post.content}
-              image={post.image}
-              like={post.like}
-              id={post.id}
-              postAreaId={post.postAreaId}
-              userId={post.userId}
-              location={post.location}
+          {posts.length ? (
+            posts.map((post, index) => (
+              <AreaPost
+                key={index}
+                title={post.title}
+                content={post.content}
+                image={post.image}
+                id={post.id}
+                postAreaId={post.postAreaId}
+                userId={post.userId}
+                like={post.like}
+                comment={[]}
+                location={post.location}
             />
-          ))}
+            ))
+          ) : (
+            <h1>작성된 글이 없습니다.</h1>
+          )}
         </AlbumStyle>
       </AlbumWrapper>
     </Container>

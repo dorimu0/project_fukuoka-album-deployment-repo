@@ -14,7 +14,7 @@ const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
   const [user, setUser] = useState({ name: '', imageUrl: '' });
 
   useEffect(() => {
-    getUser(String(post.userId))
+    getUser(Number(post.userId))
     .then(user => setUser({ name: user.name, imageUrl: user.imageUrl }))
       .catch(err => console.error(err));
   }, [post.userId]);
