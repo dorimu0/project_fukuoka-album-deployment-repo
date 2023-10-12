@@ -72,11 +72,6 @@ const Header = () => {
                 </MenuItem>
                 <MenuItem
                   onClick={() => {
-                    const isSingOut = window.confirm("로그아웃 하시겠습니까?");
-                    if (!isSingOut) {
-                      return;
-                    }
-                    signOut();
                     navigate("/write");
                   }}
                 >
@@ -86,6 +81,11 @@ const Header = () => {
                   onClick={() => {
                     store.dispatch(clearUser());
                     store.dispatch(clearToken());
+                    const isSingOut = window.confirm("로그아웃 하시겠습니까?");
+                    if (!isSingOut) {
+                      return;
+                    }
+                    signOut();
                   }}
                 >
                   로그아웃
