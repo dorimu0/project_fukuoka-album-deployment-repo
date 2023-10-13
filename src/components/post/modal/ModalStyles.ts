@@ -16,13 +16,36 @@ export const ModalStyles = styled.div`
   .modal-comment-content{
     height :100% ;
     max-height :585px ;
-    width:250px;
+    width:300px;
     display :flex ; 
-    flex-direction :column ; 
-    justify-content :center ;
+    flex-direction :column ;
     background-color:white;
     border: 0.1px solid gray;
     border-radius : 0px 12px 12px 0px ;
+
+    img.user-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 0.1px solid rgba(0,0,0,.1);
+      margin: 0px 5px 0px 3px;
+    }
+
+    .comment-box{
+      display:flex;
+      align-items:center;
+      margin : 10px 0px 0px 5px;
+    }
+
+    .comment{
+      margin : 0px 5px 5px 10px;
+    }
+
+    .comment-reply{
+      margin : 0px 0px 5px 10px;
+      color: gray;
+      font-size:13px;
+    }
   }
 
   .modal-content{

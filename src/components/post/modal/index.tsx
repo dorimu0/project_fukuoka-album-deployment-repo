@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Post as PostType } from "../../../types/post.interface";
+import { CommentInterface } from "../../../types/comment.interface";
+import { User } from "../../../types/user.interface";
 import { ModalStyles, Icon, ImageContainer, LikeComment, Comment } from "./ModalStyles";
 import likeIcon from "./like.svg";
 import commentIcon from "./comment.svg";
 import { getUser } from "../../../services/user.service";
 import { getCommentsByPostId } from "../../../services/comment.service";
-import { CommentInterface } from "../../../types/comment.interface";
 
 interface ModalProps {
   post: PostType;
@@ -14,7 +15,17 @@ interface ModalProps {
 
 const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
   const [user, setUser] = useState({ name: '', imageUrl: '' });
+  const [users, setUsers] = useState<User[]>([]);
   const [comments, setComments] = useState<CommentInterface[]>([]);
+
+  useEffect(() => {
+    Promise.all(comments.map(comment =>
+      getUser(Number(comment.userId))))
+      .then(usersData =>
+        setUsers(usersData))
+      .catch(err =>
+        console.error(err));
+  }, [comments]);
 
   useEffect(() => {
     getUser(Number(post.userId))
@@ -59,9 +70,21 @@ const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
         </Comment>
       </div>
       <div className="modal-comment-content">
-      {comments.map(comment =>
-        <p key={comment.id}>{comment.content}</p>
-      )}
+      {comments.map((comment) =>
+         <div key={comment.id}>
+          <div className="comment-box">
+            <img
+              className="user-icon"
+              src={users.find(user =>
+              user.id === comment.userId)?.imageUrl} alt={users.find(user =>
+                user.id === comment.userId)?.name} />
+            <p>{users.find(user =>
+                user.id === comment.userId)?.name}</p>
+          </div>
+           <p className="comment">{comment.content}</p>
+           <p className="comment-reply">댓글 달기</p>
+         </div>
+       )}
       </div>
     </ModalStyles>
   );
