@@ -11,58 +11,116 @@ export const ModalStyles = styled.div`
   display:flex;
   justify-content:center;
   align-items:center;
-
   
-  .modal-comment-content{
-    height :100% ;
-    max-height :585px ;
-    width:300px;
-    display :flex ; 
-    flex-direction :column ;
-    background-color:white;
-    border: 0.1px solid gray;
-    border-radius : 0px 12px 12px 0px ;
-
-    img.user-icon {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      border: 0.1px solid rgba(0,0,0,.1);
-      margin: 0px 5px 0px 3px;
-    }
-
-    .comment-box{
-      display:flex;
-      align-items:center;
-      margin : 10px 0px 0px 5px;
-    }
-
-    .comment{
-      margin : 0px 5px 5px 10px;
-    }
-
-    .comment-reply{
-      margin : 0px 0px 5px 10px;
-      color: gray;
-      font-size:13px;
-    }
-  }
-
   .modal-content{
-    height :100% ;
     display :flex ; 
     flex-direction :column ; 
     justify-content :center ;
     background-color:white;
-    max-width :485px ;
+    width :785px ;
+    position:absolute;
     max-height :585px ;
-    border-radius :12px 0px 0px 12px ;
+    border-radius :12px 12px 12px 12px ;
+    border: 0.1px solid gray;
+
+    .comment-write-box{
+      z-index: 9999;
+      border-radius :12px 0px 12px 12px ;
+      border: 0.1px solid gray;
+      justify-content: space-between;
+      width:300px;
+      background-color:white;
+      position:absolute;
+      bottom:0px;
+      left:485px;
+      
+      .comment-post{
+        background-color:white;
+        border:none;
+        color:blue;
+        cursor:default;
+      }
+  
+      .comment-post:hover{
+        background-color:white;
+        border:none;
+        color:Navy;
+        cursor:pointer;
+      }
+      
+      .comment-post-none,
+      .comment-post:disabled:hover{
+        background-color:white;
+        border:none;
+        color:Cornflowerblue;
+        cursor:default;
+      }
+  
+      .comment-write{
+        width:230px;
+        height:50px;
+        background-color:white;
+        border: none;
+        border-radius : 0px 0px 12px 0px ;
+        padding:0px 10px;
+      }
+  
+      .comment-write:focus{
+        outline:none;
+      }
+    }
+    
+    .modal-comment-content{
+      overflow:auto;
+      height :100% ;
+      display :flex ;
+      position:absolute;
+      max-height :585px ;
+      width:300px;
+      left:485px;
+      flex-direction :column ;
+      border: 0.1px solid gray;
+      border-radius : 0px 12px 12px 0px ;
+
+      &::-webkit-scrollbar {
+        display: none;
+     }
+  
+      img.user-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 0.1px solid rgba(0,0,0,.1);
+        margin: 0px 0px 0px 3px;
+      }
+
+      .comment-box{
+        display:flex;
+        align-items:center;
+        margin : 10px 0px 0px 5px;
+      }
+  
+      .comment{
+        margin : 5px 0px 5px 3px;
+      }
+  
+      .comment-reply{
+        margin : 0px 0px 10px 5px;
+        color: gray;
+        font-size:13px;
+      }
+
+      .blank{
+        justify-content: space-between;
+        margin-top:30px;
+      }
+    }
 
     .post-image {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border: 0.1px solid gray;
+      border: none;
       border-radius: 5px;
       margin: auto;
     }

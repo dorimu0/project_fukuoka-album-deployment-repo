@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store";
 import { Post as PostType } from "../../../types/post.interface";
 import { CommentInterface } from "../../../types/comment.interface";
 import { User } from "../../../types/user.interface";
+import { getUser } from "../../../services/user.service";
+import { getCommentsByPostId } from "../../../services/comment.service";
 import { ModalStyles, Icon, ImageContainer, LikeComment, Comment } from "./ModalStyles";
 import likeIcon from "./like.svg";
 import commentIcon from "./comment.svg";
-import { getUser } from "../../../services/user.service";
-import { getCommentsByPostId } from "../../../services/comment.service";
 
 interface ModalProps {
   post: PostType;
@@ -17,6 +19,8 @@ const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
   const [user, setUser] = useState({ name: '', imageUrl: '' });
   const [users, setUsers] = useState<User[]>([]);
   const [comments, setComments] = useState<CommentInterface[]>([]);
+  const [commentInput, setCommentInput] = useState("");
+  const isSignIn = useSelector((state: RootState) => state.user.isSignIn);
 
   useEffect(() => {
     Promise.all(comments.map(comment =>
@@ -62,29 +66,65 @@ const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
         }
         <LikeComment>
             <Icon src={likeIcon} alt="like" />
-            <Icon src={commentIcon} alt="comment" />
+            <Icon src={commentIcon} alt="comment"
+            onClick={() => {
+              if (isSignIn) {
+                const commentInput = document.querySelector<HTMLInputElement>('.comment-write');
+                if (commentInput) {
+                  commentInput.focus();
+                }
+              } else {
+                alert('댓글은 로그인 후 작성할 수 있습니다');
+              }
+            }}
+            />
         </LikeComment>
         <h3>좋아요  {post.like}개</h3>
         <Comment>
           {post.content}
         </Comment>
-      </div>
-      <div className="modal-comment-content">
-      {comments.map((comment) =>
-         <div key={comment.id}>
-          <div className="comment-box">
-            <img
-              className="user-icon"
-              src={users.find(user =>
-              user.id === comment.userId)?.imageUrl} alt={users.find(user =>
-                user.id === comment.userId)?.name} />
-            <p>{users.find(user =>
-                user.id === comment.userId)?.name}</p>
-          </div>
-           <p className="comment">{comment.content}</p>
-           <p className="comment-reply">댓글 달기</p>
-         </div>
-       )}
+        {isSignIn?(
+              <div className="comment-write-box">
+                <input
+                  className="comment-write"
+                  type="text"
+                  placeholder='댓글 달기...'
+                  value={commentInput}
+                  onChange={(e) => setCommentInput(e.target.value)}>
+                </input>
+                <button
+                  className={`comment-post ${!commentInput ? 'comment-post-none' : 'comment-post'}`}
+                  disabled={!commentInput}>게시
+                </button>
+              </div>
+              ):(
+              <div className="comment-write-box">
+                <input
+                  className="comment-write"
+                  type="text"
+                  placeholder='댓글은 로그인 후 작성할 수 있습니다'
+                  disabled>
+                </input>
+              </div>
+            )}
+        <div className="modal-comment-content" onClick={(e) => e.stopPropagation()}>
+          {comments.map((comment) =>
+            <div key={comment.id}>
+              <div className="comment-box">
+                <img
+                  className="user-icon"
+                  src={users.find(user =>
+                  user.id === comment.userId)?.imageUrl} alt={users.find(user =>
+                    user.id === comment.userId)?.name} />
+                <p>{users.find(user =>
+                    user.id === comment.userId)?.name}</p>
+              </div>
+              <p className="comment">{comment.content}</p>
+              <p className="comment-reply">댓글 달기</p>
+            </div>
+          )}
+          <div className="blank"></div>
+        </div>
       </div>
     </ModalStyles>
   );
