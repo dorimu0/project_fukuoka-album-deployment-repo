@@ -55,11 +55,12 @@ const Profile = () => {
                 comment={[]}
                 location={post.location}
             />
-            ))
-          ) : (
+            ))}
+          </AlbumStyle>
+          ): (
             <h1>작성된 글이 없습니다.</h1>
           )}
-        </AlbumStyle>
+        
       </AlbumWrapper>
     </Container>
   );

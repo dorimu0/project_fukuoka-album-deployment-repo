@@ -112,7 +112,7 @@ export const ModalStyles = styled.div`
 
       .blank{
         justify-content: space-between;
-        margin-top:30px;
+        margin-top:50px;
       }
     }
 
