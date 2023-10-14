@@ -3,8 +3,6 @@ import { GoogleMap, MarkerF } from "@react-google-maps/api";
 import { Wrapper, Styles } from "./MapStyles";
 import { getAllPoints } from "../../services/location.service";
 import { Location } from "../../types/location.interface";
-
-// Album import 추가
 import Album from "../album";
 
 const Map = () => {
