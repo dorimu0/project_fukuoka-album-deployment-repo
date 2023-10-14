@@ -40,10 +40,9 @@ const Profile = () => {
       </CardContainer>
       <hr />
       <AlbumWrapper>
-        <AlbumStyle>
-          {posts.length
-            ?
-            posts.map((post, index) => (
+        {posts.length ? (
+          <AlbumStyle>
+            {posts.map((post, index) => (
               <AreaPost
                 key={index}
                 title={post.title}
@@ -54,13 +53,11 @@ const Profile = () => {
                 userId={post.userId}
                 like={post.like}
               />
-            ))
-            :
-            <h1>
-              작성된 글이 없습니다.
-            </h1>
-          }
-        </AlbumStyle>
+            ))}
+          </AlbumStyle>
+        ) : (
+          <h1>작성된 글이 없습니다.</h1>
+        )}
       </AlbumWrapper>
     </Container>
   );
