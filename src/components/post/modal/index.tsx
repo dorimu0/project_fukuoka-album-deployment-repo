@@ -32,9 +32,9 @@ const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
   }, [comments]);
 
   useEffect(() => {
-    getUser(Number(post.userId))
-    .then(user => setUser({ name: user.name, imageUrl: user.imageUrl }))
-      .catch(err => console.error(err));
+    getUser(post.userId)
+      .then((user) => setUser({ name: user.name, imageUrl: user.imageUrl }))
+      .catch((err) => console.error(err));
   }, [post.userId]);
 
   useEffect(() => {
@@ -59,11 +59,11 @@ const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
             <p>{post.location}</p>
           </div>
         </div>
-        {post.image && 
+        {post.image && (
           <ImageContainer>
             <img className="post-image" src={post.image[0]} alt={post.title} />
           </ImageContainer>
-        }
+        )}
         <LikeComment>
             <Icon src={likeIcon} alt="like" />
             <Icon src={commentIcon} alt="comment"
