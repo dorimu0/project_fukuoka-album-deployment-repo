@@ -52,6 +52,7 @@ const Profile = () => {
                 postAreaId={post.postAreaId}
                 userId={post.userId}
                 like={post.like}
+                comment={[]}
               />
             ))}
           </AlbumStyle>

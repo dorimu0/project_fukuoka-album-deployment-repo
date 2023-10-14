@@ -50,7 +50,9 @@ const Album: React.FC<Props> = ({ areaId }) => {
         {isLoading ? (
           <div>Loading...</div>
         ) : (
-          posts.map((post, index) => <AreaPost {...post} key={index} />)
+          posts.map((post, index) => (
+            <AreaPost comment={[]} {...post} key={index} />
+          ))
         )}
       </AlbumStyle>
     </AlbumWrapper>

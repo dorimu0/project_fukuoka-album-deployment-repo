@@ -16,10 +16,12 @@ import {
   MenuItem,
   FakeBox,
 } from "./HeaderStyles";
-import { RootState } from "../../../store";
+import { RootState, store } from "../../../store";
 import { signInByGoogle } from "../../../services/signIn.service";
 import { useSelector } from "react-redux";
 import { signOut } from "../../../services/auth.service";
+import { clearUser } from "../../../store/user";
+import { clearToken } from "../../../store/token";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -70,6 +72,15 @@ const Header = () => {
                 </MenuItem>
                 <MenuItem
                   onClick={() => {
+                    navigate("/write");
+                  }}
+                >
+                  글쓰기
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    store.dispatch(clearUser());
+                    store.dispatch(clearToken());
                     const isSingOut = window.confirm("로그아웃 하시겠습니까?");
                     if (!isSingOut) {
                       return;
