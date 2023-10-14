@@ -53,12 +53,14 @@ const Profile = () => {
                 userId={post.userId}
                 like={post.like}
                 comment={[]}
-              />
+                location={post.location}
+            />
             ))}
           </AlbumStyle>
-        ) : (
-          <h1>작성된 글이 없습니다.</h1>
-        )}
+          ): (
+            <h1>작성된 글이 없습니다.</h1>
+          )}
+        
       </AlbumWrapper>
     </Container>
   );
