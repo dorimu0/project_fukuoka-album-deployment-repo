@@ -37,7 +37,7 @@ export const DefaultModal = ({
   const closeModal = () => {
     setModalIsOpen(false);
   };
-  
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setSelectedFile(e.target.files[0]);
@@ -45,7 +45,7 @@ export const DefaultModal = ({
       setSelectedFile(null);
     }
   };
-  
+
   const saveInfo = async () => {
     setIsLoading(true);
 
@@ -89,12 +89,14 @@ export const DefaultModal = ({
         style={{
           overlay: {
             backgroundColor: "rgba(0,0,0,0.5)",
+            zIndex: "999",
           },
           content: {
             top: "30%",
             left: "50%",
             right: "auto",
             bottom: "auto",
+            zIndex: "10",
             marginRight: "-50%",
             transform: "translate(-50%, -50%)",
             background: "#fff",

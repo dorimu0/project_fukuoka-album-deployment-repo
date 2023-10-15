@@ -1,5 +1,14 @@
 import styled from "styled-components";
+<<<<<<< HEAD
 import Slider from "react-slick";
+=======
+
+export const WriteContainer = styled.div`
+  width: 100%;
+  height: 60vh;
+  margin: 30px 0;
+`;
+>>>>>>> main
 
 export const Container = styled.div`
   width: 485px;
@@ -23,6 +32,7 @@ export const Profile = styled.img`
   border-radius: 50%;
   margin: 8px 10px;
 `;
+<<<<<<< HEAD
 
 export const Cancel = styled.button`
   position: absolute;
@@ -32,6 +42,8 @@ export const Cancel = styled.button`
   border: none;
   font-size: 1.5rem;
 `;
+=======
+>>>>>>> main
 
 export const ContentImg = styled.div`
   width: 485px;
@@ -41,6 +53,7 @@ export const ContentImg = styled.div`
   justify-content: center;
   align-items: center;
 `;
+<<<<<<< HEAD
 
 export const SliderBox = styled(Slider)`
   width: 485px;
@@ -69,6 +82,8 @@ export const SliderBox = styled(Slider)`
     overflow: hidden;
   }
 `;
+=======
+>>>>>>> main
 
 export const AddButton = styled.button`
   width: 100px;
@@ -114,6 +129,7 @@ export const Text = styled.textarea`
   outline: none;
 `;
 
+<<<<<<< HEAD
 export const EndBox = styled.div`
   width: 100%;
   display: flex;
@@ -130,6 +146,11 @@ export const Count = styled.div`
     display: inline-block;
     width: 25px;
   }
+=======
+export const ButtonBox = styled.div`
+  width: 485px;
+  margin: auto;
+>>>>>>> main
 `;
 
 export const FinishButton = styled.button`

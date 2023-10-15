@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { GoogleLogin } from "@react-oauth/google";
@@ -16,19 +16,25 @@ import {
   MenuItem,
   FakeBox,
 } from "./HeaderStyles";
+import { searchPosts } from "../../../services/post.service";
+import { Post } from "../../../types/post.interface";
 import { RootState, store } from "../../../store";
 import { signInByGoogle } from "../../../services/signIn.service";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { signOut } from "../../../services/auth.service";
 import { clearUser } from "../../../store/user";
 import { clearToken } from "../../../store/token";
+import search, { clearPosts, setPosts } from "../../../store/search";
 import Write from "../../write";
 
 const Header = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [view, setView] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const containerRef = useRef<HTMLDivElement | null>(null);
   const isSignIn = useSelector((state: RootState) => state.user.isSignIn); // 로그인 여부 (user만 사용해서 유저 정보를 원하는대로 이용 가능)
+  const debounceTimeoutId = useRef<NodeJS.Timeout | null>(null);
 
   window.addEventListener("mousedown", (event: MouseEvent) => {
     const clickElement = event.target as HTMLElement;
@@ -37,8 +43,31 @@ const Header = () => {
   });
 
   const handleSearchUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchTerm(query);
+
+    if (debounceTimeoutId.current !== null)
+      clearTimeout(debounceTimeoutId.current);
+
+    debounceTimeoutId.current = setTimeout(async () => {
+      try {
+        let results = await searchPosts(query);
+        dispatch(setPosts(results));
+      } catch (error) {
+        console.log(error);
+      }
+    }, 200);
+
     console.log(e.target.value);
   };
+
+  // 페이지 이동 시 검색 결과 초기화
+  useEffect(() => {
+    return () => {
+      const clearSearchResults = () => dispatch(clearPosts());
+      clearSearchResults();
+    };
+  }, [dispatch]);
 
   return (
     <Container>

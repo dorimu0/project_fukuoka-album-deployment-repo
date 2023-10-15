@@ -1,11 +1,13 @@
 export type Post = {
   id: number;
   postAreaId: number;
+  area: string;
   userId: number;
   title: string;
   content: string;
   image: string[];
   like: number;
+  location: string;
 };
 export type Comment = {
   id: number;
