@@ -48,6 +48,7 @@ export const Search = styled.input`
   border: none;
   outline: none;
   font-size: 1.2rem;
+  background-color: inherit;
 `;
 
 export const IconBox = styled.div`
