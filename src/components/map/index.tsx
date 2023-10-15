@@ -1,5 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
+import { useSelector } from "react-redux";
 import { GoogleMap, MarkerF } from "@react-google-maps/api";
+import { RootState } from "../../store";
 import { Wrapper, Styles } from "./MapStyles";
 import { getAllPoints } from "../../services/location.service";
 import { Location } from "../../types/location.interface";
@@ -12,6 +14,7 @@ const Map = () => {
   const [selectedLocationId, setSelectedLocationId] = useState<number | null>(
     null
   ); // 선택된 location id
+  const searchResults = useSelector((state: RootState) => state.search.posts);
 
   // API로부터 위치 정보를 받아옴
   useEffect(() => {
@@ -37,8 +40,10 @@ const Map = () => {
           />
         ))}
       </GoogleMap>
-      {/* 선택된 location에 대한 post 출력 */}
-      {selectedLocationId && <Album areaId={selectedLocationId} />}
+      <Album
+        areaId={selectedLocationId}
+        showAllPosts={!searchResults.length && selectedLocationId === null}
+      />
     </Wrapper>
   );
 };

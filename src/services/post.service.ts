@@ -43,3 +43,15 @@ export const getUserPosts = async (userId: number) => {
 
   return userPosts;
 };
+
+export const searchPosts = async (term: string): Promise<Post[]> => {
+  const res = await fetch(`http://localhost:3004/post`);
+
+  if (!res.ok) {
+    throw new Error("エラーが発生しました。");
+  }
+
+  const posts = await res.json();
+
+  return posts.filter((post: Post) => post.area.includes(term));
+};

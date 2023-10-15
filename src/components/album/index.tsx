@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { Post as PostType } from "../../types/post.interface";
 import AreaPost from "../post";
-import { getLocationPosts } from "../../services/post.service";
+import { getAllPosts, getLocationPosts } from "../../services/post.service";
+import { RootState } from "../../store";
 import { AlbumWrapper, AlbumStyle } from "./AlbumStyles";
 
-interface Props {
-  areaId: number;
+interface AlbumProps {
+  areaId: number | null;
+  showAllPosts: boolean;
 }
 
 const loadImage = (src: string): Promise<void> => {
@@ -17,28 +20,51 @@ const loadImage = (src: string): Promise<void> => {
   });
 };
 
-const Album: React.FC<Props> = ({ areaId }) => {
+const Album: React.FC<AlbumProps> = ({ areaId, showAllPosts }: AlbumProps) => {
   const [posts, setPosts] = useState<PostType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    getLocationPosts(areaId)
-      .then(async (matchedPosts) => {
-        // 모든 이미지 로딩을 기다립니다.
-        for (let post of matchedPosts) {
-          for (let imageUrl of post.image) {
-            await loadImage(imageUrl);
-          }
-        }
+  const searchResults = useSelector((state: RootState) => state.search.posts);
 
-        setPosts(matchedPosts);
-        setIsLoading(false); // 모든 이미지가 로드되면 로딩 상태를 false로 설정합니다.
-      })
-      .catch((error) => {
-        console.error("Error:", error);
+  useEffect(() => {
+    const loadPosts = async () => {
+      if (searchResults.length > 0) {
+        setPosts(searchResults);
         setIsLoading(false);
-      });
-  }, [areaId]);
+      } else if (showAllPosts) {
+        try {
+          const allPosts = await getAllPosts();
+          for (let post of allPosts) {
+            for (let imageUrl of post.image) {
+              await loadImage(imageUrl);
+            }
+          }
+          setPosts(allPosts);
+        } catch (error) {
+          console.error("Error:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      } else if (areaId !== null) {
+        try {
+          const matchedPost = await getLocationPosts(areaId);
+
+          for (let post of matchedPost) {
+            for (let imageUrl of post.image) {
+              await loadImage(imageUrl);
+            }
+
+            setPosts(matchedPost);
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+    loadPosts();
+  }, [areaId, searchResults, showAllPosts]);
 
   return (
     <AlbumWrapper>
