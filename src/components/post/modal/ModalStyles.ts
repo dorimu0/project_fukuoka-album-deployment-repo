@@ -178,7 +178,9 @@ export const LikeComment = styled.div`
   display : flex;
 `;
 
-export const Comment = styled.div`
+
+export const Content = styled.div<{ expanded: boolean }>`
+  max-height: ${({ expanded }) => (expanded ? 'none' : '80px')};
   width: 485px;
   padding : 0px 15px 10px 15px;
   box-sizing: border-box;
@@ -186,4 +188,9 @@ export const Comment = styled.div`
   display : flex;
   flex-direction: column;
   overflow-wrap: break-word;
+  overflow: hidden;
+  .more-view{
+    width:60px;
+    color:gray;
+  }
 `;

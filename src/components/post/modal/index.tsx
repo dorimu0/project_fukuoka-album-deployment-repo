@@ -6,7 +6,7 @@ import { CommentInterface } from "../../../types/comment.interface";
 import { User } from "../../../types/user.interface";
 import { getUser } from "../../../services/user.service";
 import { getCommentsByPostId } from "../../../services/comment.service";
-import { ModalStyles, Icon, ImageContainer, LikeComment, Comment } from "./ModalStyles";
+import { ModalStyles, Icon, ImageContainer, LikeComment, Content } from "./ModalStyles";
 import likeIcon from "./like.svg";
 import commentIcon from "./comment.svg";
 
@@ -21,6 +21,9 @@ const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
   const [comments, setComments] = useState<CommentInterface[]>([]);
   const [commentInput, setCommentInput] = useState("");
   const isSignIn = useSelector((state: RootState) => state.user.isSignIn);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const contentPreview = post.content.slice(0, 100);
+  const contentRest = post.content.slice(100);  
 
   useEffect(() => {
     Promise.all(comments.map(comment =>
@@ -80,9 +83,13 @@ const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
             />
         </LikeComment>
         <h3>좋아요  {post.like}개</h3>
-        <Comment>
-          {post.content}
-        </Comment>
+        <Content expanded={isExpanded}>
+          {contentPreview}
+          {post.content.length > 100 && !isExpanded && (
+            <div className="more-view" onClick={() => setIsExpanded(true)}>더보기...</div>
+          )}
+          {isExpanded && contentRest}
+        </Content>
         {isSignIn?(
               <div className="comment-write-box">
                 <input
