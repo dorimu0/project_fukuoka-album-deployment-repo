@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import {
   Container,
   UserInfo,
@@ -14,12 +14,15 @@ import {
   EndBox,
   Count,
   SliderBox,
+  Address,
+  AddressBox,
 } from "./writeStyles";
 import { MenuItem } from "../layout/header/HeaderStyles";
 import Modal from "react-modal";
-import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { getAllLocation } from "../../services/write.service";
+import { Location } from "../../types/location.interface";
 
 const Write = () => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -27,6 +30,14 @@ const Write = () => {
   const [content, setContent] = useState<string>("");
   const [inputCount, setInputCount] = useState<number>(0);
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+  const [address, setAddress] = useState<string>("");
+  const [location, setLocation] = useState<Location[]>([]);
+
+  useEffect(() => {
+    getAllLocation().then((data) => {
+      setLocation(data);
+    });
+  }, []);
 
   const onModal = () => {
     setModalIsOpen(true);
@@ -36,14 +47,15 @@ const Write = () => {
     setModalIsOpen(false);
   };
 
-  const handleClickButton = () => {
-    inputRef.current?.click();
-  };
-
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setImage(e.target.files);
     }
+  };
+
+  // add image
+  const handleImageButton = () => {
+    inputRef.current?.click();
   };
 
   const handleAddButton = () => {
@@ -106,7 +118,17 @@ const Write = () => {
         <Container>
           <UserInfo>
             <Profile src="./img/miku.jpeg" alt="image" />
-            <span>doridori</span>
+            {/* <span>doridori</span> */}
+            <select>
+              {location
+                ? location.map((location, index) => (
+                    <option key={index} value={location.area}>
+                      {location.area}
+                    </option>
+                  ))
+                : ""}
+            </select>
+
             <Cancel onClick={closeModal}>
               <img src="./cancel.svg" alt="X" />
             </Cancel>
@@ -119,7 +141,7 @@ const Write = () => {
               </SliderBox>
             ) : (
               <>
-                <AddButton onClick={handleClickButton}> + </AddButton>
+                <AddButton onClick={handleImageButton}> + </AddButton>
                 <HiddenInput
                   type="file"
                   multiple
@@ -130,14 +152,17 @@ const Write = () => {
               </>
             )}
           </ContentImg>
+          <AddressBox>
+            <Address placeholder="상세 주소" />
+          </AddressBox>
           <Content>
             <Text
-              rows={3}
+              rows={4}
               placeholder="문구를 입력해주세요."
               className="content"
               maxLength={200}
               onChange={handleInputText}
-            ></Text>
+            />
             <EndBox>
               <Count>
                 <span>{inputCount}</span> / 200

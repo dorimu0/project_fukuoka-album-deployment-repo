@@ -1,14 +1,5 @@
 import styled from "styled-components";
-<<<<<<< HEAD
 import Slider from "react-slick";
-=======
-
-export const WriteContainer = styled.div`
-  width: 100%;
-  height: 60vh;
-  margin: 30px 0;
-`;
->>>>>>> main
 
 export const Container = styled.div`
   width: 485px;
@@ -32,7 +23,6 @@ export const Profile = styled.img`
   border-radius: 50%;
   margin: 8px 10px;
 `;
-<<<<<<< HEAD
 
 export const Cancel = styled.button`
   position: absolute;
@@ -42,8 +32,6 @@ export const Cancel = styled.button`
   border: none;
   font-size: 1.5rem;
 `;
-=======
->>>>>>> main
 
 export const ContentImg = styled.div`
   width: 485px;
@@ -53,7 +41,6 @@ export const ContentImg = styled.div`
   justify-content: center;
   align-items: center;
 `;
-<<<<<<< HEAD
 
 export const SliderBox = styled(Slider)`
   width: 485px;
@@ -82,8 +69,6 @@ export const SliderBox = styled(Slider)`
     overflow: hidden;
   }
 `;
-=======
->>>>>>> main
 
 export const AddButton = styled.button`
   width: 100px;
@@ -112,6 +97,28 @@ export const PostImg = styled.img`
   width: 100%;
 `;
 
+export const AddressBox = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  box-sizing: border-box;
+  margin-top: 10px;
+  margin-bottom: 5px;
+`;
+
+export const Address = styled.input`
+  width: 100%;
+  border: none;
+  background-color: gainsboro;
+  padding: 5px 7px;
+  border-radius: 10px;
+
+  &:focus {
+    outline: none;
+  }
+`;
+
 export const Content = styled.div`
   width: 100%;
   overflow: hidden;
@@ -123,13 +130,11 @@ export const Text = styled.textarea`
   box-sizing: border-box;
   resize: none;
   border: none;
-  border-radius: 10px;
-  padding: 10px 0;
+  padding: 0 5px;
   margin: 10px auto;
   outline: none;
 `;
 
-<<<<<<< HEAD
 export const EndBox = styled.div`
   width: 100%;
   display: flex;
@@ -146,17 +151,12 @@ export const Count = styled.div`
     display: inline-block;
     width: 25px;
   }
-=======
-export const ButtonBox = styled.div`
-  width: 485px;
-  margin: auto;
->>>>>>> main
 `;
 
 export const FinishButton = styled.button`
   display: block;
   width: 60px;
-  height: 30px;
+  height: 25px;
   background-color: inherit;
   border: 1.5px solid black;
   border-radius: 10px;
