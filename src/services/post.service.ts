@@ -55,3 +55,21 @@ export const searchPosts = async (term: string): Promise<Post[]> => {
 
   return posts.filter((post: Post) => post.area.includes(term));
 };
+
+export const updateLike = async (id: number, updatedLike: Post): Promise<Post> => {
+  const res = await fetch(`http://localhost:3004/post/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(updatedLike)
+  });
+
+  if (!res.ok) {
+    throw new Error("エラーが発生しました。");
+  }
+
+  const post = await res.json();
+
+  return post;
+};

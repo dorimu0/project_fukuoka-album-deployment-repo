@@ -5,10 +5,12 @@ import { Post as PostType } from "../../../types/post.interface";
 import { CommentInterface } from "../../../types/comment.interface";
 import { User } from "../../../types/user.interface";
 import { getUser } from "../../../services/user.service";
+import { updateLike } from '../../../services/post.service';
 import { getCommentsByPostId } from "../../../services/comment.service";
 import { ModalStyles, Icon, ImageContainer, LikeComment, Content } from "./ModalStyles";
 import likeIcon from "./like.svg";
 import commentIcon from "./comment.svg";
+import likeCheckedIcon from "./likeChecked.svg";
 
 interface ModalProps {
   post: PostType;
@@ -23,7 +25,57 @@ const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
   const isSignIn = useSelector((state: RootState) => state.user.isSignIn);
   const [isExpanded, setIsExpanded] = useState(false);
   const contentPreview = post.content.slice(0, 100);
-  const contentRest = post.content.slice(100);  
+  const contentRest = post.content.slice(100);
+  const loggedInUserId = useSelector((state: RootState) => state.user.id); 
+  const hasLiked = loggedInUserId ? post.likeChecked?.includes(loggedInUserId) : false;
+  const [likeStatus, setLikeStatus] = useState(hasLiked);
+  const [likeCount, setLikeCount] = useState(post.likeChecked?.length || 0);
+
+  const toggleLike = async () => {
+    if (!isSignIn) {
+        alert('로그인 후 좋아요 기능을 사용할 수 있습니다.');
+        return;
+    }
+    let newLikeStatus;
+    let checkLike;
+  
+    if (likeStatus && post.likeChecked && loggedInUserId !== null) {
+      newLikeStatus = false; 
+      const index = post.likeChecked.indexOf(loggedInUserId);
+      const newLikeChecked = [...post.likeChecked.slice(0, index), ...post.likeChecked.slice(index + 1)];
+      checkLike = { ...post, likeChecked: newLikeChecked };
+      
+    } else if (loggedInUserId !== null) {
+      newLikeStatus = true; 
+      if (post.likeChecked) {
+        checkLike = { ...post, likeChecked: [...post.likeChecked, loggedInUserId] };
+      } else { 
+        checkLike = { ...post, likeChecked: [loggedInUserId] };
+       }
+     }
+
+     if (newLikeStatus) {
+      setLikeCount(likeCount + 1);
+    } else {
+      setLikeCount(likeCount - 1);
+    }    
+  
+     try {
+      if (!checkLike) {
+        throw new Error('Updated post is not defined');
+      }
+      const updatedLike = await updateLike(checkLike.id, checkLike);
+      console.log('Updated post:', updatedLike);
+      setLikeStatus(newLikeStatus);
+      if (updatedLike.likeChecked) {
+        setLikeCount(updatedLike.likeChecked.length);
+      } else {
+        console.error('likeChecked is undefined');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     Promise.all(comments.map(comment =>
@@ -68,7 +120,7 @@ const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
           </ImageContainer>
         )}
         <LikeComment>
-            <Icon src={likeIcon} alt="like" />
+            <Icon src={likeStatus ? likeCheckedIcon : likeIcon} alt="like" onClick={toggleLike} />
             <Icon src={commentIcon} alt="comment"
             onClick={() => {
               if (isSignIn) {
@@ -82,7 +134,7 @@ const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
             }}
             />
         </LikeComment>
-        <h3>좋아요  {post.like}개</h3>
+        <h3>좋아요  {likeCount}개</h3>
         <Content expanded={isExpanded}>
           {contentPreview}
           {post.content.length > 100 && !isExpanded && (

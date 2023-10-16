@@ -8,6 +8,7 @@ export type Post = {
   image: string[];
   like: number;
   location: string;
+  likeChecked?:number[];
 };
 export type Comment = {
   id: number;
