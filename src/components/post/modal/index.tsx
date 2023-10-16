@@ -5,25 +5,75 @@ import { Post as PostType } from "../../../types/post.interface";
 import { CommentInterface } from "../../../types/comment.interface";
 import { User } from "../../../types/user.interface";
 import { getUser } from "../../../services/user.service";
+import { updateLike, getPostById } from '../../../services/post.service';
 import { getCommentsByPostId } from "../../../services/comment.service";
 import { ModalStyles, Icon, ImageContainer, LikeComment, Content } from "./ModalStyles";
 import likeIcon from "./like.svg";
 import commentIcon from "./comment.svg";
+import likeCheckedIcon from "./likeChecked.svg";
 
 interface ModalProps {
   post: PostType;
   onClose: () => void;
 }
 
-const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
+const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose }) => {
   const [user, setUser] = useState({ name: '', imageUrl: '' });
   const [users, setUsers] = useState<User[]>([]);
   const [comments, setComments] = useState<CommentInterface[]>([]);
   const [commentInput, setCommentInput] = useState("");
+  const [post, setPost] = useState(initialPost);
   const isSignIn = useSelector((state: RootState) => state.user.isSignIn);
   const [isExpanded, setIsExpanded] = useState(false);
   const contentPreview = post.content.slice(0, 100);
-  const contentRest = post.content.slice(100);  
+  const contentRest = post.content.slice(100);
+  const loggedInUserId = useSelector((state: RootState) => state.user.id);
+  const [likeStatus, setLikeStatus] = useState(false);
+  const [likeCount, setLikeCount] = useState(post.likeChecked?.length || 0);
+
+  const toggleLike = async () => {
+    if (!isSignIn) {
+        alert('로그인 후 좋아요 기능을 사용할 수 있습니다.');
+        return;
+    }
+    let newLikeStatus = false;
+    let checkLike;
+  
+    if (likeStatus && post.likeChecked && loggedInUserId !== null) {
+      newLikeStatus = false; 
+      const index = post.likeChecked.indexOf(loggedInUserId);
+      const newLikeChecked = [...post.likeChecked.slice(0, index), ...post.likeChecked.slice(index + 1)];
+      checkLike = { ...post, likeChecked: newLikeChecked };
+      
+    } else if (loggedInUserId !== null) {
+      newLikeStatus = true; 
+      if (post.likeChecked) {
+        checkLike = { ...post, likeChecked: [...post.likeChecked, loggedInUserId] };
+      } else { 
+        checkLike = { ...post, likeChecked: [loggedInUserId] };
+       }
+     }
+
+     if (newLikeStatus) {
+      setLikeCount(likeCount + 1);
+    } else {
+      setLikeCount(likeCount - 1);
+    }    
+  
+     try {
+      if (!checkLike) {
+        throw new Error('Updated post is not defined');
+      }
+      const updatedLike = await updateLike(checkLike.id, checkLike);
+      
+      setPost(updatedLike)
+      setLikeStatus(newLikeStatus);
+      setLikeCount(updatedLike.likeChecked ? updatedLike.likeChecked.length : 0);
+      
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     Promise.all(comments.map(comment =>
@@ -46,6 +96,17 @@ const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
       .catch(err => console.error(err));
   }, [post.id]);
 
+  useEffect(() => {
+    getPostById(initialPost.id)
+      .then(updatedLike => {
+        setPost(updatedLike);
+        const hasLiked = loggedInUserId ? (updatedLike.likeChecked?.includes(loggedInUserId) ?? false) : false;
+        setLikeStatus(hasLiked);
+        setLikeCount(updatedLike.likeChecked ? updatedLike.likeChecked.length : 0);
+      })
+      .catch(err => console.error(err));
+  }, [initialPost.id]);
+  
   return (
     <ModalStyles onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -59,7 +120,7 @@ const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
           }
           <div>
             <h2>{user.name}</h2>
-            <p>{post.location}</p>
+            <p>{post.area}</p>
           </div>
         </div>
         {post.image && (
@@ -68,7 +129,7 @@ const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
           </ImageContainer>
         )}
         <LikeComment>
-            <Icon src={likeIcon} alt="like" />
+            <Icon src={likeStatus ? likeCheckedIcon : likeIcon} alt="like" onClick={toggleLike} />
             <Icon src={commentIcon} alt="comment"
             onClick={() => {
               if (isSignIn) {
@@ -82,7 +143,7 @@ const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
             }}
             />
         </LikeComment>
-        <h3>좋아요  {post.like}개</h3>
+        <h3>좋아요  {likeCount}개</h3>
         <Content expanded={isExpanded}>
           {contentPreview}
           {post.content.length > 100 && !isExpanded && (
