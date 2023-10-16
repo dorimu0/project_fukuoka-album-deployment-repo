@@ -101,6 +101,7 @@ export const DefaultModal = ({
             left: "50%",
             right: "auto",
             bottom: "auto",
+            zIndex: "10",
             marginRight: "-50%",
             transform: "translate(-50%, -50%)",
             background: "#fff",

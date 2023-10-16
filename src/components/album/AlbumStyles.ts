@@ -8,16 +8,26 @@ export const AlbumWrapper = styled.div`
 
 export const AlbumStyle = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  grid-gap: 10px;
+
+  grid-template-columns: repeat(4, minmax(200px, auto));
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(3, minmax(200px, auto));
+  }
+
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(2, minmax(200px, auto));
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: repeat(1, minmax(200px, auto));
+  }
+
   img {
-    width: 250px;
+    width: 200px;
     height: 200px;
     border-radius: 10px;
     object-fit: cover;
-    margin-right: 10px;
-    margin-bottom: 10px;
   }
 `;

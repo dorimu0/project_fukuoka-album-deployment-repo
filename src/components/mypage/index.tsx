@@ -50,9 +50,11 @@ const Profile = () => {
                 image={post.image}
                 id={post.id}
                 postAreaId={post.postAreaId}
+                area={post.area}
                 userId={post.userId}
                 like={post.like}
                 comment={[]}
+                location={post.location}
               />
             ))}
           </AlbumStyle>
