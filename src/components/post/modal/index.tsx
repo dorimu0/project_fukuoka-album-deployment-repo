@@ -59,7 +59,7 @@ const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
           }
           <div>
             <h2>{user.name}</h2>
-            <p>{post.location}</p>
+            <p>{post.area}</p>
           </div>
         </div>
         {post.image && (
