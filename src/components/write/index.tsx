@@ -70,7 +70,7 @@ const Write = () => {
     } else if (!Image) {
       alert("이미지를 넣어주세요");
     } else {
-      alert("문구를 입력해주세용");
+      alert("문구를 입력해주세요");
     }
   };
 
@@ -88,7 +88,7 @@ const Write = () => {
 
   return (
     <>
-      <MenuItem onClick={onModal}>왜 안됌?</MenuItem>
+      <MenuItem onClick={onModal}>글 쓰기</MenuItem>
 
       <Modal
         isOpen={modalIsOpen}
