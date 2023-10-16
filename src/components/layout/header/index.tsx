@@ -25,6 +25,7 @@ import { signOut } from "../../../services/auth.service";
 import { clearUser } from "../../../store/user";
 import { clearToken } from "../../../store/token";
 import search, { clearPosts, setPosts } from "../../../store/search";
+import Write from "../../write";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -96,13 +97,7 @@ const Header = () => {
                 >
                   내 정보
                 </MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    navigate("/write");
-                  }}
-                >
-                  글쓰기
-                </MenuItem>
+                <Write />
                 <MenuItem
                   onClick={() => {
                     store.dispatch(clearUser());
