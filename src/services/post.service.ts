@@ -73,3 +73,15 @@ export const updateLike = async (id: number, updatedLike: Post): Promise<Post> =
 
   return post;
 };
+
+export const getPostById = async (id: number): Promise<Post> => {
+  const res = await fetch(`http://localhost:3004/post/${id}`);
+
+  if (!res.ok) {
+    throw new Error("Error occurred while fetching post.");
+  }
+
+  const post = await res.json();
+
+  return post;
+};
