@@ -1,56 +1,30 @@
 import { User, UserUpdate } from "../types/user.interface";
-import { verify } from "./auth.service";
+import { api, uploadApi } from "./api.service";
 
 export const getUser = async (id: number | null): Promise<User> => {
   if (id === null) {
-    window.alert("유저 정보를 불러올 수 없습니다. 다시 로그인하세요.")
-  }
-  const res = await fetch(`http://localhost:3004/user/${id}`);
-
-  if (!res.ok) {
-    throw new Error("エラーが発生しました。");
+    window.alert("유저 정보를 불러올 수 없습니다. 다시 로그인하세요.");
   }
 
-  const user = await res.json();
-  return user;
+  const res = await api("GET", `user/${id}`);
+
+  return res;
 };
 
-export const updateUser = async (user: UserUpdate): Promise<User | undefined> => {
-  const auth = await verify();
-  if (!auth) {
-    return;
-  }
+export const updateUser = async (
+  user: UserUpdate,
+  prevImage?: string
+): Promise<User | undefined> => {
+  const res = await api("PUT", `user/update`, { user, prevImage });
 
-  const res = await fetch(`http://localhost:3004/user/${user.id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(user),
-  });
-
-  if (!res.ok) {
-    throw new Error("エラーが発生しました。");
-  }
-
-  const updatedUser = await res.json();
-  return updatedUser;
+  return res;
 };
 
 export const uploadProfileImage = async (file: File): Promise<string> => {
   const formData = new FormData();
   formData.append("image", file);
 
-  const res = await fetch(`http://localhost:3004/user`, {
-    method: "POST",
-    body: formData,
-  });
+  const res = await uploadApi(formData);
 
-  if (!res.ok) {
-    throw new Error("エラーが発生しました。");
-  }
-
-  const data = await res.json();
-
-  return data.imageUrl;
+  return res.path;
 };
