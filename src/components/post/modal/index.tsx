@@ -6,7 +6,7 @@ import { CommentInterface } from "../../../types/comment.interface";
 import { User } from "../../../types/user.interface";
 import { getUser } from "../../../services/user.service";
 import { updateLike, getPostById } from '../../../services/post.service';
-import { getCommentsByPostId } from "../../../services/comment.service";
+import { getCommentsByPostId, createComment, deleteComment, updateComment } from "../../../services/comment.service";
 import { ModalStyles, Icon, ImageContainer, LikeComment, Content } from "./ModalStyles";
 import likeIcon from "./like.svg";
 import commentIcon from "./comment.svg";
@@ -30,6 +30,7 @@ const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose }) => {
   const loggedInUserId = useSelector((state: RootState) => state.user.id);
   const [likeStatus, setLikeStatus] = useState(false);
   const [likeCount, setLikeCount] = useState(post.likeChecked?.length || 0);
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
 
   const toggleLike = async () => {
     if (!isSignIn) {
@@ -105,7 +106,7 @@ const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose }) => {
         setLikeCount(updatedLike.likeChecked ? updatedLike.likeChecked.length : 0);
       })
       .catch(err => console.error(err));
-  }, [initialPost.id]);
+  }, [initialPost.id, loggedInUserId]);
   
   return (
     <ModalStyles onClick={onClose}>
@@ -162,8 +163,44 @@ const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose }) => {
                 </input>
                 <button
                   className={`comment-post ${!commentInput ? 'comment-post-none' : 'comment-post'}`}
-                  disabled={!commentInput}>게시
-                </button>
+                  disabled={!commentInput}
+                    onClick={async () => {
+                    if (!loggedInUserId) {
+                      alert('로그인 후 댓글을 작성할 수 있습니다.');
+                      return;
+                    }
+                    try {
+                      if (editingCommentId) {
+                        const updatedComment: CommentInterface = {
+                          id: editingCommentId,
+                          userId: loggedInUserId,
+                          postId: post.id,
+                          content: commentInput,
+                          commentId: comments.length + 1
+                        };
+
+                        const updated = await updateComment(updatedComment);
+                        setComments(comments.map(c => c.id === updated.id ? updated : c));
+                      } else {
+                        const newComment: CommentInterface = {
+                          userId: loggedInUserId,
+                          postId: post.id,
+                          content: commentInput,
+                          commentId: comments.length + 1
+                        };
+
+                        const created = await createComment(newComment);
+                        setComments([...comments, created]);
+                      }
+
+                      setEditingCommentId(null);
+                      setCommentInput('');
+                      
+                    } catch (error) {
+                      console.error(error);
+                    }
+                  }}
+                >{editingCommentId ? '수정' : '게시'}</button>
               </div>
               ):(
               <div className="comment-write-box">
@@ -186,9 +223,35 @@ const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose }) => {
                     user.id === comment.userId)?.name} />
                 <p>{users.find(user =>
                     user.id === comment.userId)?.name}</p>
+                <div>
+                {(loggedInUserId === comment.userId || post.userId === loggedInUserId) && 
+                  <div className="comment-delete" onClick={async () => {
+                    if(window.confirm('삭제하시겠습니까?')) { 
+                      try{
+                        if (typeof comment.id === 'number') {
+                          await deleteComment(comment.id);
+                          setComments(comments.filter(c => c.id !== comment.id));
+                        } else {
+                          throw new Error('Comment ID is missing');
+                        }
+                      } catch(error){
+                        console.error(error);
+                      }
+                    }
+                  }}>❌</div>}
+                </div>
               </div>
               <p className="comment">{comment.content}</p>
-              <p className="comment-reply">댓글 달기</p>
+              <div className="comment-edit-box">
+                <p className="comment-reply">댓글 달기</p>
+                <p>{loggedInUserId === comment.userId && 
+                <p className="comment-rewrite" onClick={() => {
+                  setCommentInput(comment.content);
+                  if (typeof comment.id === "number") {
+                    setEditingCommentId(comment.id);
+                  }
+                }}>수정</p>}</p>
+              </div>
             </div>
           )}
           <div className="blank"></div>
