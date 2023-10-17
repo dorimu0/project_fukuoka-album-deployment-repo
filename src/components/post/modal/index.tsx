@@ -9,7 +9,6 @@ import { updateLike, getPostById } from '../../../services/post.service';
 import { getCommentsByPostId, createComment, deleteComment, updateComment } from "../../../services/comment.service";
 import { ModalStyles, Icon, ImageContainer, LikeComment, Content } from "./ModalStyles";
 import likeIcon from "./like.svg";
-import commentIcon from "./comment.svg";
 import likeCheckedIcon from "./likeChecked.svg";
 
 interface ModalProps {
@@ -131,18 +130,6 @@ const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose }) => {
         )}
         <LikeComment>
             <Icon src={likeStatus ? likeCheckedIcon : likeIcon} alt="like" onClick={toggleLike} />
-            <Icon src={commentIcon} alt="comment"
-            onClick={() => {
-              if (isSignIn) {
-                const commentInput = document.querySelector<HTMLInputElement>('.comment-write');
-                if (commentInput) {
-                  commentInput.focus();
-                }
-              } else {
-                alert('댓글은 로그인 후 작성할 수 있습니다');
-              }
-            }}
-            />
         </LikeComment>
         <h3>좋아요  {likeCount}개</h3>
         <Content expanded={isExpanded}>
