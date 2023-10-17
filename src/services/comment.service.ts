@@ -1,4 +1,5 @@
 import { CommentInterface } from '../types/comment.interface';
+import { Post as PostType } from '../types/post.interface';
 
 export const getCommentsByPostId = async (postId: number): Promise<CommentInterface[]> => {
     const response = await fetch(`http://localhost:3004/comment?postId=${postId}`);
@@ -26,6 +27,7 @@ export const createComment = async (comment: CommentInterface): Promise<CommentI
     return createdComment;
 };
 
+
 export const deleteComment = async (id: number): Promise<void> => {
   const res = await fetch(`http://localhost:3004/comment/${id}`, {
     method: 'DELETE',
@@ -44,7 +46,7 @@ export const updateComment = async (comment: CommentInterface): Promise<CommentI
     },
     body: JSON.stringify(comment)
   });
-
+  
   if (!res.ok) {
     throw new Error("Failed to update comment");
   }
@@ -52,3 +54,18 @@ export const updateComment = async (comment: CommentInterface): Promise<CommentI
   return await res.json();
 };
   
+export const updateCommentId = async (post: PostType): Promise<PostType> => {
+  const res = await fetch(`http://localhost:3004/post/${post.id}`,{
+      method: 'PUT',
+      headers:{
+          'Content-Type':'application/json'
+      },
+      body: JSON.stringify(post)
+  });
+
+  if (!res.ok){
+      throw new Error("Network response was not ok");
+  }
+
+  return await res.json();
+}
