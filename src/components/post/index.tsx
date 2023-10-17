@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Post as PostType } from "../../types/post.interface";
 import { PostStyles } from "./PostStyles";
 import Modal from "./modal";
@@ -15,6 +15,22 @@ const Post: React.FC<Props> = (props) => {
   const firstImage = props.image[0];
   const [modalOpen, setModalOpen] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+
+  const [likeCount, setLikeCount] = useState(props.likeChecked?.length || 0);
+  const [commentCount, setCommentCount] = useState(props.commentId?.length || 0);
+
+  useEffect(() => {
+    setLikeCount(props.likeChecked?.length || 0);
+    setCommentCount(props.commentId?.length || 0);
+  }, [props.likeChecked, props.commentId]);
+  
+  const handleLikeCountChange = (newLikeCount: number) => {
+    setLikeCount(newLikeCount);
+  };
+  const handleCommentCountChange = (newCommentCount: number) => {
+    setCommentCount(newCommentCount);
+  };
+
 
   return (
     <>
@@ -37,7 +53,7 @@ const Post: React.FC<Props> = (props) => {
                 alt="Likes"
                 style={{ width: "50px", height: "50px", opacity: "1" }}
               />{" "}
-              : {props.like}
+              : {likeCount}
             </p>
 
             <p>
@@ -46,12 +62,12 @@ const Post: React.FC<Props> = (props) => {
                 alt="Comments"
                 style={{ width: "50px", height: "50px", opacity: "1" }}
               />
-              : {props.comment.length}
+              : {commentCount}
             </p>
           </div>
         )}
       </PostStyles>
-      {modalOpen && <Modal post={props} onClose={() => setModalOpen(false)} />}
+      {modalOpen && <Modal post={props} onClose={() => setModalOpen(false)} onLikeCountChange={handleLikeCountChange} onCommentCountChange={handleCommentCountChange}/>}
     </>
   );
 };
