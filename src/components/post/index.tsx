@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Post as PostType } from "../../types/post.interface";
 import { PostStyles } from "./PostStyles";
+import { getCommentsByPostId } from "../../services/comment.service";
 import Modal from "./modal";
 import likeIcon from "../post/like.svg";
 import commentIcon from "../post/comment.svg";
@@ -15,6 +16,14 @@ const Post: React.FC<Props> = (props) => {
   const firstImage = props.image[0];
   const [modalOpen, setModalOpen] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+  const [commentCount, setCommentCount] = useState(0);
+
+  useEffect(() => {
+    (async () => {
+      const comments = await getCommentsByPostId(props.id);
+      setCommentCount(comments.length);
+    })();
+  }, [props.id]); // props.id가 변경될 때마다 실행
 
   return (
     <>
@@ -35,18 +44,25 @@ const Post: React.FC<Props> = (props) => {
               <img
                 src={likeIcon}
                 alt="Likes"
-                style={{ width: "50px", height: "50px", opacity: "1" }}
+                style={{
+                  width: "30px",
+                  height: "30px",
+                  opacity: "1",
+                  margin: "10px",
+                }}
               />{" "}
-              : {props.like}
-            </p>
-
-            <p>
+              {props.like}
               <img
                 src={commentIcon}
                 alt="Comments"
-                style={{ width: "50px", height: "50px", opacity: "1" }}
+                style={{
+                  width: "30px",
+                  height: "30px",
+                  opacity: "1",
+                  margin: "10px",
+                }}
               />
-              : {props.comment.length}
+              {commentCount}
             </p>
           </div>
         )}
