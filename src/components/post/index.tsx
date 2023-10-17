@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Post as PostType } from "../../types/post.interface";
 import { PostStyles } from "./PostStyles";
 import { getCommentsByPostId } from "../../services/comment.service";
@@ -16,7 +16,6 @@ const Post: React.FC<Props> = (props) => {
   const firstImage = props.image[0];
   const [modalOpen, setModalOpen] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
-  const [commentCount, setCommentCount] = useState(0);
 
   useEffect(() => {
     (async () => {
@@ -24,6 +23,23 @@ const Post: React.FC<Props> = (props) => {
       setCommentCount(comments.length);
     })();
   }, [props.id]); // props.id가 변경될 때마다 실행
+
+  const [likeCount, setLikeCount] = useState(props.likeChecked?.length || 0);
+  const [commentCount, setCommentCount] = useState(
+    props.commentId?.length || 0
+  );
+
+  useEffect(() => {
+    setLikeCount(props.likeChecked?.length || 0);
+    setCommentCount(props.commentId?.length || 0);
+  }, [props.likeChecked, props.commentId]);
+
+  const handleLikeCountChange = (newLikeCount: number) => {
+    setLikeCount(newLikeCount);
+  };
+  const handleCommentCountChange = (newCommentCount: number) => {
+    setCommentCount(newCommentCount);
+  };
 
   return (
     <>
@@ -51,7 +67,10 @@ const Post: React.FC<Props> = (props) => {
                   margin: "10px",
                 }}
               />{" "}
-              {props.like}
+              : {likeCount}
+            </p>
+
+            <p>
               <img
                 src={commentIcon}
                 alt="Comments"
@@ -62,12 +81,19 @@ const Post: React.FC<Props> = (props) => {
                   margin: "10px",
                 }}
               />
-              {commentCount}
+              : {commentCount}
             </p>
           </div>
         )}
       </PostStyles>
-      {modalOpen && <Modal post={props} onClose={() => setModalOpen(false)} />}
+      {modalOpen && (
+        <Modal
+          post={props}
+          onClose={() => setModalOpen(false)}
+          onLikeCountChange={handleLikeCountChange}
+          onCommentCountChange={handleCommentCountChange}
+        />
+      )}
     </>
   );
 };
