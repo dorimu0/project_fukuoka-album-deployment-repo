@@ -64,13 +64,10 @@ const Post: React.FC<Props> = (props) => {
                   width: "30px",
                   height: "30px",
                   opacity: "1",
-                  margin: "10px",
+                  margin: "5px",
                 }}
               />{" "}
-              : {likeCount}
-            </p>
-
-            <p>
+              {likeCount}
               <img
                 src={commentIcon}
                 alt="Comments"
@@ -78,10 +75,10 @@ const Post: React.FC<Props> = (props) => {
                   width: "30px",
                   height: "30px",
                   opacity: "1",
-                  margin: "10px",
+                  margin: "5px",
                 }}
               />
-              : {commentCount}
+              {commentCount}
             </p>
           </div>
         )}
