@@ -14,9 +14,11 @@ import likeCheckedIcon from "./likeChecked.svg";
 interface ModalProps {
   post: PostType;
   onClose: () => void;
+  onLikeCountChange?: (likeCheckedLength: number) => void;
+  onCommentCountChange?: (commentIdLength: number) => void;
 }
 
-const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose }) => {
+const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose, onLikeCountChange, onCommentCountChange }) => {
   const [user, setUser] = useState({ name: '', imageUrl: '' });
   const [users, setUsers] = useState<User[]>([]);
   const [comments, setComments] = useState<CommentInterface[]>([]);
@@ -67,6 +69,11 @@ const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose }) => {
       const updatedLike = await updateLike(checkLike.id, checkLike);
       
       setPost(updatedLike)
+
+      if(onLikeCountChange){
+        onLikeCountChange(updatedLike.likeChecked ? updatedLike.likeChecked.length : 0)
+     }
+     
       setLikeStatus(newLikeStatus);
       setLikeCount(updatedLike.likeChecked ? updatedLike.likeChecked.length : 0);
       
@@ -192,6 +199,11 @@ const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose }) => {
                         try {
                             const resUpdatedPost = await updateCommentId(updatedPost);
                             setPost(resUpdatedPost);
+
+                            if(onCommentCountChange){
+                              onCommentCountChange(updatedPost.commentId ? updatedPost.commentId.length : 0)
+                           }
+                           
                         } catch(error) {
                             console.error(error);
                         }
@@ -243,6 +255,11 @@ const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose }) => {
                             try {
                               await updateCommentId(updatedPost);
                               setPost(updatedPost);
+
+                              if(onCommentCountChange){
+                                onCommentCountChange(updatedPost.commentId ? updatedPost.commentId.length : 0)
+                              }
+                              
                             } catch(error) {
                               console.error(error);
                             }
