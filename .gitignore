@@ -25,3 +25,5 @@ yarn-error.log*
 .env
 public/img
 db.json
+
+project_fukuoka-album-deployment-repo
