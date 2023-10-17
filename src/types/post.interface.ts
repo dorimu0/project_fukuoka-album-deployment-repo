@@ -9,6 +9,7 @@ export type Post = {
   like: number;
   location: string;
   likeChecked?:number[];
+  commentId?:number[];
 };
 export type Comment = {
   id: number;

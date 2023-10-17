@@ -6,7 +6,7 @@ import { CommentInterface } from "../../../types/comment.interface";
 import { User } from "../../../types/user.interface";
 import { getUser } from "../../../services/user.service";
 import { updateLike, getPostById } from '../../../services/post.service';
-import { getCommentsByPostId, createComment, deleteComment, updateComment } from "../../../services/comment.service";
+import { getCommentsByPostId, createComment, deleteComment, updateComment , updateCommentId} from "../../../services/comment.service";
 import { ModalStyles, Icon, ImageContainer, LikeComment, Content } from "./ModalStyles";
 import likeIcon from "./like.svg";
 import likeCheckedIcon from "./likeChecked.svg";
@@ -163,7 +163,7 @@ const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose }) => {
                           userId: loggedInUserId,
                           postId: post.id,
                           content: commentInput,
-                          commentId: comments.length + 1
+                          commentId: comments.length
                         };
 
                         const updated = await updateComment(updatedComment);
@@ -177,7 +177,24 @@ const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose }) => {
                         };
 
                         const created = await createComment(newComment);
+                        if (created.id === undefined) {
+                          throw new Error('Failed to create comment');
+                        }
                         setComments([...comments, created]);
+                        let updatedPost = {...post};
+
+                        if(updatedPost.commentId) {
+                            updatedPost.commentId.push(created.id);
+                        } else {
+                            updatedPost.commentId = [created.id];
+                        }
+
+                        try {
+                            const resUpdatedPost = await updateCommentId(updatedPost);
+                            setPost(resUpdatedPost);
+                        } catch(error) {
+                            console.error(error);
+                        }
                       }
 
                       setEditingCommentId(null);
@@ -218,6 +235,19 @@ const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose }) => {
                         if (typeof comment.id === 'number') {
                           await deleteComment(comment.id);
                           setComments(comments.filter(c => c.id !== comment.id));
+
+                          let updatedPost = {...post};
+                          if(updatedPost.commentId) {
+                            updatedPost.commentId = updatedPost.commentId.filter(id => id !== comment.id);
+                            
+                            try {
+                              await updateCommentId(updatedPost);
+                              setPost(updatedPost);
+                            } catch(error) {
+                              console.error(error);
+                            }
+                          }
+
                         } else {
                           throw new Error('Comment ID is missing');
                         }
