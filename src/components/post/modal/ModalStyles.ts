@@ -155,7 +155,7 @@ export const ModalStyles = styled.div`
       padding-left: 10px;
     }
     h3{
-      margin: 10px;
+      margin: 0px 10px 7px 11px;
     }
   }
 
