@@ -3,7 +3,7 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import MainPage from "./pages";
 import MyPage from "./pages/mypage";
 import { verify } from "./services/auth.service";
-import WritePage from "./pages/write"
+import WritePage from "./pages/write";
 
 const Router: React.FC = () => {
   const location = useLocation();
