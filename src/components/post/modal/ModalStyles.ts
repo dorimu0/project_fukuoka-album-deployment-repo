@@ -102,12 +102,37 @@ export const ModalStyles = styled.div`
   
       .comment{
         margin : 5px 0px 5px 3px;
+        overflow-wrap: break-word;
+        max-width:275px;
       }
   
-      .comment-reply{
-        margin : 0px 0px 10px 5px;
-        color: gray;
-        font-size:13px;
+      .comment-edit-box{
+        display:flex;
+
+        .comment-reply{
+          cursor:pointer;
+          width:50px;
+          margin : 0px 0px 10px 5px;
+          color: gray;
+          font-size:13px;
+        }
+  
+        .comment-rewrite{
+          cursor:pointer;
+          color:blue;
+          font-size:13px;
+          width:30px;
+        }
+      }
+      
+      .comment-delete{
+        cursor:pointer;
+        width : 20px;
+        height : 20px;
+        display : flex;
+        justify-content : center;
+        align-items : center;
+        margin-left:50px;
       }
 
       .blank{
@@ -126,11 +151,11 @@ export const ModalStyles = styled.div`
     }
     h2,
     p {
-      margin : 1px 0px;
+      margin : 0px 3px 0px 2px;
       padding-left: 10px;
     }
     h3{
-      margin: 10px;
+      margin: 0px 10px 7px 11px;
     }
   }
 

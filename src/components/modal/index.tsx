@@ -55,13 +55,18 @@ export const DefaultModal = ({
         imageUrlToUpdate = await uploadProfileImage(selectedFile);
       }
 
-      const updatedUser = await updateUser({
-        id,
-        email,
-        name,
-        comment,
-        imageUrl: imageUrlToUpdate || imageUrl,
-      });
+      const prevImage = imageUrlToUpdate ? imageUrl : undefined;
+
+      const updatedUser = await updateUser(
+        {
+          id,
+          email,
+          name,
+          comment,
+          imageUrl: imageUrlToUpdate || imageUrl,
+        },
+        prevImage
+      );
 
       if (!updatedUser) {
         return;
@@ -110,7 +115,6 @@ export const DefaultModal = ({
             e.preventDefault();
             saveInfo();
           }}
-          encType="multipart/form-data"
         >
           <Label htmlFor="profileImg">프로필 사진 등록/수정: </Label>
           <InputField

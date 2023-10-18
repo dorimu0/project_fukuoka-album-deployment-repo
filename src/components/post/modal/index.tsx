@@ -5,25 +5,82 @@ import { Post as PostType } from "../../../types/post.interface";
 import { CommentInterface } from "../../../types/comment.interface";
 import { User } from "../../../types/user.interface";
 import { getUser } from "../../../services/user.service";
-import { getCommentsByPostId } from "../../../services/comment.service";
+import { updateLike, getPostById } from '../../../services/post.service';
+import { getCommentsByPostId, createComment, deleteComment, updateComment , updateCommentId} from "../../../services/comment.service";
 import { ModalStyles, Icon, ImageContainer, LikeComment, Content } from "./ModalStyles";
 import likeIcon from "./like.svg";
-import commentIcon from "./comment.svg";
+import likeCheckedIcon from "./likeChecked.svg";
 
 interface ModalProps {
   post: PostType;
   onClose: () => void;
+  onLikeCountChange?: (likeCheckedLength: number) => void;
+  onCommentCountChange?: (commentIdLength: number) => void;
 }
 
-const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
+const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose, onLikeCountChange, onCommentCountChange }) => {
   const [user, setUser] = useState({ name: '', imageUrl: '' });
   const [users, setUsers] = useState<User[]>([]);
   const [comments, setComments] = useState<CommentInterface[]>([]);
   const [commentInput, setCommentInput] = useState("");
+  const [post, setPost] = useState(initialPost);
   const isSignIn = useSelector((state: RootState) => state.user.isSignIn);
   const [isExpanded, setIsExpanded] = useState(false);
   const contentPreview = post.content.slice(0, 100);
-  const contentRest = post.content.slice(100);  
+  const contentRest = post.content.slice(100);
+  const loggedInUserId = useSelector((state: RootState) => state.user.id);
+  const [likeStatus, setLikeStatus] = useState(false);
+  const [likeCount, setLikeCount] = useState(post.likeChecked?.length || 0);
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+
+  const toggleLike = async () => {
+    if (!isSignIn) {
+        alert('로그인 후 좋아요 기능을 사용할 수 있습니다.');
+        return;
+    }
+    let newLikeStatus = false;
+    let checkLike;
+  
+    if (likeStatus && post.likeChecked && loggedInUserId !== null) {
+      newLikeStatus = false; 
+      const index = post.likeChecked.indexOf(loggedInUserId);
+      const newLikeChecked = [...post.likeChecked.slice(0, index), ...post.likeChecked.slice(index + 1)];
+      checkLike = { ...post, likeChecked: newLikeChecked };
+      
+    } else if (loggedInUserId !== null) {
+      newLikeStatus = true; 
+      if (post.likeChecked) {
+        checkLike = { ...post, likeChecked: [...post.likeChecked, loggedInUserId] };
+      } else { 
+        checkLike = { ...post, likeChecked: [loggedInUserId] };
+       }
+     }
+
+     if (newLikeStatus) {
+      setLikeCount(likeCount + 1);
+    } else {
+      setLikeCount(likeCount - 1);
+    }    
+  
+     try {
+      if (!checkLike) {
+        throw new Error('Updated post is not defined');
+      }
+      const updatedLike = await updateLike(checkLike.id, checkLike);
+      
+      setPost(updatedLike)
+
+      if(onLikeCountChange){
+        onLikeCountChange(updatedLike.likeChecked ? updatedLike.likeChecked.length : 0)
+     }
+     
+      setLikeStatus(newLikeStatus);
+      setLikeCount(updatedLike.likeChecked ? updatedLike.likeChecked.length : 0);
+      
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     Promise.all(comments.map(comment =>
@@ -46,6 +103,17 @@ const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
       .catch(err => console.error(err));
   }, [post.id]);
 
+  useEffect(() => {
+    getPostById(initialPost.id)
+      .then(updatedLike => {
+        setPost(updatedLike);
+        const hasLiked = loggedInUserId ? (updatedLike.likeChecked?.includes(loggedInUserId) ?? false) : false;
+        setLikeStatus(hasLiked);
+        setLikeCount(updatedLike.likeChecked ? updatedLike.likeChecked.length : 0);
+      })
+      .catch(err => console.error(err));
+  }, [initialPost.id, loggedInUserId]);
+  
   return (
     <ModalStyles onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -59,7 +127,7 @@ const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
           }
           <div>
             <h2>{user.name}</h2>
-            <p>{post.location}</p>
+            <p>{post.area}</p>
           </div>
         </div>
         {post.image && (
@@ -68,21 +136,9 @@ const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
           </ImageContainer>
         )}
         <LikeComment>
-            <Icon src={likeIcon} alt="like" />
-            <Icon src={commentIcon} alt="comment"
-            onClick={() => {
-              if (isSignIn) {
-                const commentInput = document.querySelector<HTMLInputElement>('.comment-write');
-                if (commentInput) {
-                  commentInput.focus();
-                }
-              } else {
-                alert('댓글은 로그인 후 작성할 수 있습니다');
-              }
-            }}
-            />
+            <Icon src={likeStatus ? likeCheckedIcon : likeIcon} alt="like" onClick={toggleLike} />
         </LikeComment>
-        <h3>좋아요  {post.like}개</h3>
+        <h3>좋아요  {likeCount}개</h3>
         <Content expanded={isExpanded}>
           {contentPreview}
           {post.content.length > 100 && !isExpanded && (
@@ -101,8 +157,66 @@ const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
                 </input>
                 <button
                   className={`comment-post ${!commentInput ? 'comment-post-none' : 'comment-post'}`}
-                  disabled={!commentInput}>게시
-                </button>
+                  disabled={!commentInput}
+                    onClick={async () => {
+                    if (!loggedInUserId) {
+                      alert('로그인 후 댓글을 작성할 수 있습니다.');
+                      return;
+                    }
+                    try {
+                      if (editingCommentId) {
+                        const updatedComment: CommentInterface = {
+                          id: editingCommentId,
+                          userId: loggedInUserId,
+                          postId: post.id,
+                          content: commentInput,
+                          commentId: comments.length
+                        };
+
+                        const updated = await updateComment(updatedComment);
+                        setComments(comments.map(c => c.id === updated.id ? updated : c));
+                      } else {
+                        const newComment: CommentInterface = {
+                          userId: loggedInUserId,
+                          postId: post.id,
+                          content: commentInput,
+                          commentId: comments.length + 1
+                        };
+
+                        const created = await createComment(newComment);
+                        if (created.id === undefined) {
+                          throw new Error('Failed to create comment');
+                        }
+                        setComments([...comments, created]);
+                        let updatedPost = {...post};
+
+                        if(updatedPost.commentId) {
+                            updatedPost.commentId.push(created.id);
+                        } else {
+                            updatedPost.commentId = [created.id];
+                        }
+
+                        try {
+                            const resUpdatedPost = await updateCommentId(updatedPost);
+                            setPost(resUpdatedPost);
+
+                            if(onCommentCountChange){
+                              onCommentCountChange(updatedPost.commentId ? updatedPost.commentId.length : 0)
+                           }
+                           
+                        } catch(error) {
+                            console.error(error);
+                        }
+                      }
+
+                      setEditingCommentId(null);
+                      setCommentInput('');
+                      
+                    } catch (error) {
+                      console.error(error);
+                    }
+                  }}
+                >{editingCommentId ? '수정' : '게시'}</button>
               </div>
               ):(
               <div className="comment-write-box">
@@ -125,9 +239,53 @@ const Modal: React.FC<ModalProps> = ({ post, onClose }) => {
                     user.id === comment.userId)?.name} />
                 <p>{users.find(user =>
                     user.id === comment.userId)?.name}</p>
+                <div>
+                {(loggedInUserId === comment.userId || post.userId === loggedInUserId) && 
+                  <div className="comment-delete" onClick={async () => {
+                    if(window.confirm('삭제하시겠습니까?')) { 
+                      try{
+                        if (typeof comment.id === 'number') {
+                          await deleteComment(comment.id);
+                          setComments(comments.filter(c => c.id !== comment.id));
+
+                          let updatedPost = {...post};
+                          if(updatedPost.commentId) {
+                            updatedPost.commentId = updatedPost.commentId.filter(id => id !== comment.id);
+                            
+                            try {
+                              await updateCommentId(updatedPost);
+                              setPost(updatedPost);
+
+                              if(onCommentCountChange){
+                                onCommentCountChange(updatedPost.commentId ? updatedPost.commentId.length : 0)
+                              }
+                              
+                            } catch(error) {
+                              console.error(error);
+                            }
+                          }
+
+                        } else {
+                          throw new Error('Comment ID is missing');
+                        }
+                      } catch(error){
+                        console.error(error);
+                      }
+                    }
+                  }}>❌</div>}
+                </div>
               </div>
               <p className="comment">{comment.content}</p>
-              <p className="comment-reply">댓글 달기</p>
+              <div className="comment-edit-box">
+                <p className="comment-reply">댓글 달기</p>
+                <p>{loggedInUserId === comment.userId && 
+                <p className="comment-rewrite" onClick={() => {
+                  setCommentInput(comment.content);
+                  if (typeof comment.id === "number") {
+                    setEditingCommentId(comment.id);
+                  }
+                }}>수정</p>}</p>
+              </div>
             </div>
           )}
           <div className="blank"></div>
