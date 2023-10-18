@@ -1,6 +1,7 @@
 import { SliderBox, PostImg } from "../writeStyles";
+import { myImage } from "../../../types/user.interface";
 
-export const Slide = () => {
+export const Slide = (image: myImage) => {
   const settings = {
     dots: false,
     infinite: true,
@@ -9,11 +10,26 @@ export const Slide = () => {
     slidesToScroll: 1,
   };
 
+  // for (let i = 0; i < image.image.length; i++) {
+  //   const file = image.image[i];
+  //   const reader = new FileReader();
+
+  //   reader.onload = function (e) {
+  //     const imgElement = document.querySelector(".img") as HTMLImageElement;
+  //     if(e.target) {
+  //     }
+  //   };
+
+  //   reader.readAsDataURL(file);
+  // }
+  // const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
   return (
     <>
       <SliderBox {...settings}>
-        <PostImg src="./img/miku.jpeg" alt="" />
-        <PostImg src="./logo.svg" alt="" />
+        {image.image.map((image, index) => (
+          <PostImg key={index} src={image} alt={`Preview ${index}`} />
+        ))}
       </SliderBox>
     </>
   );
