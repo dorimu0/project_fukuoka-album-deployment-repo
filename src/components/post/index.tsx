@@ -5,6 +5,7 @@ import { getCommentsByPostId } from "../../services/comment.service";
 import Modal from "./modal";
 import likeIcon from "../post/like.svg";
 import commentIcon from "../post/comment.svg";
+import likeCheckedIcon from "../post/likeChecked.svg";
 
 interface Props extends PostType {
   isLoading?: boolean;
@@ -58,7 +59,7 @@ const Post: React.FC<Props> = (props) => {
           <div className="info">
             <p>
               <img
-                src={likeIcon}
+                src={likeCount ? likeCheckedIcon : likeIcon}
                 alt="Likes"
                 style={{
                   width: "30px",
