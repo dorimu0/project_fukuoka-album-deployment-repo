@@ -20,14 +20,15 @@ import Modal from "react-modal";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import {
-  PostImg,
+  uploadPostImage,
   getAllLocation,
   postPost,
 } from "../../services/write.service";
 import { Location } from "../../types/location.interface";
 import Slide from "./slide";
 import { RootState } from "../../store";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setModalOpen } from "../../store/modal";
 
 const Write = () => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -41,6 +42,7 @@ const Write = () => {
   const [locations, setLocations] = useState<Location[]>([]); // 지역들
   const [postAreaId, setPostAreaId] = useState<number>(0); // 지역들
   const userInfo = useSelector((state: RootState) => state.user); // 현재 유저 정보
+  const dispatch = useDispatch();
 
   useEffect(() => {
     getAllLocation().then((data) => {
@@ -51,11 +53,13 @@ const Write = () => {
   // MODAL
   const onModal = () => {
     setModalIsOpen(true);
+    dispatch(setModalOpen(true));
   };
   const closeModal = () => {
     setModalIsOpen(false);
     setInputCount(0);
     setImages([]);
+    dispatch(setModalOpen(false));
   };
 
   const handleImageButton = () => {
@@ -102,7 +106,7 @@ const Write = () => {
       setPostAreaId(parseInt(selectLocation.current.value));
       setArea(`${location} ${inputAddress.current.value}`);
       console.log(location);
-      const url = PostImg(imageFile, location);
+      const url = uploadPostImage(imageFile, location);
       setImageUrl(await url);
     }
 

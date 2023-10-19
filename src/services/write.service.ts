@@ -1,6 +1,7 @@
 import { RootState } from "../store";
 import { Location } from "../types/location.interface";
 import { useSelector } from "react-redux";
+import { uploadApi } from "./api.service";
 
 export const getAllLocation = async (): Promise<Location[]> => {
   const res = await fetch(`http://localhost:3004/location`);
@@ -14,33 +15,18 @@ export const getAllLocation = async (): Promise<Location[]> => {
   return locations;
 };
 
-export const PostImg = async (
-  images: File[],
+export const uploadPostImage = async (
+  files: File[],
   area: string
 ): Promise<string[]> => {
   const formData = new FormData();
-  const token = useSelector((state: RootState) => state.token); // 현재 유저 정보
-
-  images.forEach((image) => {
-    formData.append("image", image);
-  });
-  console.log(area);
-
-  const res = await fetch(`http://localhost:8000/${area}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "multipart/form-data",
-      Authorization: `${token.accessToken}`,
-    },
-    body: JSON.stringify(formData),
+  files.forEach((file) => {
+    formData.append("image", file);
   });
 
-  if (!res.ok) {
-    throw new Error("エラーが発生しました。");
-  }
+  const res = await uploadApi(formData, area);
 
-  const urls = await res.json();
-  return urls;
+  return res.path;
 };
 
 export const postPost = async (
