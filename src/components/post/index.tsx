@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Post as PostType } from "../../types/post.interface";
 import { PostStyles } from "./PostStyles";
+import { getCommentsByPostId } from "../../services/comment.service";
 import Modal from "./modal";
 import likeIcon from "../post/like.svg";
 import commentIcon from "../post/comment.svg";
+import likeCheckedIcon from "../post/likeChecked.svg";
 
 interface Props extends PostType {
   isLoading?: boolean;
@@ -16,21 +18,29 @@ const Post: React.FC<Props> = (props) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
 
+  useEffect(() => {
+    (async () => {
+      const comments = await getCommentsByPostId(props.id);
+      setCommentCount(comments.length);
+    })();
+  }, [props.id]);
+
   const [likeCount, setLikeCount] = useState(props.likeChecked?.length || 0);
-  const [commentCount, setCommentCount] = useState(props.commentId?.length || 0);
+  const [commentCount, setCommentCount] = useState(
+    props.commentId?.length || 0
+  );
 
   useEffect(() => {
     setLikeCount(props.likeChecked?.length || 0);
     setCommentCount(props.commentId?.length || 0);
   }, [props.likeChecked, props.commentId]);
-  
+
   const handleLikeCountChange = (newLikeCount: number) => {
     setLikeCount(newLikeCount);
   };
   const handleCommentCountChange = (newCommentCount: number) => {
     setCommentCount(newCommentCount);
   };
-
 
   return (
     <>
@@ -49,25 +59,39 @@ const Post: React.FC<Props> = (props) => {
           <div className="info">
             <p>
               <img
-                src={likeIcon}
+                src={likeCount ? likeCheckedIcon : likeIcon}
                 alt="Likes"
-                style={{ width: "50px", height: "50px", opacity: "1" }}
+                style={{
+                  width: "30px",
+                  height: "30px",
+                  opacity: "1",
+                  margin: "5px",
+                }}
               />{" "}
-              : {likeCount}
-            </p>
-
-            <p>
+              {likeCount}
               <img
                 src={commentIcon}
                 alt="Comments"
-                style={{ width: "50px", height: "50px", opacity: "1" }}
+                style={{
+                  width: "30px",
+                  height: "30px",
+                  opacity: "1",
+                  margin: "5px",
+                }}
               />
-              : {commentCount}
+              {commentCount}
             </p>
           </div>
         )}
       </PostStyles>
-      {modalOpen && <Modal post={props} onClose={() => setModalOpen(false)} onLikeCountChange={handleLikeCountChange} onCommentCountChange={handleCommentCountChange}/>}
+      {modalOpen && (
+        <Modal
+          post={props}
+          onClose={() => setModalOpen(false)}
+          onLikeCountChange={handleLikeCountChange}
+          onCommentCountChange={handleCommentCountChange}
+        />
+      )}
     </>
   );
 };
