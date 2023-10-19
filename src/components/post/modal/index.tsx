@@ -6,7 +6,7 @@ import { CommentInterface } from "../../../types/comment.interface";
 import { User } from "../../../types/user.interface";
 import { getUser } from "../../../services/user.service";
 import { updateLike, getPostById } from '../../../services/post.service';
-import { getCommentsByPostId, createComment, deleteComment, updateComment , updateCommentId} from "../../../services/comment.service";
+import { getCommentsByPostId, createComment, deleteComment, updateComment , updateCommentId, getPost} from "../../../services/comment.service";
 import { ModalStyles, Icon, ImageContainer, LikeComment, Content } from "./ModalStyles";
 import likeIcon from "./like.svg";
 import likeCheckedIcon from "./likeChecked.svg";
@@ -32,6 +32,8 @@ const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose, onLikeCountCha
   const [likeStatus, setLikeStatus] = useState(false);
   const [likeCount, setLikeCount] = useState(post.likeChecked?.length || 0);
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+  const [showReplyInput, setShowReplyInput] = useState<number | null>(null);
+  const [replyInput, setReplyInput] = useState("");
 
   const toggleLike = async () => {
     if (!isSignIn) {
@@ -165,12 +167,18 @@ const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose, onLikeCountCha
                     }
                     try {
                       if (editingCommentId) {
+                        const commentToUpdate = comments.find(c => c.id === editingCommentId);
+                        if (!commentToUpdate) {
+                          console.error('The comment to update was not found');
+                          return;
+                        }
                         const updatedComment: CommentInterface = {
                           id: editingCommentId,
                           userId: loggedInUserId,
                           postId: post.id,
                           content: commentInput,
-                          commentId: comments.length
+                          commentId: comments.length,
+                          parentCommentId: commentToUpdate.parentCommentId
                         };
 
                         const updated = await updateComment(updatedComment);
@@ -195,6 +203,8 @@ const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose, onLikeCountCha
                         } else {
                             updatedPost.commentId = [created.id];
                         }
+
+                        new Promise((resolve) => setTimeout(resolve, 100))
 
                         try {
                             const resUpdatedPost = await updateCommentId(updatedPost);
@@ -229,64 +239,232 @@ const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose, onLikeCountCha
               </div>
             )}
         <div className="modal-comment-content" onClick={(e) => e.stopPropagation()}>
-          {comments.map((comment) =>
-            <div key={comment.id}>
-              <div className="comment-box">
-                <img
-                  className="user-icon"
-                  src={users.find(user =>
-                  user.id === comment.userId)?.imageUrl} alt={users.find(user =>
-                    user.id === comment.userId)?.name} />
-                <p>{users.find(user =>
-                    user.id === comment.userId)?.name}</p>
-                <div>
-                {(loggedInUserId === comment.userId || post.userId === loggedInUserId) && 
-                  <div className="comment-delete" onClick={async () => {
-                    if(window.confirm('삭제하시겠습니까?')) { 
-                      try{
-                        if (typeof comment.id === 'number') {
-                          await deleteComment(comment.id);
-                          setComments(comments.filter(c => c.id !== comment.id));
-
-                          let updatedPost = {...post};
-                          if(updatedPost.commentId) {
-                            updatedPost.commentId = updatedPost.commentId.filter(id => id !== comment.id);
-                            
+          {comments.map((comment) => {
+            if (comment.parentCommentId === null || comment.parentCommentId === undefined){
+              return(
+                <div key={comment.id}>
+                <div className="comment-box">
+                  <img
+                    className="user-icon"
+                    src={users.find(user =>
+                    user.id === comment.userId)?.imageUrl} alt={users.find(user =>
+                      user.id === comment.userId)?.name} />
+                  <p>{users.find(user =>
+                      user.id === comment.userId)?.name}</p>
+                  <div>
+                  {(loggedInUserId === comment.userId || post.userId === loggedInUserId) && 
+                    <div className="comment-delete" onClick={async () => {
+                      if(window.confirm('삭제하시겠습니까?')) {
+                        const childComments = comments.filter(c => c.parentCommentId === comment.id);
+                        for (let childComment of childComments){
+                          if (typeof childComment.id === 'number') {
                             try {
-                              await updateCommentId(updatedPost);
-                              setPost(updatedPost);
-
-                              if(onCommentCountChange){
-                                onCommentCountChange(updatedPost.commentId ? updatedPost.commentId.length : 0)
-                              }
+                              await deleteComment(childComment.id);
                               
+                              let updatedPost = {...post};
+                              
+                              if(updatedPost.commentId) {
+                                updatedPost.commentId = updatedPost.commentId.filter(id => id !== childComment.id);
+                      
+                                const resUpdatedPost = await updateCommentId(updatedPost);
+                                
+                                setComments(comments => comments.filter(c => c.id !== childComment.id));
+                                setPost(resUpdatedPost);
+                      
+                                if(onCommentCountChange){
+                                  onCommentCountChange(resUpdatedPost.commentId ? resUpdatedPost.commentId.length : 0)
+                                }
+                                
+                              } else {
+                                 throw new Error('Child comment ID is missing in post');
+                               }
                             } catch(error) {
+                               console.error('Error deleting or updating a child comment:', error);
+                            }
+                          } else {
+                             console.error('Child comment ID is missing');
+                          }
+                          new Promise((resolve) => setTimeout(resolve, 100))
+                        }
+                        const latestPost = await getPost(post.id);
+                        try{
+                          if (typeof comment.id === 'number') {
+                      
+                            await deleteComment(comment.id);
+                      
+                            let updatedParent = {...latestPost};
+
+                            if(updatedParent.commentId) {
+                              updatedParent.commentId = updatedParent.commentId.filter(id => id !== comment.id);
+                      
+                              const resUpdatedParent = await updateCommentId(updatedParent);
+                              
+                              setComments(comments.filter(c => c.id !== comment.id));
+                              setPost(resUpdatedParent);
+                      
+                              if(onCommentCountChange){
+                                onCommentCountChange(resUpdatedParent.commentId ? resUpdatedParent.commentId.length : 0)
+                               }
+                      
+                             } else { 
+                                throw new Error('Failed to remove parent\'s ID from comments array.');
+                             }
+                      
+                           } else { 
+                               throw new Error('Failed to delete parent\'s ID.');
+                           }
+                      
+                         } catch(error){
+                           console.error(error);
+                         }
+                         new Promise((resolve) => setTimeout(resolve, 100))
+                      }                      
+                    }}>❌</div>}
+                  </div>
+                </div>
+                <p className="comment">{comment.content}</p>
+                <div className="comment-edit-box">
+                  <div>
+                    <p className="comment-reply"
+                      onClick={()=>{
+                        if(!isSignIn){
+                          alert("해당 기능은 로그인 후 이용가능합니다")
+                        }else{
+                          if (typeof comment.id === 'number') {
+                            setShowReplyInput(comment.id);
+                          } else {
+                            console.error('Comment ID is missing');
+                          }
+                        }
+                      }}>
+                      댓글 달기</p>
+                      {showReplyInput === comment.id &&
+                    <div>
+                        <input type="text" placeholder="댓글을 작성하세요." value={replyInput} onChange={(e) => setReplyInput(e.target.value)}/>
+                        <button onClick={async () => {
+                          if (!loggedInUserId) {
+                            alert('로그인 후 대댓글을 작성할 수 있습니다.');
+                            return;
+                          }
+                          try {
+                            const newReply: CommentInterface = {
+                              userId: loggedInUserId,
+                              postId: post.id,
+                              parentCommentId: comment.id,
+                              content: replyInput,
+                              commentId: comments.length + 1
+                            };
+  
+                            const created = await createComment(newReply);
+                            if (created.id === undefined) {
+                              throw new Error('Failed to create reply');
+                            }
+                            setComments([...comments, created]);
+
+                            let updatedPost = {...post};
+    
+                            if(updatedPost.commentId) {
+                                updatedPost.commentId.push(created.id);
+                            } else {
+                                updatedPost.commentId = [created.id];
+                            }
+
+                            try{
+                                const resUpdatedPost = await updateCommentId(updatedPost);
+                                setPost(resUpdatedPost);
+
+                                if(onCommentCountChange){
+                                  onCommentCountChange(updatedPost.commentId ? updatedPost.commentId.length : 0)
+                              }
+
+                            } catch(error){
+                              console.error(error);
+                            }
+
+                            
+                          } catch (error) {
+                            console.error(error);
+                          }
+  
+                          setReplyInput('');
+                          setShowReplyInput(null)
+                        }}>제출</button>
+                        <p onClick={() => setShowReplyInput(null)}>✖</p>
+                        {/* X 말고 댓글 달기 한번 더 누르면 닫히는 걸루
+                          + 스타일 수정 해야함
+                        */}
+                    </div>}
+                  </div>
+                  <p>{loggedInUserId === comment.userId && 
+                    <p className="comment-rewrite" onClick={() => {
+                      setCommentInput(comment.content);
+                      if (typeof comment.id === "number") {
+                        setEditingCommentId(comment.id);
+                      }
+                    }}>수정</p>}
+                  </p>
+                </div>
+                {comments.filter(reply => reply.parentCommentId === comment.id).map(reply =>
+                  <div key={reply.id} className="reply">
+                    <div>
+                      <img
+                        className="user-icon"
+                        src={users.find(user =>
+                          user.id === reply.userId)?.imageUrl}
+                        alt={users.find(user =>
+                          user.id === reply.userId)?.name} />
+                      <p>{users.find(user =>
+                          user.id === reply.userId)?.name}</p>
+                      {(loggedInUserId === reply.userId || post.userId === loggedInUserId) && 
+                        <div className="comment-delete" onClick={async () => {
+                          if(window.confirm('삭제하시겠습니까?')) { 
+                            try{
+                              if (typeof reply.id === 'number') {
+                                await deleteComment(reply.id);
+                                setComments(comments.filter(c => c.id !== reply.id));
+      
+                                let updatedPost = {...post};
+                                if(updatedPost.commentId) {
+                                  updatedPost.commentId = updatedPost.commentId.filter(id => id !== reply.id);
+                                  
+                                  try {
+                                    await updateCommentId(updatedPost);
+                                    setPost(updatedPost);
+      
+                                    if(onCommentCountChange){
+                                      onCommentCountChange(updatedPost.commentId ? updatedPost.commentId.length : 0)
+                                    }
+                                    
+                                  } catch(error) {
+                                    console.error(error);
+                                  }
+                                }
+      
+                              } else {
+                                throw new Error('Comment ID is missing');
+                              }
+                            } catch(error){
                               console.error(error);
                             }
                           }
-
-                        } else {
-                          throw new Error('Comment ID is missing');
-                        }
-                      } catch(error){
-                        console.error(error);
+                        }}>❌
+                      </div>}
+                  </div>
+                  <p className="reply">{reply.content}</p>
+                  <p>{loggedInUserId === reply.userId && 
+                    <p className="comment-rewrite" onClick={ async() => {
+                      setCommentInput(reply.content);
+                      if (typeof reply.id === "number") {
+                        setEditingCommentId(reply.id);
                       }
-                    }
-                  }}>❌</div>}
+                    }}>수정</p>}
+                  </p>
                 </div>
+              )}
               </div>
-              <p className="comment">{comment.content}</p>
-              <div className="comment-edit-box">
-                <p className="comment-reply">댓글 달기</p>
-                <p>{loggedInUserId === comment.userId && 
-                <p className="comment-rewrite" onClick={() => {
-                  setCommentInput(comment.content);
-                  if (typeof comment.id === "number") {
-                    setEditingCommentId(comment.id);
-                  }
-                }}>수정</p>}</p>
-              </div>
-            </div>
+              )
+            }
+          }
           )}
           <div className="blank"></div>
         </div>
