@@ -70,20 +70,13 @@ const Album: React.FC<AlbumProps> = ({ areaId, showAllPosts }: AlbumProps) => {
   }, [areaId, pageEndIndex, searchResults, showAllPosts]);
 
   useEffect(() => {
-    function handleScroll() {
-      if (
-        window.innerHeight + document.documentElement.scrollTop !==
-        document.documentElement.offsetHeight
-      )
-        return;
-      if (
-        window.innerHeight + window.scrollY + 1 >= document.body.offsetHeight ||
-        window.innerHeight + document.documentElement.scrollTop !==
-          document.documentElement.offsetHeight
-      ) {
+    const handleScroll = () => {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+        console.log("scroll");
         setPageEndIndex((prevEndIndex) => prevEndIndex + 8);
       }
-    }
+    };
+
     window.addEventListener("scroll", handleScroll);
 
     return () => window.removeEventListener("scroll", handleScroll);
