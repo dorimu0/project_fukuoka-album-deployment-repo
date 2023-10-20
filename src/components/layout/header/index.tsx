@@ -100,8 +100,6 @@ const Header = () => {
                 <Write />
                 <MenuItem
                   onClick={() => {
-                    store.dispatch(clearUser());
-                    store.dispatch(clearToken());
                     const isSingOut = window.confirm("로그아웃 하시겠습니까?");
                     if (!isSingOut) {
                       return;
