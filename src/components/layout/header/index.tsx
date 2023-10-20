@@ -102,7 +102,7 @@ const Header = () => {
         >
           <Icon src="/menu.svg" alt="" />
         </IconButton>
-        {view ? ( //
+        {view ? ( 
           <Menu>
             {isSignIn ? (
               <>
