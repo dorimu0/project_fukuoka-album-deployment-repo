@@ -1,6 +1,7 @@
 import { SliderBox, PostImg } from "../writeStyles";
+import { myImage } from "../../../types/user.interface";
 
-export const Slide = () => {
+export const Slide = (image: myImage) => {
   const settings = {
     dots: false,
     infinite: true,
@@ -12,8 +13,9 @@ export const Slide = () => {
   return (
     <>
       <SliderBox {...settings}>
-        <PostImg src="./img/miku.jpeg" alt="" />
-        <PostImg src="./logo.svg" alt="" />
+        {image.image.map((image, index) => (
+          <PostImg key={index} src={image} alt={`Preview ${index}`} />
+        ))}
       </SliderBox>
     </>
   );

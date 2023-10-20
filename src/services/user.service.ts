@@ -1,20 +1,17 @@
-import { User, UserUpdate } from "../types/user.interface";
+import { UserUpdate } from "../types/user.interface";
 import { api, uploadApi } from "./api.service";
 
-export const getUser = async (id: number | null): Promise<User> => {
+export const getUser = async (id: number | null) => {
   if (id === null) {
     window.alert("유저 정보를 불러올 수 없습니다. 다시 로그인하세요.");
   }
 
-  const res = await api("GET", `user/${id}`);
+  const data = await api("GET", `user/${id}`);
 
-  return res;
+  return data;
 };
 
-export const updateUser = async (
-  user: UserUpdate,
-  prevImage?: string
-): Promise<User | undefined> => {
+export const updateUser = async (user: UserUpdate, prevImage?: string) => {
   const res = await api("PUT", `user/update`, { user, prevImage });
 
   return res;
