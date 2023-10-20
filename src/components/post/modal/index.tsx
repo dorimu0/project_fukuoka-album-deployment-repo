@@ -137,9 +137,14 @@ const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose, onLikeCountCha
             <img className="post-image" src={post.image[0]} alt={post.title} />
           </ImageContainer>
         )}
-        <LikeComment>
-            <Icon src={likeStatus ? likeCheckedIcon : likeIcon} alt="like" onClick={toggleLike} />
-        </LikeComment>
+        <div className="post-edit-box">
+          <LikeComment>
+              <Icon src={likeStatus ? likeCheckedIcon : likeIcon} alt="like" onClick={toggleLike} />
+          </LikeComment>
+          {loggedInUserId === post.userId && (
+            <button className="post-rewrite">게시물 수정</button>
+          )}
+        </div>
         <h3>좋아요  {likeCount}개</h3>
         <Content expanded={isExpanded}>
           {contentPreview}
@@ -276,15 +281,14 @@ const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose, onLikeCountCha
                                 }
                                 
                               } else {
-                                 throw new Error('Child comment ID is missing in post');
+                                 throw new Error('에러 : 게시물에서 자식의 ID 값을 찾을 수 없음');
                                }
                             } catch(error) {
-                               console.error('Error deleting or updating a child comment:', error);
+                               console.error('에러 : 자식 댓글을 삭제/수정 실패 내용->', error);
                             }
                           } else {
-                             console.error('Child comment ID is missing');
+                             console.error('에러 : 자식의 ID 값이 누락되었습니다');
                           }
-                          new Promise((resolve) => setTimeout(resolve, 100))
                         }
                         const latestPost = await getPost(post.id);
                         try{
@@ -307,11 +311,11 @@ const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose, onLikeCountCha
                                }
                       
                              } else { 
-                                throw new Error('Failed to remove parent\'s ID from comments array.');
+                                throw new Error('에러 : 게시물의 댓글 목록에서 부모 댓글 제거 실패');
                              }
                       
                            } else { 
-                               throw new Error('Failed to delete parent\'s ID.');
+                               throw new Error('에러 : 부모의 댓글 삭제 실패.');
                            }
                       
                          } catch(error){
@@ -331,69 +335,13 @@ const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose, onLikeCountCha
                           alert("해당 기능은 로그인 후 이용가능합니다")
                         }else{
                           if (typeof comment.id === 'number') {
-                            setShowReplyInput(comment.id);
+                            setShowReplyInput(showReplyInput === comment.id ? null : comment.id);
                           } else {
                             console.error('Comment ID is missing');
                           }
                         }
                       }}>
                       댓글 달기</p>
-                      {showReplyInput === comment.id &&
-                    <div>
-                        <input type="text" placeholder="댓글을 작성하세요." value={replyInput} onChange={(e) => setReplyInput(e.target.value)}/>
-                        <button onClick={async () => {
-                          if (!loggedInUserId) {
-                            alert('로그인 후 대댓글을 작성할 수 있습니다.');
-                            return;
-                          }
-                          try {
-                            const newReply: CommentInterface = {
-                              userId: loggedInUserId,
-                              postId: post.id,
-                              parentCommentId: comment.id,
-                              content: replyInput,
-                              commentId: comments.length + 1
-                            };
-  
-                            const created = await createComment(newReply);
-                            if (created.id === undefined) {
-                              throw new Error('Failed to create reply');
-                            }
-                            setComments([...comments, created]);
-
-                            let updatedPost = {...post};
-    
-                            if(updatedPost.commentId) {
-                                updatedPost.commentId.push(created.id);
-                            } else {
-                                updatedPost.commentId = [created.id];
-                            }
-
-                            try{
-                                const resUpdatedPost = await updateCommentId(updatedPost);
-                                setPost(resUpdatedPost);
-
-                                if(onCommentCountChange){
-                                  onCommentCountChange(updatedPost.commentId ? updatedPost.commentId.length : 0)
-                              }
-
-                            } catch(error){
-                              console.error(error);
-                            }
-
-                            
-                          } catch (error) {
-                            console.error(error);
-                          }
-  
-                          setReplyInput('');
-                          setShowReplyInput(null)
-                        }}>제출</button>
-                        <p onClick={() => setShowReplyInput(null)}>✖</p>
-                        {/* X 말고 댓글 달기 한번 더 누르면 닫히는 걸루
-                          + 스타일 수정 해야함
-                        */}
-                    </div>}
                   </div>
                   <p>{loggedInUserId === comment.userId && 
                     <p className="comment-rewrite" onClick={() => {
@@ -402,11 +350,12 @@ const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose, onLikeCountCha
                         setEditingCommentId(comment.id);
                       }
                     }}>수정</p>}
-                  </p>
+                  </p>                
                 </div>
                 {comments.filter(reply => reply.parentCommentId === comment.id).map(reply =>
-                  <div key={reply.id} className="reply">
-                    <div>
+                  <div key={reply.id}>
+                    <div className="reply-user-box">
+                      <p>ㄴ</p>
                       <img
                         className="user-icon"
                         src={users.find(user =>
@@ -450,19 +399,82 @@ const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose, onLikeCountCha
                         }}>❌
                       </div>}
                   </div>
-                  <p className="reply">{reply.content}</p>
-                  <p>{loggedInUserId === reply.userId && 
-                    <p className="comment-rewrite" onClick={ async() => {
-                      setCommentInput(reply.content);
-                      if (typeof reply.id === "number") {
-                        setEditingCommentId(reply.id);
-                      }
-                    }}>수정</p>}
-                  </p>
+                  <div className="reply-content-box">
+                    <p className="reply-content">{reply.content}</p>
+                    <p>{loggedInUserId === reply.userId && 
+                      <p className="reply-rewrite" onClick={ async() => {
+                        setCommentInput(reply.content);
+                        if (typeof reply.id === "number") {
+                          setEditingCommentId(reply.id);
+                        }
+                      }}>수정</p>}
+                    </p>
+                  </div>
                 </div>
               )}
+              {showReplyInput === comment.id &&
+                  <div className="reply-container">
+                      <input
+                        className="reply-write"
+                        type="text"
+                        placeholder="대댓글을 작성하세요."
+                        value={replyInput}
+                        onChange={(e) => setReplyInput(e.target.value)}/>
+                      <button
+                        className={`reply-post ${!replyInput ? 'reply-post-none' : 'reply-post'}`}
+                        onClick={async () => {
+                          if (!loggedInUserId) {
+                            alert('로그인 후 대댓글을 작성할 수 있습니다.');
+                            return;
+                          }
+                          try {
+                            const newReply: CommentInterface = {
+                              userId: loggedInUserId,
+                              postId: post.id,
+                              parentCommentId: comment.id,
+                              content: replyInput,
+                              commentId: comments.length + 1
+                            };
+
+                            const created = await createComment(newReply);
+                            if (created.id === undefined) {
+                              throw new Error('Failed to create reply');
+                            }
+                            setComments([...comments, created]);
+
+                            let updatedPost = {...post};
+    
+                            if(updatedPost.commentId) {
+                                updatedPost.commentId.push(created.id);
+                            } else {
+                                updatedPost.commentId = [created.id];
+                            }
+
+                            try{
+                                const resUpdatedPost = await updateCommentId(updatedPost);
+                                setPost(resUpdatedPost);
+
+                                if(onCommentCountChange){
+                                  onCommentCountChange(updatedPost.commentId ? updatedPost.commentId.length : 0)
+                              }
+
+                            } catch(error){
+                              console.error(error);
+                            }
+
+                            
+                          } catch (error) {
+                            console.error(error);
+                          }
+
+                          setReplyInput('');
+                          setShowReplyInput(null)
+                      }}>제출</button>
+                </div>}
               </div>
               )
+            }else{
+              return null;
             }
           }
           )}
