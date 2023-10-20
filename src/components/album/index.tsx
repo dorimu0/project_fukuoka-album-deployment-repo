@@ -22,7 +22,9 @@ const loadImage = (src: string): Promise<void> => {
 
 const Album: React.FC<AlbumProps> = ({ areaId, showAllPosts }: AlbumProps) => {
   const [posts, setPosts] = useState<PostType[]>([]);
+  const [displayedPosts, setDisplayedPosts] = useState<PostType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [pageEndIndex, setPageEndIndex] = useState<number>(8);
 
   const searchResults = useSelector((state: RootState) => state.search.posts);
 
@@ -40,6 +42,7 @@ const Album: React.FC<AlbumProps> = ({ areaId, showAllPosts }: AlbumProps) => {
             }
           }
           setPosts(allPosts);
+          setDisplayedPosts(allPosts.slice(0, pageEndIndex));
         } catch (error) {
           console.error("Error:", error);
         } finally {
@@ -64,7 +67,24 @@ const Album: React.FC<AlbumProps> = ({ areaId, showAllPosts }: AlbumProps) => {
       }
     };
     loadPosts();
-  }, [areaId, searchResults, showAllPosts]);
+  }, [areaId, pageEndIndex, searchResults, showAllPosts]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+        console.log("scroll");
+        setPageEndIndex((prevEndIndex) => prevEndIndex + 8);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    setDisplayedPosts(posts.slice(0, pageEndIndex));
+  }, [pageEndIndex, posts]);
 
   return (
     <AlbumWrapper>
@@ -72,7 +92,7 @@ const Album: React.FC<AlbumProps> = ({ areaId, showAllPosts }: AlbumProps) => {
         {isLoading ? (
           <div>Loading...</div>
         ) : (
-          posts.map((post, index) => (
+          displayedPosts.map((post, index) => (
             <AreaPost comment={[]} {...post} key={index} />
           ))
         )}

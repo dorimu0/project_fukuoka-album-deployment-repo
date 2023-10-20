@@ -23,7 +23,7 @@ const Post: React.FC<Props> = (props) => {
       const comments = await getCommentsByPostId(props.id);
       setCommentCount(comments.length);
     })();
-  }, [props.id]); // props.id가 변경될 때마다 실행
+  }, [props.id]);
 
   const [likeCount, setLikeCount] = useState(props.likeChecked?.length || 0);
   const [commentCount, setCommentCount] = useState(
