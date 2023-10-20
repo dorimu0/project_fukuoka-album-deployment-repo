@@ -32,7 +32,7 @@ import { setModalOpen } from "../../store/modal";
 
 const Write = () => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [imageUrl, setImageUrl] = useState<string[]>([]); // 이미지 요청
+  const [imageUrl, setImageUrl] = useState<string[] | null>([]); // 이미지 요청
   const [images, setImages] = useState<string[]>([]); // 이미지 미리보기
   const [imageFile, setImageFile] = useState<File[]>([]); // 이미지 파일
   const [content, setContent] = useState<string>(""); // 문구
@@ -40,7 +40,7 @@ const Write = () => {
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false); // 모달 open 여부
   const [area, setArea] = useState<string>(""); // 상세 주소
   const [locations, setLocations] = useState<Location[]>([]); // 지역들
-  const [postAreaId, setPostAreaId] = useState<number>(0); // 지역들
+  const [postAreaId, setPostAreaId] = useState<number>(0); // 지역Id
   const userInfo = useSelector((state: RootState) => state.user); // 현재 유저 정보
   const dispatch = useDispatch();
 
@@ -65,7 +65,6 @@ const Write = () => {
   const handleImageButton = () => {
     inputRef.current?.click();
   };
-
   // 이미지 미리보기
   const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -102,22 +101,31 @@ const Write = () => {
       const location = selectLocation.current.options[
         selectLocation.current.selectedIndex
       ].textContent as string;
+
       setContent(inputContent.current.value);
       setPostAreaId(parseInt(selectLocation.current.value));
       setArea(`${location} ${inputAddress.current.value}`);
-      console.log(location);
-      const url = uploadPostImage(imageFile, location);
-      setImageUrl(await url);
-    }
 
-    if (content && imageUrl && userInfo.id) {
-      alert("success");
-      postPost(imageUrl, content, postAreaId, area, userInfo.id);
-      closeModal();
-    } else if (imageUrl.length === 0) {
-      alert("이미지를 넣어주세요");
-    } else {
-      alert("문구를 입력해주세요");
+      if (imageFile.length === 0) {
+        alert("이미지를 넣어주세요");
+        return;
+      } else if (!content || !area) {
+        alert("상세주소문구를 입력해주세요");
+        return;
+      }
+
+      try {
+        const url = await uploadPostImage(imageFile, location);
+        setImageUrl(url);
+
+        if (content && imageUrl && userInfo.id) {
+          alert("success");
+          postPost(imageUrl, content, postAreaId, area, userInfo.id);
+          closeModal();
+        }
+      } catch (error) {
+        console.error("Failed to upload image:", error);
+      }
     }
   };
 
