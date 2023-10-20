@@ -23,6 +23,26 @@ export const ModalStyles = styled.div`
     border-radius :12px 12px 12px 12px ;
     border: 0.1px solid gray;
 
+    .post-edit-box{
+      width:485px;
+      display:flex;
+      align-items:center;
+
+      .post-rewrite{
+        border:solid 1px gray;
+        color : navy;
+        width:90px;
+        height:30px;
+        position:absolute;
+        left:380px;
+      }
+      .post-rewrite:hover{
+        background-color:white;
+        color:blue;
+        cursor:pointer;
+      }
+    }
+
     .comment-write-box{
       z-index: 9999;
       border-radius :12px 0px 12px 12px ;
@@ -138,6 +158,57 @@ export const ModalStyles = styled.div`
       .blank{
         justify-content: space-between;
         margin-top:50px;
+      }
+
+      .reply-user-box{
+        display:flex;
+        align-items:center;
+        margin : 5px 0px 0px 15px;
+      }
+
+      .reply-content-box{
+        margin : 0px 0px 5px 35px;
+        .reply-content{
+
+        }
+        .reply-rewrite{
+          padding:0px;
+          cursor:pointer;
+          color:blue;
+          font-size:13px;
+          width:30px;
+        }
+      }
+
+      .reply-container{
+        margin : 0px 0px 10px 10px;
+        display:flex;
+
+        .reply-write{
+          width:200px;
+          height:40px;
+          border-top : solid 1px gray;
+          border-bottom : solid 1px gray;
+          border-right : solid 1px white;
+          border-left : solid 1px white;
+        }
+
+        .reply-post{
+          align-items:center;
+          background-color:white;
+          border:none;
+          color:blue;
+          cursor:pointer;
+        }
+
+        .reply-post-none,
+        .reply-post:disabled:hover{
+          background-color:white;
+          border:none;
+          color:Cornflowerblue;
+          cursor:default;
+        }
+
       }
     }
 
