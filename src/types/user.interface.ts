@@ -8,3 +8,7 @@ export type User = {
 };
 
 export type UserUpdate = Omit<User, "isSignIn">;
+
+export interface myImage {
+  image: string[];
+}

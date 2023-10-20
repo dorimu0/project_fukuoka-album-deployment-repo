@@ -9,11 +9,9 @@ import {
   Text,
   HiddenInput,
   FinishButton,
-  PostImg,
   Cancel,
   EndBox,
   Count,
-  SliderBox,
   Address,
   AddressBox,
 } from "./writeStyles";
@@ -21,69 +19,118 @@ import { MenuItem } from "../layout/header/HeaderStyles";
 import Modal from "react-modal";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { getAllLocation } from "../../services/write.service";
+import {
+  uploadPostImage,
+  getAllLocation,
+  postPost,
+} from "../../services/write.service";
 import { Location } from "../../types/location.interface";
+import Slide from "./slide";
+import { RootState } from "../../store";
+import { useDispatch, useSelector } from "react-redux";
+import { setModalOpen } from "../../store/modal";
 
 const Write = () => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [Image, setImage] = useState<FileList>();
-  const [content, setContent] = useState<string>("");
-  const [inputCount, setInputCount] = useState<number>(0);
-  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
-  const [address, setAddress] = useState<string>("");
-  const [location, setLocation] = useState<Location[]>([]);
+  const [imageUrl, setImageUrl] = useState<string[] | null>([]); // 이미지 요청
+  const [images, setImages] = useState<string[]>([]); // 이미지 미리보기
+  const [imageFile, setImageFile] = useState<File[]>([]); // 이미지 파일
+  const [content, setContent] = useState<string>(""); // 문구
+  const [inputCount, setInputCount] = useState<number>(0); // 글자 수
+  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false); // 모달 open 여부
+  const [area, setArea] = useState<string>(""); // 상세 주소
+  const [locations, setLocations] = useState<Location[]>([]); // 지역들
+  const [postAreaId, setPostAreaId] = useState<number>(0); // 지역Id
+  const userInfo = useSelector((state: RootState) => state.user); // 현재 유저 정보
+  const dispatch = useDispatch();
 
   useEffect(() => {
     getAllLocation().then((data) => {
-      setLocation(data);
+      setLocations(data);
     });
   }, []);
 
+  // MODAL
   const onModal = () => {
     setModalIsOpen(true);
+    dispatch(setModalOpen(true));
   };
-
   const closeModal = () => {
     setModalIsOpen(false);
+    setInputCount(0);
+    setImages([]);
+    dispatch(setModalOpen(false));
   };
 
-  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setImage(e.target.files);
-    }
-  };
-
-  // add image
   const handleImageButton = () => {
     inputRef.current?.click();
   };
+  // 이미지 미리보기
+  const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
 
-  const handleAddButton = () => {
-    const inputContent = document.querySelector(
-      ".content"
-    ) as HTMLTextAreaElement;
-    setContent(`${inputContent}`);
+    if (files) {
+      setImageFile(Array.from(files));
+      if (files?.length > 5) {
+        alert("이미지는 최대 5개까지 담을 수 있습니다.");
+        return;
+      }
+      const imagesArray: string[] = [];
+      Array.from(files).forEach((file) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          imagesArray.push(reader.result as string);
+          setImages([...imagesArray]);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  };
 
-    if (content && Image) {
-      // api 요청
-      alert("success");
-    } else if (!Image) {
-      alert("이미지를 넣어주세요");
-    } else {
-      alert("문구를 입력해주세요");
+  const inputContent = useRef<HTMLTextAreaElement>(null);
+  const inputAddress = useRef<HTMLInputElement>(null);
+  const selectLocation = useRef<HTMLSelectElement>(null);
+
+  // 게시글 생성
+  const handleAddButton = async () => {
+    if (
+      inputContent.current &&
+      inputAddress.current &&
+      selectLocation.current
+    ) {
+      const location = selectLocation.current.options[
+        selectLocation.current.selectedIndex
+      ].textContent as string;
+
+      setContent(inputContent.current.value);
+      setPostAreaId(parseInt(selectLocation.current.value));
+      setArea(`${location} ${inputAddress.current.value}`);
+
+      if (imageFile.length === 0) {
+        alert("이미지를 넣어주세요");
+        return;
+      } else if (!content || !area) {
+        alert("상세주소문구를 입력해주세요");
+        return;
+      }
+
+      try {
+        const url = await uploadPostImage(imageFile, location);
+        setImageUrl(url);
+
+        if (content && imageUrl && userInfo.id) {
+          alert("success");
+          postPost(imageUrl, content, postAreaId, area, userInfo.id);
+          closeModal();
+        }
+      } catch (error) {
+        console.error("Failed to upload image:", error);
+      }
     }
   };
 
   const handleInputText = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setInputCount(e.target.value.length);
-  };
-
-  const settings = {
-    dots: false,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
   };
 
   return (
@@ -117,28 +164,26 @@ const Write = () => {
       >
         <Container>
           <UserInfo>
-            <Profile src="./img/miku.jpeg" alt="image" />
-            {/* <span>doridori</span> */}
-            <select>
-              {location
-                ? location.map((location, index) => (
-                    <option key={index} value={location.area}>
+            <Profile
+              src={userInfo.imageUrl ? userInfo.imageUrl : ""}
+              alt="image"
+            />
+            <select className="location" ref={selectLocation}>
+              {locations
+                ? locations.map((location, index) => (
+                    <option key={index} value={location.id}>
                       {location.area}
                     </option>
                   ))
                 : ""}
             </select>
-
             <Cancel onClick={closeModal}>
               <img src="./cancel.svg" alt="X" />
             </Cancel>
           </UserInfo>
           <ContentImg>
-            {Image && Image?.length !== 0 ? (
-              <SliderBox {...settings}>
-                <PostImg src="./img/miku.jpeg" alt="" />
-                <PostImg src="./logo.svg" alt="" />
-              </SliderBox>
+            {images && images?.length !== 0 ? (
+              <Slide image={images} />
             ) : (
               <>
                 <AddButton onClick={handleImageButton}> + </AddButton>
@@ -153,7 +198,11 @@ const Write = () => {
             )}
           </ContentImg>
           <AddressBox>
-            <Address placeholder="상세 주소" />
+            <Address
+              placeholder="상세 주소"
+              className="address"
+              ref={inputAddress}
+            />
           </AddressBox>
           <Content>
             <Text
@@ -162,6 +211,7 @@ const Write = () => {
               className="content"
               maxLength={200}
               onChange={handleInputText}
+              ref={inputContent}
             />
             <EndBox>
               <Count>
