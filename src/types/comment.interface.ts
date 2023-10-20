@@ -4,4 +4,5 @@ export interface CommentInterface {
     userId: number;
     commentId: number;
     content: string;
+    parentCommentId?:number;
   }
