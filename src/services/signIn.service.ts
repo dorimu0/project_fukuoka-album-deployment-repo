@@ -24,7 +24,10 @@ const fetchOptions = (userInfo: string | undefined): FetchOptions => {
 };
 
 export const signInByGoogle = async (googleResponse: CredentialResponse) => {
-  const response = await fetch("http://localhost:8000/auth", fetchOptions(googleResponse.credential));
+  const response = await fetch(
+    "http://localhost:8000/auth",
+    fetchOptions(googleResponse.credential)
+  );
 
   const { data } = await response.json();
 
@@ -32,4 +35,4 @@ export const signInByGoogle = async (googleResponse: CredentialResponse) => {
 
   store.dispatch(setUser(data));
   store.dispatch(setToken(token));
-}
+};

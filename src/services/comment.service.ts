@@ -69,3 +69,11 @@ export const updateCommentId = async (post: PostType): Promise<PostType> => {
 
   return await res.json();
 }
+
+export const getPost = async (id: number): Promise<PostType> => {
+  const res = await fetch(`http://localhost:3004/post/${id}`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch post");
+  }
+  return await res.json();
+};
