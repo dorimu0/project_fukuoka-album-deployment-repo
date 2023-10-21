@@ -52,7 +52,6 @@ export const postPost = async (
   const res = await fetch(`http://localhost:3004/post`, {
     method: "POST",
     headers: {
-      // "Content-Type": "multipart/form-data",
       "Content-Type": "application/json",
     },
     body: JSON.stringify(post),
