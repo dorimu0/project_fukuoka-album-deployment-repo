@@ -10,20 +10,6 @@ export const Slide = (image: myImage) => {
     slidesToScroll: 1,
   };
 
-  // for (let i = 0; i < image.image.length; i++) {
-  //   const file = image.image[i];
-  //   const reader = new FileReader();
-
-  //   reader.onload = function (e) {
-  //     const imgElement = document.querySelector(".img") as HTMLImageElement;
-  //     if(e.target) {
-  //     }
-  //   };
-
-  //   reader.readAsDataURL(file);
-  // }
-  // const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
   return (
     <>
       <SliderBox {...settings}>
