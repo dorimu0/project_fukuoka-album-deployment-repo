@@ -9,7 +9,6 @@ export const refresh = async () => {
   const token = store.getState().token.refreshToken;
   const email = store.getState().user.email;
 
-  console.log("리프레쉬");
   try {
     const refreshResponse = await fetch(
       "http://localhost:8000/auth/refresh",
