@@ -21,9 +21,7 @@ import { RootState, store } from "../../../store";
 import { signInByGoogle } from "../../../services/signIn.service";
 import { useDispatch, useSelector } from "react-redux";
 import { signOut } from "../../../services/auth.service";
-import { clearUser } from "../../../store/user";
-import { clearToken } from "../../../store/token";
-import search, { clearPosts, setPosts } from "../../../store/search";
+import { clearPosts, setPosts } from "../../../store/search";
 import Write from "../../write/";
 
 const Header = () => {

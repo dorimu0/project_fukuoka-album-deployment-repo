@@ -1,24 +1,14 @@
 import { Post } from "../types/post.interface";
+import { api } from "./api.service";
 
 export const getAllPosts = async (): Promise<Post[]> => {
-  const res = await fetch(`http://localhost:3004/post`);
-
-  if (!res.ok) {
-    throw new Error("エラーが発生しました。");
-  }
-
-  const posts = await res.json();
+  const posts = await api("GET", `post`);
 
   return posts;
 };
 
 export const getLocationPosts = async (areaId: number): Promise<Post[]> => {
-  const response = await fetch("http://localhost:3004/post");
-  if (!response.ok) {
-    throw new Error("エラーが発生しました。");
-  }
-
-  const data: Post[] = await response.json();
+  const data = await api("GET", "post");
 
   if (data) {
     const matchedPosts = data.filter(
@@ -31,13 +21,7 @@ export const getLocationPosts = async (areaId: number): Promise<Post[]> => {
 };
 
 export const getUserPosts = async (userId: number) => {
-  const res = await fetch(`http://localhost:3004/post`);
-
-  if (!res.ok) {
-    throw new Error("エラーが発生しました。");
-  }
-
-  const posts = await res.json();
+  const posts = await api("GET", `post`);
 
   const userPosts = posts.filter((post: Post) => post.userId === userId);
 
@@ -45,43 +29,22 @@ export const getUserPosts = async (userId: number) => {
 };
 
 export const searchPosts = async (term: string): Promise<Post[]> => {
-  const res = await fetch(`http://localhost:3004/post`);
-
-  if (!res.ok) {
-    throw new Error("エラーが発生しました。");
-  }
-
-  const posts = await res.json();
+  const posts = await api("GET", `post`);
 
   return posts.filter((post: Post) => post.area.includes(term));
 };
 
-export const updateLike = async (id: number, updatedLike: Post): Promise<Post> => {
-  const res = await fetch(`http://localhost:3004/post/${id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(updatedLike)
-  });
-
-  if (!res.ok) {
-    throw new Error("エラーが発生しました。");
-  }
-
-  const post = await res.json();
+export const updateLike = async (
+  id: number,
+  updatedLike: Post
+): Promise<Post> => {
+  const post = await api("PUT", `post/${id}`, updatedLike);
 
   return post;
 };
 
 export const getPostById = async (id: number): Promise<Post> => {
-  const res = await fetch(`http://localhost:3004/post/${id}`);
-
-  if (!res.ok) {
-    throw new Error("Error occurred while fetching post.");
-  }
-
-  const post = await res.json();
+  const post = await api("GET", `post/${id}`);
 
   return post;
 };

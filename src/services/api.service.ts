@@ -1,16 +1,10 @@
-import { store } from "../store";
-import { refresh, signOut } from "./auth.service";
-
 type FetchMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
 export const fetchOptions = (
   method: FetchMethod,
   body: object | undefined = undefined
 ) => {
-  const token = store.getState().token.accessToken || "";
-
   const myHeaders = new Headers();
-  myHeaders.append("Authorization", token);
   myHeaders.append("Cache-Control", "no-store");
   myHeaders.append("Pragma", "no-cache");
 
@@ -36,35 +30,16 @@ export const api = async (
 ) => {
   const options = fetchOptions(method, body);
 
-  const url = `http://localhost:8000/${endpoint}`;
-
+  const url = `http://localhost:3004/${endpoint}`;
   let res = await fetch(url, options);
 
   if (!res.ok) {
-    const { status } = res;
+    window.alert("문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    return;
+  }
 
-    switch (status) {
-      // 유효기간 만료 - 리프레쉬 후 새로 요청
-      case 410: {
-        await refresh();
-        const newOption = fetchOptions(method, body);
-        res = await fetch(url, newOption);
-
-        const data = await res.json();
-        return data;
-      }
-      // 올바르지 않은 토큰
-      case 401: {
-        window.alert("권한이 없습니다.");
-        signOut();
-        break;
-      }
-      default: {
-        window.alert("문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
-        window.location.href = "http://localhost:3000";
-        break;
-      }
-    }
+  if (res.status === 204) {
+    return res;
   }
 
   const data = await res.json();
