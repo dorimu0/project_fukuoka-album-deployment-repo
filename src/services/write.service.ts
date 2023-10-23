@@ -19,13 +19,15 @@ export const uploadPostImage = async (
   area: string
 ): Promise<string[]> => {
   const images: string[] = [];
-  const formData = new FormData();
 
-  files.forEach(async (file) => {
-    formData.append("image", file);
-    const res = await uploadApi(formData, area);
-    images.push(res.pathF);
-  });
+  await Promise.all(
+    files.map(async (file) => {
+      const formData = new FormData();
+      formData.append("image", file);
+      const res = await uploadApi(formData, area);
+      images.push(res.pathF);
+    })
+  );
 
   console.log(images);
   return images;
@@ -73,4 +75,18 @@ export const getEditPost = async (): Promise<Post> => {
 
   const post = await res.json();
   return post;
+};
+
+export const uploadEditPost = async () => {
+  const res = await fetch("http://localhost:3004/post", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    // body: JSON.stringify(post),
+  });
+
+  if (!res.ok) {
+    throw new Error("エラーが発生しました。");
+  }
 };

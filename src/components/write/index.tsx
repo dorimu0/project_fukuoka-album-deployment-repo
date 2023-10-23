@@ -24,6 +24,7 @@ import {
   getAllLocation,
   postPost,
   getEditPost,
+  uploadEditPost,
 } from "../../services/write.service";
 import { Location } from "../../types/location.interface";
 import Slide from "./slide";
@@ -43,7 +44,7 @@ const Write = ({ editMode }: WriteProps) => {
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false); // 모달 open 여부
   // const [area, setArea] = useState<string>(""); // 상세 주소
   const [locations, setLocations] = useState<Location[]>([]); // 지역들
-  const [postAreaId, setPostAreaId] = useState<number>(0); // 지역Id
+  // const [postAreaId, setPostAreaId] = useState<number>(0); // 지역Id
   const userInfo = useSelector((state: RootState) => state.user); // 현재 유저 정보
   const dispatch = useDispatch();
 
@@ -112,7 +113,7 @@ const Write = ({ editMode }: WriteProps) => {
       ].textContent as string;
 
       const content: string = inputContent.current.value;
-      setPostAreaId(parseInt(selectLocation.current.value));
+      const postAreaId: number = parseInt(selectLocation.current.value);
       const area: string = `${location} ${inputAddress.current.value}`;
 
       if (imageFile.length === 0) {
@@ -126,11 +127,14 @@ const Write = ({ editMode }: WriteProps) => {
       try {
         const url = await uploadPostImage(imageFile, location);
         console.log(url);
-        const imageUrl: string[] = url;
 
-        if (content && imageUrl && userInfo.id) {
+        if (content && url && userInfo.id) {
           alert("success");
-          postPost(imageUrl, content, postAreaId, area, userInfo.id);
+          if (editMode) {
+            uploadEditPost();
+          } else {
+            postPost(url, content, postAreaId, area, userInfo.id);
+          }
           closeModal();
         }
       } catch (error) {
