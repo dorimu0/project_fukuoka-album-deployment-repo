@@ -18,3 +18,7 @@ export type Comment = {
   commentId: number | null;
   content: string;
 };
+
+export interface WriteProps {
+  editMode: boolean;
+}

@@ -34,6 +34,7 @@ export const Cancel = styled.button`
 `;
 
 export const ContentImg = styled.div`
+  position: relative;
   width: 485px;
   height: 325px;
   background-color: black;
@@ -71,14 +72,19 @@ export const SliderBox = styled(Slider)`
 `;
 
 export const AddButton = styled.button`
+  position: absolute;
+  top: 50%:
+  left: 50%:
+  transform: translate(-50%, -50%);
   width: 100px;
   height: 100px;
   color: white;
   border: 3px solid white;
-  background-color: inherit;
+  background-color: rgba(0, 0, 0, 0);
   border-radius: 50%;
   font-size: 4rem;
   transition: width 0.3s ease, height 0.3s ease, font-size 0.3s ease;
+  z-index: 999;
 
   &:hover {
     width: 110px;

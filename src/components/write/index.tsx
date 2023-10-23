@@ -23,31 +23,40 @@ import {
   uploadPostImage,
   getAllLocation,
   postPost,
+  getEditPost,
 } from "../../services/write.service";
 import { Location } from "../../types/location.interface";
 import Slide from "./slide";
 import { RootState } from "../../store";
 import { useDispatch, useSelector } from "react-redux";
 import { setModalOpen } from "../../store/modal";
+import { Post, WriteProps } from "../../types/post.interface";
 
-const Write = () => {
+const Write = ({ editMode }: WriteProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [imageUrl, setImageUrl] = useState<string[] | null>([]); // 이미지 요청
+  const [editPost, setEditPost] = useState<Post>();
+  // const [imageUrl, setImageUrl] = useState<string[] | null>([]); // 이미지 요청
   const [images, setImages] = useState<string[]>([]); // 이미지 미리보기
   const [imageFile, setImageFile] = useState<File[]>([]); // 이미지 파일
-  const [content, setContent] = useState<string>(""); // 문구
+  // const [content, setContent] = useState<string>(""); // 문구
   const [inputCount, setInputCount] = useState<number>(0); // 글자 수
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false); // 모달 open 여부
-  const [area, setArea] = useState<string>(""); // 상세 주소
+  // const [area, setArea] = useState<string>(""); // 상세 주소
   const [locations, setLocations] = useState<Location[]>([]); // 지역들
   const [postAreaId, setPostAreaId] = useState<number>(0); // 지역Id
   const userInfo = useSelector((state: RootState) => state.user); // 현재 유저 정보
   const dispatch = useDispatch();
 
   useEffect(() => {
-    getAllLocation().then((data) => {
-      setLocations(data);
-    });
+    if (editMode) {
+      getEditPost().then((data) => {
+        setEditPost(data);
+      });
+    } else {
+      getAllLocation().then((data) => {
+        setLocations(data);
+      });
+    }
   }, []);
 
   // MODAL
@@ -102,9 +111,9 @@ const Write = () => {
         selectLocation.current.selectedIndex
       ].textContent as string;
 
-      setContent(inputContent.current.value);
+      const content: string = inputContent.current.value;
       setPostAreaId(parseInt(selectLocation.current.value));
-      setArea(`${location} ${inputAddress.current.value}`);
+      const area: string = `${location} ${inputAddress.current.value}`;
 
       if (imageFile.length === 0) {
         alert("이미지를 넣어주세요");
@@ -116,7 +125,8 @@ const Write = () => {
 
       try {
         const url = await uploadPostImage(imageFile, location);
-        setImageUrl(url);
+        console.log(url);
+        const imageUrl: string[] = url;
 
         if (content && imageUrl && userInfo.id) {
           alert("success");
@@ -135,7 +145,7 @@ const Write = () => {
 
   return (
     <>
-      <MenuItem onClick={onModal}>글 쓰기</MenuItem>
+      <MenuItem onClick={onModal}>{editMode ? "수정" : "글쓰기"}</MenuItem>
 
       <Modal
         isOpen={modalIsOpen}
@@ -182,20 +192,15 @@ const Write = () => {
             </Cancel>
           </UserInfo>
           <ContentImg>
-            {images && images?.length !== 0 ? (
-              <Slide image={images} />
-            ) : (
-              <>
-                <AddButton onClick={handleImageButton}> + </AddButton>
-                <HiddenInput
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  ref={inputRef}
-                  onChange={handleOnChange}
-                />
-              </>
-            )}
+            <AddButton onClick={handleImageButton}> + </AddButton>
+            {images && images?.length !== 0 ? <Slide image={images} /> : null}
+            <HiddenInput
+              type="file"
+              multiple
+              accept="image/*"
+              ref={inputRef}
+              onChange={handleOnChange}
+            />
           </ContentImg>
           <AddressBox>
             <Address
