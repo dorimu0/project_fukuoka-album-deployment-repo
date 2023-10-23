@@ -24,7 +24,7 @@ export const uploadPostImage = async (
   files.forEach(async (file) => {
     formData.append("image", file);
     const res = await uploadApi(formData, area);
-    images.push(res);
+    images.push(res.pathF);
   });
 
   console.log(images);
