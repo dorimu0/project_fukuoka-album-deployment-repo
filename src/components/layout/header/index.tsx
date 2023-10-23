@@ -102,7 +102,7 @@ const Header = () => {
         >
           <Icon src="/menu.svg" alt="" />
         </IconButton>
-        {view ? ( 
+        {view ? (
           <Menu>
             {isSignIn ? (
               <>
@@ -113,7 +113,7 @@ const Header = () => {
                 >
                   내 정보
                 </MenuItem>
-                <Write />
+                <Write editMode={false} />
                 <MenuItem
                   onClick={() => {
                     const isSingOut = window.confirm("로그아웃 하시겠습니까?");

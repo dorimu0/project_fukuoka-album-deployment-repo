@@ -78,6 +78,7 @@ export const uploadApi = async (
   method: FetchMethod = "POST"
 ) => {
   const url = `http://localhost:8000/upload/${endpoint}`;
+  console.log(url);
 
   let res = await fetch(url, {
     method,

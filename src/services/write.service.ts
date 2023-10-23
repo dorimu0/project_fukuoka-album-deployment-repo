@@ -1,6 +1,5 @@
-import { RootState } from "../store";
 import { Location } from "../types/location.interface";
-import { useSelector } from "react-redux";
+import { Post } from "../types/post.interface";
 import { uploadApi } from "./api.service";
 
 export const getAllLocation = async (): Promise<Location[]> => {
@@ -19,14 +18,17 @@ export const uploadPostImage = async (
   files: File[],
   area: string
 ): Promise<string[]> => {
+  const images: string[] = [];
   const formData = new FormData();
-  files.forEach((file) => {
+
+  files.forEach(async (file) => {
     formData.append("image", file);
+    const res = await uploadApi(formData, area);
+    images.push(res.pathF);
   });
 
-  const res = await uploadApi(formData, area);
-
-  return res.path;
+  console.log(images);
+  return images;
 };
 
 export const postPost = async (
@@ -60,4 +62,15 @@ export const postPost = async (
   if (!res.ok) {
     throw new Error("エラーが発生しました。");
   }
+};
+
+export const getEditPost = async (): Promise<Post> => {
+  const res = await fetch(`http://localhost:3004/post`);
+
+  if (!res.ok) {
+    throw new Error("エラーが発生しました。");
+  }
+
+  const post = await res.json();
+  return post;
 };
