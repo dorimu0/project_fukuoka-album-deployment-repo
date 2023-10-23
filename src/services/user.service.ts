@@ -8,13 +8,13 @@ export const getUser = async (id: number | null) => {
 
   const data = await api("GET", `user/${id}`);
 
-  return data;
+  return data.user;
 };
 
 export const updateUser = async (user: UserUpdate, prevImage?: string) => {
-  const res = await api("PUT", `user/update`, { user, prevImage });
+  const data = await api("PUT", `user/${user.id}`, { user, prevImage });
 
-  return res;
+  return data.user;
 };
 
 export const uploadProfileImage = async (file: File): Promise<string> => {
