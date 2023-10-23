@@ -20,3 +20,15 @@ export const getAllPoints = async (): Promise<Location[]> => {
 
   return locations;
 };
+
+export const getLocationById = async (id: number): Promise<Location> => {
+  let res = await fetch(`http://localhost:3004/location/${id}`);
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch location.");
+  }
+
+  let location = await res.json();
+
+  return location;
+};

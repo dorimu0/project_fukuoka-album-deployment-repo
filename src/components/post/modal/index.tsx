@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
 import { RootState } from "../../../store";
 import { Post as PostType } from "../../../types/post.interface";
 import { CommentInterface } from "../../../types/comment.interface";
@@ -7,7 +9,8 @@ import { User } from "../../../types/user.interface";
 import { getUser } from "../../../services/user.service";
 import { updateLike, getPostById } from '../../../services/post.service';
 import { getCommentsByPostId, createComment, deleteComment, updateComment , updateCommentId, getPost} from "../../../services/comment.service";
-import { ModalStyles, Icon, ImageContainer, LikeComment, Content } from "./ModalStyles";
+import { getLocationById } from "../../../services/location.service";
+import { ModalStyles, Icon, SliderBox, LikeComment, Content } from "./ModalStyles";
 import likeIcon from "./like.svg";
 import likeCheckedIcon from "./likeChecked.svg";
 
@@ -34,6 +37,7 @@ const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose, onLikeCountCha
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [showReplyInput, setShowReplyInput] = useState<number | null>(null);
   const [replyInput, setReplyInput] = useState("");
+  const [location, setLocation] = useState<{ area: string; id: number | null }>({ area: '', id: null });
 
   const toggleLike = async () => {
     if (!isSignIn) {
@@ -84,6 +88,14 @@ const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose, onLikeCountCha
     }
   };
 
+  const settings = {
+    dots: false,
+    infinite: true,
+    speed:500,
+    slidesToShow :1,
+    slidesToScroll :1,
+   };
+
   useEffect(() => {
     Promise.all(comments.map(comment =>
       getUser(Number(comment.userId))))
@@ -115,6 +127,12 @@ const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose, onLikeCountCha
       })
       .catch(err => console.error(err));
   }, [initialPost.id, loggedInUserId]);
+
+  useEffect(() => {
+    getLocationById(post.postAreaId)
+      .then((location) => setLocation({ area: location.area, id: location.id }))
+      .catch((err) => console.error(err));
+  }, [post.postAreaId]);
   
   return (
     <ModalStyles onClick={onClose}>
@@ -129,13 +147,17 @@ const Modal: React.FC<ModalProps> = ({ post:initialPost, onClose, onLikeCountCha
           }
           <div>
             <h2>{user.name}</h2>
-            <p>{post.area}</p>
+            <p>{location.area}_{post.area}</p>
           </div>
         </div>
         {post.image && (
-          <ImageContainer>
-            <img className="post-image" src={post.image[0]} alt={post.title} />
-          </ImageContainer>
+        <SliderBox {...settings}>
+          {post.image.map((imgSrc, index) => (
+            <div key={index}>
+              <img className="post-image" src={imgSrc} alt={`Post ${index}`}/>
+            </div>
+          ))}
+        </SliderBox>
         )}
         <div className="post-edit-box">
           <LikeComment>
