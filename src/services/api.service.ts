@@ -67,6 +67,10 @@ export const api = async (
     }
   }
 
+  if (res.status === 204) {
+    return res;
+  }
+
   const data = await res.json();
 
   return data;
