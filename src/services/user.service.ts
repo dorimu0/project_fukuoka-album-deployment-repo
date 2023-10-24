@@ -8,7 +8,7 @@ export const getUser = async (id: number | null) => {
 
   const data = await api("GET", `user/${id}`);
 
-  return data.user;
+  return data;
 };
 
 export const updateUser = async (user: UserUpdate, prevImage?: string) => {
