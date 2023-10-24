@@ -7,7 +7,11 @@ import { Post as PostType } from "../../../types/post.interface";
 import { CommentInterface } from "../../../types/comment.interface";
 import { User } from "../../../types/user.interface";
 import { getUser } from "../../../services/user.service";
-import { updateLike, getPostById } from "../../../services/post.service";
+import {
+  updateLike,
+  getPostById,
+  deletePost,
+} from "../../../services/post.service";
 import {
   getCommentsByPostId,
   createComment,
@@ -201,7 +205,21 @@ const Modal: React.FC<ModalProps> = ({
               {menuCheck ? (
                 <PostMenu>
                   <Write editMode={true} />
-                  <PostMenuItem>삭제</PostMenuItem>
+                  <PostMenuItem
+                    onClick={async () => {
+                      if (window.confirm("정말 삭제하시겠습니까?")) {
+                        try {
+                          await deletePost(post.id);
+                          window.alert("게시글이 삭제되었습니다.");
+                          window.location.reload();
+                        } catch (error) {
+                          console.error("게시글 삭제 실패", error);
+                        }
+                      }
+                    }}
+                  >
+                    삭제
+                  </PostMenuItem>
                 </PostMenu>
               ) : null}
             </>
