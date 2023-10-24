@@ -20,13 +20,13 @@ import { getLocationById } from "../../../services/location.service";
 import {
   ModalStyles,
   Icon,
-  SliderBox,
   LikeComment,
   Content,
 } from "./ModalStyles";
 import likeIcon from "./like.svg";
 import likeCheckedIcon from "./likeChecked.svg";
 import Write from "../../write";
+import Slide from "../../write/slide";
 
 interface ModalProps {
   post: PostType;
@@ -117,14 +117,6 @@ const Modal: React.FC<ModalProps> = ({
     }
   };
 
-  const settings = {
-    dots: false,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-  };
-
   useEffect(() => {
     Promise.all(comments.map((comment) => getUser(Number(comment.userId))))
       .then((usersData) => setUsers(usersData))
@@ -178,19 +170,7 @@ const Modal: React.FC<ModalProps> = ({
             </p>
           </div>
         </div>
-        {post.image && (
-          <SliderBox {...settings}>
-            {post.image.map((imgSrc, index) => (
-              <div key={index}>
-                <img
-                  className="post-image"
-                  src={imgSrc}
-                  alt={`Post ${index}`}
-                />
-              </div>
-            ))}
-          </SliderBox>
-        )}
+        {post.image && post.image?.length !== 0 ? <Slide image={post.image} /> : null}
         <div className="post-edit-box">
           <LikeComment>
             <Icon
