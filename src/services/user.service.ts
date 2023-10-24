@@ -12,7 +12,7 @@ export const getUser = async (id: number | null) => {
 };
 
 export const updateUser = async (user: UserUpdate, prevImage?: string) => {
-  const data = await api("PUT", `user/${user.id}`, { user, prevImage });
+  const data = await api("PUT", `user/${user.id}`, user);
 
   return data.user;
 };
