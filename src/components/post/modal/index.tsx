@@ -22,6 +22,9 @@ import {
   Icon,
   LikeComment,
   Content,
+  IconButton,
+  PostMenu,
+  PostMenuItem,
 } from "./ModalStyles";
 import likeIcon from "./like.svg";
 import likeCheckedIcon from "./likeChecked.svg";
@@ -59,6 +62,7 @@ const Modal: React.FC<ModalProps> = ({
   const [location, setLocation] = useState<{ area: string; id: number | null }>(
     { area: "", id: null }
   );
+  const [menuCheck, setMenuCheck] = useState<boolean>(false);
 
   const toggleLike = async () => {
     if (!isSignIn) {
@@ -170,7 +174,9 @@ const Modal: React.FC<ModalProps> = ({
             </p>
           </div>
         </div>
-        {post.image && post.image?.length !== 0 ? <Slide image={post.image} /> : null}
+        {post.image && post.image?.length !== 0 ? (
+          <Slide image={post.image} />
+        ) : null}
         <div className="post-edit-box">
           <LikeComment>
             <Icon
@@ -181,7 +187,24 @@ const Modal: React.FC<ModalProps> = ({
           </LikeComment>
           {loggedInUserId === post.userId && (
             // <button className="post-rewrite">게시물 수정</button>
-            <Write editMode={true} />
+            // 게시글 삭제 함수 추가
+            <>
+              <LikeComment>
+                <IconButton
+                  onClick={() => {
+                    setMenuCheck(!menuCheck);
+                  }}
+                >
+                  <Icon src="/post_menu.svg" />
+                </IconButton>
+              </LikeComment>
+              {menuCheck ? (
+                <PostMenu>
+                  <Write editMode={true} />
+                  <PostMenuItem>삭제</PostMenuItem>
+                </PostMenu>
+              ) : null}
+            </>
           )}
         </div>
         <h3>좋아요 {likeCount}개</h3>
