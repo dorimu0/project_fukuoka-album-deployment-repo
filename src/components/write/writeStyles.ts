@@ -52,7 +52,8 @@ export const SliderBox = styled(Slider)`
     margin: 0 10px;
   }
   div {
-    width: 100%;
+    // width: 100%;
+    height:100%;
   }
   .slick-prev {
     left: 0;
@@ -61,13 +62,17 @@ export const SliderBox = styled(Slider)`
     right: 0;
   }
   .slick-slide {
+    background-color : black;
     width: 485px;
     height: 325px;
-
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    img{
+      height:100%;
+      border-radius:0px;
+    }
   }
 `;
 

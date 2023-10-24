@@ -1,7 +1,6 @@
 import { CredentialResponse } from "@react-oauth/google";
 import { store } from "../store";
 import { setUser } from "../store/user";
-import { setToken } from "../store/token";
 
 interface FetchOptions {
   method: string;
@@ -31,8 +30,5 @@ export const signInByGoogle = async (googleResponse: CredentialResponse) => {
 
   const { data } = await response.json();
 
-  const { token } = data;
-
   store.dispatch(setUser(data));
-  store.dispatch(setToken(token));
 };

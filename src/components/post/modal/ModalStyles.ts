@@ -1,4 +1,3 @@
-import Slider from "react-slick";
 import styled from "styled-components";
 
 export const ModalStyles = styled.div`
@@ -291,43 +290,4 @@ export const Content = styled.div<{ expanded: boolean }>`
     width:60px;
     color:gray;
   }
-`;
-
-export const SliderBox = styled(Slider)`
-  width: 485px;
-  height: 323.325px;
-
-  .slick-track{
-    display:flex;
-    align-items:center;
-  }
-
-  .slick-slide {
-    background-color: black;
-    img {
-      display:flex;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-    div {
-      display:flex;
-      justify-content:center;
-      align-items:center;
-    }
-  }
-
-  button {
-    color: black;
-    z-index: 9999;
-    margin:0;
-
-    &:before {
-        font-size:30px; 
-     }
-   }
-
-   .slick-prev { left : 10px; }
-   .slick-next { right : 20px; }
-  
 `;
