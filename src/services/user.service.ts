@@ -1,5 +1,5 @@
 import { UserUpdate } from "../types/user.interface";
-import { api, uploadApi } from "./api.service";
+import { api, deleteImageApi, uploadApi } from "./api.service";
 
 export const getUser = async (id: number | null) => {
   if (id === null) {
@@ -12,9 +12,19 @@ export const getUser = async (id: number | null) => {
 };
 
 export const updateUser = async (user: UserUpdate, prevImage?: string) => {
+  // 이전 사진 삭제
+  if (prevImage) {
+    const result = await deleteImageApi([prevImage]);
+    if (!result.ok) {
+      window.alert("문제가 생겼습니다. 잠시 후 다시 시도하세요.");
+      return;
+    }
+  }
+
+  // 정보 수정
   const data = await api("PUT", `user/${user.id}`, user);
 
-  return data.user;
+  return data;
 };
 
 export const uploadProfileImage = async (file: File): Promise<string> => {
