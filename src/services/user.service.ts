@@ -1,4 +1,4 @@
-import { UserUpdate } from "../types/user.interface";
+import { User, UserUpdate } from "../types/user.interface";
 import { api, deleteImageApi, uploadApi } from "./api.service";
 
 export const getUser = async (id: number | null) => {
@@ -11,7 +11,10 @@ export const getUser = async (id: number | null) => {
   return data;
 };
 
-export const updateUser = async (user: UserUpdate, prevImage?: string) => {
+export const updateUser = async (
+  user: UserUpdate,
+  prevImage?: string
+): Promise<User | undefined> => {
   // 이전 사진 삭제
   if (prevImage) {
     const result = await deleteImageApi([prevImage]);
