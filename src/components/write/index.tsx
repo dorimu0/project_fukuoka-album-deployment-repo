@@ -33,6 +33,7 @@ import { RootState } from "../../store";
 import { useDispatch, useSelector } from "react-redux";
 import { setModalOpen } from "../../store/modal";
 import { Post, WriteProps } from "../../types/post.interface";
+import { setPosts } from "../../store/search";
 
 const Write = ({ editMode }: WriteProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -133,7 +134,14 @@ const Write = ({ editMode }: WriteProps) => {
           if (editMode) {
             uploadEditPost();
           } else {
-            postPost(url, content, postAreaId, area, userInfo.id);
+            const newPost = await postPost(
+              url,
+              content,
+              postAreaId,
+              area,
+              userInfo.id
+            );
+            dispatch(setPosts(newPost));
           }
           closeModal();
         }
