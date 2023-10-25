@@ -11,6 +11,8 @@ import {
 import { User } from "../../types/user.interface";
 import { ModalType } from "../../types/modal.interface";
 import { updateUser, uploadProfileImage } from "../../services/user.service";
+import { store } from "../../store";
+import { setUser } from "../../store/user";
 
 export const DefaultModal = ({
   id,
@@ -74,6 +76,8 @@ export const DefaultModal = ({
 
       if (onUserUpdated) {
         onUserUpdated(updatedUser);
+        // 디스패치
+        store.dispatch(setUser(updatedUser));
       }
 
       window.alert("수정 완료!");

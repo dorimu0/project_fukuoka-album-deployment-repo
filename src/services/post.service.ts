@@ -48,3 +48,9 @@ export const getPostById = async (id: number): Promise<Post> => {
 
   return post;
 };
+
+export const deletePost = async (id: number): Promise<Post> => {
+  const post = await api("DELETE", `post/${id}`);
+
+  return post;
+};

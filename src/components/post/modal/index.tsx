@@ -7,7 +7,11 @@ import { Post as PostType } from "../../../types/post.interface";
 import { CommentInterface } from "../../../types/comment.interface";
 import { User } from "../../../types/user.interface";
 import { getUser } from "../../../services/user.service";
-import { updateLike, getPostById } from "../../../services/post.service";
+import {
+  updateLike,
+  getPostById,
+  deletePost,
+} from "../../../services/post.service";
 import {
   getCommentsByPostId,
   createComment,
@@ -22,6 +26,9 @@ import {
   Icon,
   LikeComment,
   Content,
+  IconButton,
+  PostMenu,
+  PostMenuItem,
 } from "./ModalStyles";
 import likeIcon from "./like.svg";
 import likeCheckedIcon from "./likeChecked.svg";
@@ -59,6 +66,7 @@ const Modal: React.FC<ModalProps> = ({
   const [location, setLocation] = useState<{ area: string; id: number | null }>(
     { area: "", id: null }
   );
+  const [menuCheck, setMenuCheck] = useState<boolean>(false);
 
   const toggleLike = async () => {
     if (!isSignIn) {
@@ -234,7 +242,9 @@ const Modal: React.FC<ModalProps> = ({
             </p>
           </div>
         </div>
-        {post.image && post.image?.length !== 0 ? <Slide image={post.image} /> : null}
+        {post.image && post.image?.length !== 0 ? (
+          <Slide image={post.image} />
+        ) : null}
         <div className="post-edit-box">
           <LikeComment>
             <Icon
@@ -245,7 +255,38 @@ const Modal: React.FC<ModalProps> = ({
           </LikeComment>
           {loggedInUserId === post.userId && (
             // <button className="post-rewrite">게시물 수정</button>
-            <Write editMode={true} />
+            // 게시글 삭제 함수 추가
+            <>
+              <LikeComment>
+                <IconButton
+                  onClick={() => {
+                    setMenuCheck(!menuCheck);
+                  }}
+                >
+                  <Icon src="/post_menu.svg" />
+                </IconButton>
+              </LikeComment>
+              {menuCheck ? (
+                <PostMenu>
+                  <Write editMode={true} />
+                  <PostMenuItem
+                    onClick={async () => {
+                      if (window.confirm("정말 삭제하시겠습니까?")) {
+                        try {
+                          await deletePost(post.id);
+                          window.alert("게시글이 삭제되었습니다.");
+                          window.location.reload();
+                        } catch (error) {
+                          console.error("게시글 삭제 실패", error);
+                        }
+                      }
+                    }}
+                  >
+                    삭제
+                  </PostMenuItem>
+                </PostMenu>
+              ) : null}
+            </>
           )}
         </div>
         <h3>좋아요 {likeCount}개</h3>

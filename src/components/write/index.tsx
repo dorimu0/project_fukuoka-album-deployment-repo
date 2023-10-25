@@ -16,6 +16,7 @@ import {
   AddressBox,
 } from "./writeStyles";
 import { MenuItem } from "../layout/header/HeaderStyles";
+import { PostMenuItem } from "../post/modal/ModalStyles";
 import Modal from "react-modal";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -35,7 +36,6 @@ import { Post, WriteProps } from "../../types/post.interface";
 
 const Write = ({ editMode }: WriteProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [editPost, setEditPost] = useState<Post>();
   // const [imageUrl, setImageUrl] = useState<string[] | null>([]); // 이미지 요청
   const [images, setImages] = useState<string[]>([]); // 이미지 미리보기
   const [imageFile, setImageFile] = useState<File[]>([]); // 이미지 파일
@@ -51,7 +51,7 @@ const Write = ({ editMode }: WriteProps) => {
   useEffect(() => {
     if (editMode) {
       getEditPost().then((data) => {
-        setEditPost(data);
+        console.log(data);
       });
     } else {
       getAllLocation().then((data) => {
@@ -149,7 +149,11 @@ const Write = ({ editMode }: WriteProps) => {
 
   return (
     <>
-      <MenuItem onClick={onModal}>{editMode ? "수정" : "글쓰기"}</MenuItem>
+      {editMode ? (
+        <PostMenuItem onClick={onModal}>수정</PostMenuItem>
+      ) : (
+        <MenuItem onClick={onModal}>글쓰기</MenuItem>
+      )}
 
       <Modal
         isOpen={modalIsOpen}
@@ -201,7 +205,7 @@ const Write = ({ editMode }: WriteProps) => {
             <HiddenInput
               type="file"
               multiple
-              accept="image/*"
+              accept=".jpeg, .png, .jpg"
               ref={inputRef}
               onChange={handleOnChange}
             />
@@ -226,7 +230,9 @@ const Write = ({ editMode }: WriteProps) => {
               <Count>
                 <span>{inputCount}</span> / 200
               </Count>
-              <FinishButton onClick={handleAddButton}> 생성 </FinishButton>
+              <FinishButton onClick={handleAddButton}>
+                {editMode ? " 생성 " : "수정"}
+              </FinishButton>
             </EndBox>
           </Content>
         </Container>
