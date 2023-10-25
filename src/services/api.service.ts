@@ -82,3 +82,11 @@ export const deleteImageApi = async (prevImage: string[]) => {
 
   return res;
 };
+
+// 임시 저장소 이미지 삭제
+export const deleteTempImageFromDb = async (image: string[]) => {
+  image.forEach(async (img) => {
+    const _image = await api("GET", `tempImage?pathF=${img}`);
+    await api("DELETE", `tempImage/${_image[0]?.id}`);
+  });
+};
