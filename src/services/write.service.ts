@@ -1,6 +1,6 @@
 import { Location } from "../types/location.interface";
 import { Post } from "../types/post.interface";
-import { uploadApi } from "./api.service";
+import { api, deleteTempImageFromDb, uploadApi } from "./api.service";
 
 export const getAllLocation = async (): Promise<Location[]> => {
   const res = await fetch(`http://localhost:3004/location`);
@@ -29,7 +29,6 @@ export const uploadPostImage = async (
     })
   );
 
-  console.log(images);
   return images;
 };
 
@@ -53,17 +52,14 @@ export const postPost = async (
     likeChecked,
   };
 
-  const res = await fetch(`http://localhost:3004/post`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(post),
-  });
+  const postedData = await api("POST", "post", post);
 
-  if (!res.ok) {
-    throw new Error("エラーが発生しました。");
+  // 임시 저장소 이미지 삭제
+  if (image?.length) {
+    await deleteTempImageFromDb(image);
   }
+
+  return postedData;
 };
 
 export const getEditPost = async (): Promise<Post> => {
@@ -83,7 +79,6 @@ export const uploadEditPost = async () => {
     headers: {
       "Content-Type": "application/json",
     },
-    // body: JSON.stringify(post),
   });
 
   if (!res.ok) {
