@@ -125,10 +125,74 @@ const Modal: React.FC<ModalProps> = ({
     }
   };
 
+  const deleteCommentWithChildren = async (comment: CommentInterface) => {
+    const childComments = comments.filter(
+      (c) => c.parentCommentId === comment.id
+    );
+    let updatedPost = { ...post };
+  
+    for (let childComment of childComments) {
+      if (typeof childComment.id === "number") {
+        await deleteComment(childComment.id);
+        if (updatedPost.commentId) {
+          updatedPost.commentId =
+            updatedPost.commentId.filter(
+              (id) => id !== childComment.id
+          );
+          await updateCommentId(updatedPost);
+        }
+      }
+    }
+    if (typeof comment.id === "number") {
+        await deleteComment(comment.id);
+          
+        let updatedParent = { ...updatedPost };
+
+        if (updatedParent.commentId) {
+          updatedParent.commentId =
+            updatedParent.commentId.filter(
+              (id) => id !== comment.id
+            );
+
+          setComments(
+            comments.filter(
+              (c) => c.id !== comment.id
+            )
+          );
+          
+          const resUpdatedParent =
+            await updateCommentId(updatedParent);
+
+            setPost(resUpdatedParent)
+
+            if (onCommentCountChange) {
+              onCommentCountChange(
+                resUpdatedParent.commentId
+                  ? resUpdatedParent.commentId.length
+                  : 0
+              );
+            }
+        }
+      }
+    let latestPost = await getPost(post.id);
+    setPost(latestPost);
+  }
+
   useEffect(() => {
-    Promise.all(comments.map((comment) => getUser(Number(comment.userId))))
-      .then((usersData) => setUsers(usersData))
-      .catch((err) => console.error(err));
+    let isCancelled = false;
+  
+    const fetchCommentUsers = async () => {
+      try {
+        const usersData = await Promise.all(comments.map((comment) => getUser(Number(comment.userId))));
+        if (!isCancelled) setUsers(usersData);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  
+    fetchCommentUsers();
+  
+    return () => { isCancelled = true; };
   }, [comments]);
 
   useEffect(() => {
@@ -174,7 +238,7 @@ const Modal: React.FC<ModalProps> = ({
           <div>
             <h2>{user.name}</h2>
             <p>
-              {location.area}_{post.area}
+              {post.area}
             </p>
           </div>
         </div>
@@ -297,8 +361,6 @@ const Modal: React.FC<ModalProps> = ({
                       updatedPost.commentId = [created.id];
                     }
 
-                    new Promise((resolve) => setTimeout(resolve, 100));
-
                     try {
                       const resUpdatedPost = await updateCommentId(updatedPost);
                       setPost(resUpdatedPost);
@@ -367,102 +429,9 @@ const Modal: React.FC<ModalProps> = ({
                           className="comment-delete"
                           onClick={async () => {
                             if (window.confirm("삭제하시겠습니까?")) {
-                              const childComments = comments.filter(
-                                (c) => c.parentCommentId === comment.id
-                              );
-                              for (let childComment of childComments) {
-                                if (typeof childComment.id === "number") {
-                                  try {
-                                    await deleteComment(childComment.id);
-
-                                    let updatedPost = { ...post };
-
-                                    if (updatedPost.commentId) {
-                                      updatedPost.commentId =
-                                        updatedPost.commentId.filter(
-                                          (id) => id !== childComment.id
-                                        );
-
-                                      const resUpdatedPost =
-                                        await updateCommentId(updatedPost);
-
-                                      setComments((comments) =>
-                                        comments.filter(
-                                          (c) => c.id !== childComment.id
-                                        )
-                                      );
-                                      setPost(resUpdatedPost);
-
-                                      if (onCommentCountChange) {
-                                        onCommentCountChange(
-                                          resUpdatedPost.commentId
-                                            ? resUpdatedPost.commentId.length
-                                            : 0
-                                        );
-                                      }
-                                    } else {
-                                      throw new Error(
-                                        "에러 : 게시물에서 자식의 ID 값을 찾을 수 없음"
-                                      );
-                                    }
-                                  } catch (error) {
-                                    console.error(
-                                      "에러 : 자식 댓글을 삭제/수정 실패 내용->",
-                                      error
-                                    );
-                                  }
-                                } else {
-                                  console.error(
-                                    "에러 : 자식의 ID 값이 누락되었습니다"
-                                  );
-                                }
-                              }
-                              const latestPost = await getPost(post.id);
-                              try {
-                                if (typeof comment.id === "number") {
-                                  await deleteComment(comment.id);
-
-                                  let updatedParent = { ...latestPost };
-
-                                  if (updatedParent.commentId) {
-                                    updatedParent.commentId =
-                                      updatedParent.commentId.filter(
-                                        (id) => id !== comment.id
-                                      );
-
-                                    const resUpdatedParent =
-                                      await updateCommentId(updatedParent);
-
-                                    setComments(
-                                      comments.filter(
-                                        (c) => c.id !== comment.id
-                                      )
-                                    );
-                                    setPost(resUpdatedParent);
-
-                                    if (onCommentCountChange) {
-                                      onCommentCountChange(
-                                        resUpdatedParent.commentId
-                                          ? resUpdatedParent.commentId.length
-                                          : 0
-                                      );
-                                    }
-                                  } else {
-                                    throw new Error(
-                                      "에러 : 게시물의 댓글 목록에서 부모 댓글 제거 실패"
-                                    );
-                                  }
-                                } else {
-                                  throw new Error(
-                                    "에러 : 부모의 댓글 삭제 실패."
-                                  );
-                                }
-                              } catch (error) {
-                                console.error(error);
-                              }
-                              new Promise((resolve) =>
-                                setTimeout(resolve, 100)
-                              );
+                              await deleteCommentWithChildren(comment);
+                              const latestComments = await getCommentsByPostId(post.id);
+                              setComments(latestComments);
                             }
                           }}
                         >
@@ -544,8 +513,8 @@ const Modal: React.FC<ModalProps> = ({
                                     if (typeof reply.id === "number") {
                                       await deleteComment(reply.id);
                                       setComments(
-                                        comments.filter(
-                                          (c) => c.id !== reply.id
+                                        comments.map(
+                                          (c) => c.id !== reply.id ? reply : c
                                         )
                                       );
 
