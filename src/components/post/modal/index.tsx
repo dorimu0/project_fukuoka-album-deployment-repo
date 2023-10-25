@@ -200,7 +200,9 @@ const Modal: React.FC<ModalProps> = ({
               </LikeComment>
               {menuCheck ? (
                 <PostMenu>
-                  <Write editMode={true} />
+                  <div>
+                    <Write editMode={true} postId={post.userId} />
+                  </div>
                   <PostMenuItem>삭제</PostMenuItem>
                 </PostMenu>
               ) : null}

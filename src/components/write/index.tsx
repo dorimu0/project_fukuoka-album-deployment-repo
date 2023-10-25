@@ -32,33 +32,58 @@ import Slide from "./slide";
 import { RootState } from "../../store";
 import { useDispatch, useSelector } from "react-redux";
 import { setModalOpen } from "../../store/modal";
-import { Post, WriteProps } from "../../types/post.interface";
+import { WriteProps } from "../../types/post.interface";
 
-const Write = ({ editMode }: WriteProps) => {
+const Write = ({ editMode, postId }: WriteProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  // const [imageUrl, setImageUrl] = useState<string[] | null>([]); // 이미지 요청
   const [images, setImages] = useState<string[]>([]); // 이미지 미리보기
   const [imageFile, setImageFile] = useState<File[]>([]); // 이미지 파일
-  // const [content, setContent] = useState<string>(""); // 문구
+  const [content, setContent] = useState<string>(""); // 문구
   const [inputCount, setInputCount] = useState<number>(0); // 글자 수
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false); // 모달 open 여부
-  // const [area, setArea] = useState<string>(""); // 상세 주소
+  const [address, setAddress] = useState<string>("");
+  const [area, setArea] = useState<string>(""); // 상세 주소
   const [locations, setLocations] = useState<Location[]>([]); // 지역들
-  // const [postAreaId, setPostAreaId] = useState<number>(0); // 지역Id
+  const [postAreaId, setPostAreaId] = useState<number>(1); // 지역Id
+  const [location, setLocation] = useState<string>("후쿠오카시"); // 지역 이름
   const userInfo = useSelector((state: RootState) => state.user); // 현재 유저 정보
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (editMode) {
-      getEditPost().then((data) => {
-        console.log(data);
+    if (editMode && postId) {
+      getEditPost(postId).then((data) => {
+        setContent(data.content);
+        setPostAreaId(data.postAreaId);
+        setAddress(data.area);
+        setImages(data.image);
       });
     } else {
       getAllLocation().then((data) => {
         setLocations(data);
       });
     }
-  }, []);
+  }, [editMode, postId]);
+
+  // 값 불러오기
+  const handleChangeLocation = (e: ChangeEvent<HTMLSelectElement>) => {
+    setPostAreaId(Number(e.target.value));
+    const locationName = e.target.options[e.target.selectedIndex]
+      .textContent as string;
+    setLocation(locationName);
+  };
+
+  const handleInputArea = (e: ChangeEvent<HTMLInputElement>) => {
+    setAddress(e.target.value);
+  };
+
+  const handleInputText = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    setInputCount(e.target.value.length);
+    setContent(e.target.value);
+  };
+
+  useEffect(() => {
+    setArea(`${location} ${address}`);
+  }, [location, address]);
 
   // MODAL
   const onModal = () => {
@@ -72,13 +97,14 @@ const Write = ({ editMode }: WriteProps) => {
     dispatch(setModalOpen(false));
   };
 
+  // IMAGE
   const handleImageButton = () => {
     inputRef.current?.click();
   };
+
   // 이미지 미리보기
   const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
-
     if (files) {
       setImageFile(Array.from(files));
       if (files?.length > 5) {
@@ -97,54 +123,33 @@ const Write = ({ editMode }: WriteProps) => {
     }
   };
 
-  const inputContent = useRef<HTMLTextAreaElement>(null);
-  const inputAddress = useRef<HTMLInputElement>(null);
-  const selectLocation = useRef<HTMLSelectElement>(null);
-
   // 게시글 생성
   const handleAddButton = async () => {
-    if (
-      inputContent.current &&
-      inputAddress.current &&
-      selectLocation.current
-    ) {
-      const location = selectLocation.current.options[
-        selectLocation.current.selectedIndex
-      ].textContent as string;
-
-      const content: string = inputContent.current.value;
-      const postAreaId: number = parseInt(selectLocation.current.value);
-      const area: string = `${location} ${inputAddress.current.value}`;
-
-      if (imageFile.length === 0) {
-        alert("이미지를 넣어주세요");
-        return;
-      } else if (!content || !area) {
-        alert("상세주소문구를 입력해주세요");
-        return;
-      }
-
-      try {
-        const url = await uploadPostImage(imageFile, location);
-        console.log(url);
-
-        if (content && url && userInfo.id) {
-          alert("success");
-          if (editMode) {
-            uploadEditPost();
-          } else {
-            postPost(url, content, postAreaId, area, userInfo.id);
-          }
-          closeModal();
-        }
-      } catch (error) {
-        console.error("Failed to upload image:", error);
-      }
+    if (imageFile.length === 0) {
+      alert("이미지를 넣어주세요");
+      return;
+    } else if (!address) {
+      alert("상세주소문구를 입력해주세요");
+      return;
+    } else if (!content) {
+      alert("문구를 입력해주세요");
     }
-  };
+    try {
+      console.log();
+      const url = await uploadPostImage(imageFile, location);
 
-  const handleInputText = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setInputCount(e.target.value.length);
+      if (content && url && userInfo.id && postAreaId && area) {
+        alert("success");
+        if (editMode && postId) {
+          uploadEditPost(postId);
+        } else {
+          postPost(url, content, postAreaId, area, userInfo.id);
+        }
+        closeModal();
+      }
+    } catch (error) {
+      console.error("Failed to upload image:", error);
+    }
   };
 
   return (
@@ -167,7 +172,7 @@ const Write = ({ editMode }: WriteProps) => {
           content: {
             width: "485px",
             height: "530px",
-            zIndex: "150",
+            zIndex: "1500",
             position: "absolute",
             top: "50%",
             left: "50%",
@@ -186,7 +191,11 @@ const Write = ({ editMode }: WriteProps) => {
               src={userInfo.imageUrl ? userInfo.imageUrl : ""}
               alt="image"
             />
-            <select className="location" ref={selectLocation}>
+            <select
+              className="location"
+              onChange={handleChangeLocation}
+              value={postAreaId}
+            >
               {locations
                 ? locations.map((location, index) => (
                     <option key={index} value={location.id}>
@@ -212,26 +221,27 @@ const Write = ({ editMode }: WriteProps) => {
           </ContentImg>
           <AddressBox>
             <Address
+              value={address}
               placeholder="상세 주소"
               className="address"
-              ref={inputAddress}
+              onChange={handleInputArea}
             />
           </AddressBox>
           <Content>
             <Text
+              value={content}
               rows={4}
               placeholder="문구를 입력해주세요."
               className="content"
               maxLength={200}
               onChange={handleInputText}
-              ref={inputContent}
             />
             <EndBox>
               <Count>
                 <span>{inputCount}</span> / 200
               </Count>
               <FinishButton onClick={handleAddButton}>
-                {editMode ? " 생성 " : "수정"}
+                {editMode ? "수정" : "생성"}
               </FinishButton>
             </EndBox>
           </Content>

@@ -66,8 +66,8 @@ export const postPost = async (
   }
 };
 
-export const getEditPost = async (): Promise<Post> => {
-  const res = await fetch(`http://localhost:3004/post`);
+export const getEditPost = async (userId: number): Promise<Post> => {
+  const res = await fetch(`http://localhost:3004/post/${userId}`);
 
   if (!res.ok) {
     throw new Error("エラーが発生しました。");
@@ -77,8 +77,8 @@ export const getEditPost = async (): Promise<Post> => {
   return post;
 };
 
-export const uploadEditPost = async () => {
-  const res = await fetch("http://localhost:3004/post", {
+export const uploadEditPost = async (userId: number) => {
+  const res = await fetch(`http://localhost:3004/post/${userId}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
