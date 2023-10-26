@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Container, CardContainer } from "./MyPageStyles";
 import Card from "../card";
 import { getUser } from "../../services/user.service";
-import { getUserPosts } from "../../services/post.service";
+import { getPostByUserId, getUserPosts } from "../../services/post.service";
 import { User } from "../../types/user.interface";
 import { AlbumStyle, AlbumWrapper } from "../album/AlbumStyles";
 import AreaPost from "../post";
@@ -14,19 +14,22 @@ const Profile = () => {
   const [user, setUser] = useState<User>(); // API로 받아온 위치 정보
   const [posts, setPosts] = useState<PostType[]>([]);
   const userInfo = useSelector((state: RootState) => state.user);
+  const postsInfo = useSelector((state: RootState) => state.search.posts);
 
   // API로부터 위치 정보를 받아옴
   useEffect(() => {
     (async () => {
-      const user = await getUser(userInfo.id);
+      const user = await getUser(userInfo?.id);
       setUser(user);
     })();
-    getUserPosts(user?.id || 0)
-      .then((matchedPosts) => {
-        setPosts(matchedPosts);
-      })
-      .catch((error) => console.error("Error:", error)); // 네트워크 요청 중 발생한 에러 출력
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      const usersPosts = await getPostByUserId(userInfo?.id);
+      setPosts(usersPosts);
+    })();
+  }, [postsInfo]);
 
   if (!user) return null;
 
