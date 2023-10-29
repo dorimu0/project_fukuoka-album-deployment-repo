@@ -1,3 +1,4 @@
+import { stringify } from "querystring";
 import { Location } from "../types/location.interface";
 import { Post } from "../types/post.interface";
 import { api, deleteTempImageFromDb, uploadApi } from "./api.service";
@@ -16,7 +17,8 @@ export const getAllLocation = async (): Promise<Location[]> => {
 
 export const uploadPostImage = async (
   files: File[],
-  area: string
+  area: string,
+  editMode: boolean
 ): Promise<string[]> => {
   const images: string[] = [];
 
@@ -24,7 +26,9 @@ export const uploadPostImage = async (
     files.map(async (file) => {
       const formData = new FormData();
       formData.append("image", file);
-      const res = await uploadApi(formData, area);
+      const res = editMode
+        ? await uploadApi(formData, area, "PUT")
+        : await uploadApi(formData, area);
       images.push(res.pathF);
     })
   );
@@ -62,8 +66,8 @@ export const postPost = async (
   return postedData;
 };
 
-export const getEditPost = async (): Promise<Post> => {
-  const res = await fetch(`http://localhost:3004/post`);
+export const getEditPost = async (userId: number): Promise<Post> => {
+  const res = await fetch(`http://localhost:3004/post/${userId}`);
 
   if (!res.ok) {
     throw new Error("エラーが発生しました。");
@@ -73,12 +77,26 @@ export const getEditPost = async (): Promise<Post> => {
   return post;
 };
 
-export const uploadEditPost = async () => {
-  const res = await fetch("http://localhost:3004/post", {
+export const uploadEditPost = async (
+  image: string[],
+  postAreaId: number,
+  content: string,
+  area: string,
+  postId: number
+) => {
+  const editPost = {
+    postAreaId: postAreaId,
+    content: content,
+    image: image,
+    area: area,
+  };
+
+  const res = await fetch(`http://localhost:3004/post/${postId}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
     },
+    body: JSON.stringify(editPost),
   });
 
   if (!res.ok) {
