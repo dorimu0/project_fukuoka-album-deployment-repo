@@ -143,7 +143,7 @@ const Write = ({ editMode, postId }: WriteProps) => {
       if (content && url && userInfo.id && postAreaId && area) {
         alert("success");
         if (editMode && postId) {
-          uploadEditPost(postId);
+          uploadEditPost(url, postAreaId, content, area, postId);
         } else {
           const newPost = await postPost(
             url,

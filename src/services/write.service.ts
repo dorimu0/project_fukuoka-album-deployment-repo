@@ -78,11 +78,11 @@ export const getEditPost = async (userId: number): Promise<Post> => {
 };
 
 export const uploadEditPost = async (
+  image: string[],
   postAreaId: number,
   content: string,
-  image: string[],
   area: string,
-  userId: number
+  postId: number
 ) => {
   const editPost = {
     postAreaId: postAreaId,
@@ -91,7 +91,7 @@ export const uploadEditPost = async (
     area: area,
   };
 
-  const res = await fetch(`http://localhost:3004/post/${userId}`, {
+  const res = await fetch(`http://localhost:3004/post/${postId}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
