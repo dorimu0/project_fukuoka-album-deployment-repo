@@ -53,12 +53,40 @@ export const uploadApi = async (
   method: FetchMethod = "POST"
 ) => {
   const url = `http://localhost:8000/upload/${endpoint}`;
-  console.log(url);
 
   let res = await fetch(url, {
     method,
     body,
   });
 
-  return await res.json();
+  if (!res.ok) {
+    window.alert("문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    return;
+  }
+
+  const data = await res.json();
+
+  return data;
+};
+
+export const deleteImageApi = async (prevImage: string[]) => {
+  const url = "http://localhost:8000/upload/delete";
+
+  const res = await fetch(url, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(prevImage),
+  });
+
+  return res;
+};
+
+// 임시 저장소 이미지 삭제
+export const deleteTempImageFromDb = async (image: string[]) => {
+  image.forEach(async (img) => {
+    const _image = await api("GET", `tempImage?pathF=${img}`);
+    await api("DELETE", `tempImage/${_image[0]?.id}`);
+  });
 };

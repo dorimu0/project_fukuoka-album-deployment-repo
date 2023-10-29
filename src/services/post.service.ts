@@ -1,5 +1,5 @@
 import { Post } from "../types/post.interface";
-import { api } from "./api.service";
+import { api, deleteTempImageFromDb, deleteImageApi } from "./api.service";
 
 export const getAllPosts = async (): Promise<Post[]> => {
   const posts = await api("GET", `post`);
@@ -50,8 +50,35 @@ export const getPostById = async (id: number): Promise<Post> => {
   return post;
 };
 
-export const deletePost = async (id: number): Promise<Post> => {
-  const post = await api("DELETE", `post/${id}`);
+export const getPostByUserId = async (
+  userId: number | null
+): Promise<Post[]> => {
+  if (!userId === null) {
+    window.alert("유저 정보를 불러올 수 없습니다. 다시 로그인하세요.");
+    return [];
+  }
+
+  const post = await api("GET", `post?userId=${userId}`);
 
   return post;
+};
+
+export const deletePost = async (id: number) => {
+  const { image } = await getPostById(id);
+
+  if (image?.length) {
+    const result = await deleteImageApi(image);
+    if (!result.ok) {
+      window.alert(
+        "게시글 삭제 과정에 문제가 생겼습니다. 잠시 후 다시 시도하세요."
+      );
+      return;
+    }
+
+    if (image?.length) {
+      await deleteTempImageFromDb(image);
+    }
+  }
+
+  await api("DELETE", `post/${id}`);
 };
