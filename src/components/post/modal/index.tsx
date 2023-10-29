@@ -202,10 +202,10 @@ const Modal: React.FC<ModalProps> = ({
                   <Icon src="/post_menu.svg" />
                 </IconButton>
               </LikeComment>
-              {menuCheck ? (
+              {menuCheck ? ( // 모달 창 수정
                 <PostMenu>
                   <div>
-                    <Write editMode={true} postId={post.userId} />
+                    <Write editMode={true} postId={post.id} />
                   </div>
                   <PostMenuItem
                     onClick={async () => {

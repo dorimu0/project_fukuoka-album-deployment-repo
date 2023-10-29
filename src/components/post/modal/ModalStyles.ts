@@ -7,7 +7,7 @@ export const ModalStyles = styled.div`
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 9999; // 1000으로 되긴 하는데 일단 9999로 고정해주세요
+  z-index: 1; // 1000으로 되긴 하는데 일단 9999로 고정해주세요
   display: flex;
   justify-content: center;
   align-items: center;

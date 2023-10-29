@@ -50,16 +50,17 @@ const Write = ({ editMode, postId }: WriteProps) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    console.log(postId);
+    getAllLocation().then((data) => {
+      setLocations(data);
+    });
     if (editMode && postId) {
       getEditPost(postId).then((data) => {
+        console.log(data);
         setContent(data.content);
         setPostAreaId(data.postAreaId);
         setAddress(data.area);
         setImages(data.image);
-      });
-    } else {
-      getAllLocation().then((data) => {
-        setLocations(data);
       });
     }
   }, [editMode, postId]);
@@ -136,7 +137,7 @@ const Write = ({ editMode, postId }: WriteProps) => {
     }
     try {
       console.log();
-      const url = await uploadPostImage(imageFile, location);
+      const url = await uploadPostImage(imageFile, location, editMode);
 
       if (content && url && userInfo.id && postAreaId && area) {
         alert("success");
