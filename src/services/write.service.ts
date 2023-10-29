@@ -1,3 +1,4 @@
+import { stringify } from "querystring";
 import { Location } from "../types/location.interface";
 import { Post } from "../types/post.interface";
 import { api, deleteTempImageFromDb, uploadApi } from "./api.service";
@@ -76,12 +77,26 @@ export const getEditPost = async (userId: number): Promise<Post> => {
   return post;
 };
 
-export const uploadEditPost = async (userId: number) => {
+export const uploadEditPost = async (
+  postAreaId: number,
+  content: string,
+  image: string[],
+  area: string,
+  userId: number
+) => {
+  const editPost = {
+    postAreaId: postAreaId,
+    content: content,
+    image: image,
+    area: area,
+  };
+
   const res = await fetch(`http://localhost:3004/post/${userId}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
     },
+    body: JSON.stringify(editPost),
   });
 
   if (!res.ok) {
