@@ -34,6 +34,8 @@ import likeIcon from "./like.svg";
 import likeCheckedIcon from "./likeChecked.svg";
 import Write from "../../write";
 import Slide from "../../write/slide";
+import CommentComponent from "./comment";
+import ReplyComponent from "./reply";
 
 interface ModalProps {
   post: PostType;
@@ -404,252 +406,62 @@ const Modal: React.FC<ModalProps> = ({
           onClick={(e) => e.stopPropagation()}
         >
           {comments.map((comment) => {
-            if (
+          if (
               comment.parentCommentId === null ||
               comment.parentCommentId === undefined
-            ) {
+          ) {
               return (
-                <div key={comment.id}>
-                  <div className="comment-box">
-                    <img
-                      className="user-icon"
-                      src={
-                        users.find((user) => user.id === comment.userId)
-                          ?.imageUrl
-                      }
-                      alt={
-                        users.find((user) => user.id === comment.userId)?.name
-                      }
-                    />
-                    <p>
-                      {users.find((user) => user.id === comment.userId)?.name}
-                    </p>
-                    <div>
-                      {(loggedInUserId === comment.userId ||
-                        post.userId === loggedInUserId) && (
-                        <div
-                          className="comment-delete"
-                          onClick={async () => {
-                            if (window.confirm("삭제하시겠습니까?")) {
-                              await deleteCommentWithChildren(comment);
-                              const latestComments = await getCommentsByPostId(post.id);
-                              setComments(latestComments);
-                            }
-                          }}
-                        >
-                          ❌
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <p className="comment">{comment.content}</p>
-                  <div className="comment-edit-box">
-                    <div>
-                      <p
-                        className="comment-reply"
-                        onClick={() => {
-                          if (!isSignIn) {
-                            alert("해당 기능은 로그인 후 이용가능합니다");
-                          } else {
-                            if (typeof comment.id === "number") {
-                              setShowReplyInput(
-                                showReplyInput === comment.id
-                                  ? null
-                                  : comment.id
-                              );
-                            } else {
-                              console.error("Comment ID is missing");
-                            }
-                          }
-                        }}
-                      >
-                        댓글 달기
-                      </p>
-                    </div>
-                    <p>
-                      {loggedInUserId === comment.userId && (
-                        <p
-                          className="comment-rewrite"
-                          onClick={() => {
-                            setCommentInput(comment.content);
-                            if (typeof comment.id === "number") {
-                              setEditingCommentId(comment.id);
-                            }
-                          }}
-                        >
-                          수정
-                        </p>
-                      )}
-                    </p>
-                  </div>
-                  {comments
-                    .filter((reply) => reply.parentCommentId === comment.id)
-                    .map((reply) => (
-                      <div key={reply.id}>
-                        <div className="reply-user-box">
-                          <p>ㄴ</p>
-                          <img
-                            className="user-icon"
-                            src={
-                              users.find((user) => user.id === reply.userId)
-                                ?.imageUrl
-                            }
-                            alt={
-                              users.find((user) => user.id === reply.userId)
-                                ?.name
-                            }
-                          />
-                          <p>
-                            {
-                              users.find((user) => user.id === reply.userId)
-                                ?.name
-                            }
-                          </p>
-                          {(loggedInUserId === reply.userId ||
-                            post.userId === loggedInUserId) && (
-                            <div
-                              className="comment-delete"
-                              onClick={async () => {
-                                if (window.confirm("삭제하시겠습니까?")) {
-                                  try {
-                                    if (typeof reply.id === "number") {
-                                      await deleteComment(reply.id);
-                                      setComments(
-                                        comments.map(
-                                          (c) => c.id !== reply.id ? reply : c
-                                        )
-                                      );
-
-                                      let updatedPost = { ...post };
-                                      if (updatedPost.commentId) {
-                                        updatedPost.commentId =
-                                          updatedPost.commentId.filter(
-                                            (id) => id !== reply.id
-                                          );
-
-                                        try {
-                                          await updateCommentId(updatedPost);
-                                          setPost(updatedPost);
-
-                                          if (onCommentCountChange) {
-                                            onCommentCountChange(
-                                              updatedPost.commentId
-                                                ? updatedPost.commentId.length
-                                                : 0
-                                            );
-                                          }
-                                        } catch (error) {
-                                          console.error(error);
-                                        }
-                                      }
-                                    } else {
-                                      throw new Error("Comment ID is missing");
-                                    }
-                                  } catch (error) {
-                                    console.error(error);
-                                  }
-                                }
-                              }}
-                            >
-                              ❌
-                            </div>
-                          )}
-                        </div>
-                        <div className="reply-content-box">
-                          <p className="reply-content">{reply.content}</p>
-                          <p>
-                            {loggedInUserId === reply.userId && (
-                              <p
-                                className="reply-rewrite"
-                                onClick={async () => {
-                                  setCommentInput(reply.content);
-                                  if (typeof reply.id === "number") {
-                                    setEditingCommentId(reply.id);
-                                  }
-                                }}
-                              >
-                                수정
-                              </p>
-                            )}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  {showReplyInput === comment.id && (
-                    <div className="reply-container">
-                      <input
-                        className="reply-write"
-                        type="text"
-                        placeholder="대댓글을 작성하세요."
-                        value={replyInput}
-                        onChange={(e) => setReplyInput(e.target.value)}
+                  <div key={comment.id}>
+                      <CommentComponent 
+                          comment={comment}
+                          users={users}
+                          loggedInUserId={loggedInUserId}
+                          post={post}
+                          deleteCommentWithChildren={deleteCommentWithChildren}
+                          getCommentsByPostId={getCommentsByPostId}
+                          comments={comments}
+                          createComment={createComment}
+                          setComments={setComments}
+                          updateCommentId={updateCommentId}
+                          setPost={setPost}
+                          onCommentCountChange={onCommentCountChange}
+                          isSignIn={isSignIn}
+                          showReplyInput={showReplyInput}
+                          setShowReplyInput={setShowReplyInput}
+                          setCommentInput={setCommentInput}
+                          setEditingCommentId={setEditingCommentId}
                       />
-                      <button
-                        className={`reply-post ${
-                          !replyInput ? "reply-post-none" : "reply-post"
-                        }`}
-                        onClick={async () => {
-                          if (!loggedInUserId) {
-                            alert("로그인 후 대댓글을 작성할 수 있습니다.");
-                            return;
-                          }
-                          try {
-                            const newReply: CommentInterface = {
-                              userId: loggedInUserId,
-                              postId: post.id,
-                              parentCommentId: comment.id,
-                              content: replyInput,
-                              commentId: comments.length + 1,
-                            };
 
-                            const created = await createComment(newReply);
-                            if (created.id === undefined) {
-                              throw new Error("Failed to create reply");
-                            }
-                            setComments([...comments, created]);
-
-                            let updatedPost = { ...post };
-
-                            if (updatedPost.commentId) {
-                              updatedPost.commentId.push(created.id);
-                            } else {
-                              updatedPost.commentId = [created.id];
-                            }
-
-                            try {
-                              const resUpdatedPost = await updateCommentId(
-                                updatedPost
-                              );
-                              setPost(resUpdatedPost);
-
-                              if (onCommentCountChange) {
-                                onCommentCountChange(
-                                  updatedPost.commentId
-                                    ? updatedPost.commentId.length
-                                    : 0
-                                );
-                              }
-                            } catch (error) {
-                              console.error(error);
-                            }
-                          } catch (error) {
-                            console.error(error);
-                          }
-
-                          setReplyInput("");
-                          setShowReplyInput(null);
-                        }}
-                      >
-                        제출
-                      </button>
-                    </div>
-                  )}
-                </div>
+                      {comments
+                          .filter((reply) => reply.parentCommentId === comment.id)
+                          .map((reply) => (
+                              <ReplyComponent 
+                                  key={reply.id}
+                                  reply={reply}
+                                  users={users}
+                                  loggedInUserId={loggedInUserId}
+                                  post={post}
+                                  deleteComment={deleteComment}
+                                  setComments={setComments}
+                                  comments={comments}
+                                  updateCommentId={updateCommentId}
+                                  setPost={setPost}
+                                  onCommentCountChange={onCommentCountChange}
+                                  setCommentInput={setCommentInput}
+                                  setEditingCommentId={setEditingCommentId}
+                                  getCommentsByPostId={getCommentsByPostId}
+                                  isSignIn={isSignIn}
+                                  showReplyInput={showReplyInput}
+                                  setShowReplyInput={setShowReplyInput}
+                              />
+                          ))
+                      }
+                  </div>
               );
-            } else {
+          } else {
               return null;
-            }
-          })}
+          }
+        })}
           <div className="blank"></div>
         </div>
       </div>
