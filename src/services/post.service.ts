@@ -45,7 +45,6 @@ export const updateLike = async (
 
 export const getPostById = async (id: number): Promise<Post> => {
   const post = await api("GET", `post/${id}`);
-  console.log(post);
 
   return post;
 };

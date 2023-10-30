@@ -32,7 +32,7 @@ import Slide from "./slide";
 import { RootState } from "../../store";
 import { useDispatch, useSelector } from "react-redux";
 import { setModalOpen } from "../../store/modal";
-import { Post, WriteProps } from "../../types/post.interface";
+import { WriteProps } from "../../types/post.interface";
 import { setPosts } from "../../store/search";
 
 const Write = ({ editMode, postId }: WriteProps) => {
@@ -51,20 +51,20 @@ const Write = ({ editMode, postId }: WriteProps) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(postId);
     getAllLocation().then((data) => {
       setLocations(data);
     });
     if (editMode && postId) {
       getEditPost(postId).then((data) => {
-        console.log(data);
         setContent(data.content);
         setPostAreaId(data.postAreaId);
-        setAddress(data.area);
+
+        setArea(data.area);
         setImages(data.image);
       });
     }
   }, [editMode, postId]);
+  console.log(location);
 
   // 값 불러오기
   const handleChangeLocation = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -84,8 +84,10 @@ const Write = ({ editMode, postId }: WriteProps) => {
   };
 
   useEffect(() => {
-    setArea(`${location} ${address}`);
-  }, [location, address]);
+    if (!editMode) {
+      setArea(`${location} ${address}`);
+    }
+  }, [location, address, editMode]);
 
   // MODAL
   const onModal = () => {
@@ -127,7 +129,7 @@ const Write = ({ editMode, postId }: WriteProps) => {
 
   // 게시글 생성
   const handleAddButton = async () => {
-    if (imageFile.length === 0) {
+    if (imageFile.length === 0 && !editMode) {
       alert("이미지를 넣어주세요");
       return;
     } else if (!address) {
@@ -135,11 +137,16 @@ const Write = ({ editMode, postId }: WriteProps) => {
       return;
     } else if (!content) {
       alert("문구를 입력해주세요");
+      return;
     }
     try {
-      console.log();
-      const url = await uploadPostImage(imageFile, location, editMode);
+      console.log(editMode);
+      const url =
+        editMode && imageFile.length === 0
+          ? images
+          : await uploadPostImage(imageFile, location, editMode);
 
+      console.log(content, url, userInfo.id, postAreaId, area);
       if (content && url && userInfo.id && postAreaId && area) {
         alert("success");
         if (editMode && postId) {
@@ -155,6 +162,8 @@ const Write = ({ editMode, postId }: WriteProps) => {
           dispatch(setPosts(newPost));
         }
         closeModal();
+      } else {
+        alert("값이 올바르지 않습니다.");
       }
     } catch (error) {
       console.error("Failed to upload image:", error);
