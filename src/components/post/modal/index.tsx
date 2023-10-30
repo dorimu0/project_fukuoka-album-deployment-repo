@@ -266,9 +266,11 @@ const Modal: React.FC<ModalProps> = ({
                   <Icon src="/post_menu.svg" />
                 </IconButton>
               </LikeComment>
-              {menuCheck ? (
+              {menuCheck ? ( // 모달 창 수정
                 <PostMenu>
-                  <Write editMode={true} />
+                  <div>
+                    <Write editMode={true} postId={post.id} />
+                  </div>
                   <PostMenuItem
                     onClick={async () => {
                       if (window.confirm("정말 삭제하시겠습니까?")) {
