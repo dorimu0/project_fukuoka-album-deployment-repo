@@ -16,7 +16,7 @@ import {
   AddressBox,
 } from "./writeStyles";
 import { MenuItem } from "../layout/header/HeaderStyles";
-import { PostMenuItem } from "../post/modal/ModalStyles";
+import { PostMenuItem } from "../modal/post/ModalStyles";
 import Modal from "react-modal";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Post as PostType } from "../../types/post.interface";
 import { PostStyles } from "./PostStyles";
 import { getCommentsByPostId } from "../../services/comment.service";
-import Modal from "./modal";
+import Modal from "../modal/post";
 import likeIcon from "../post/like.svg";
 import commentIcon from "../post/comment.svg";
 import likeCheckedIcon from "../post/likeChecked.svg";
