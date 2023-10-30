@@ -22,6 +22,8 @@ export const uploadPostImage = async (
 ): Promise<string[]> => {
   const images: string[] = [];
 
+  console.log(files, area, editMode);
+
   await Promise.all(
     files.map(async (file) => {
       const formData = new FormData();
