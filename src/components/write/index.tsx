@@ -157,17 +157,6 @@ const Write = ({ editMode, postId }: WriteProps) => {
         editMode && imageFile.length === 0
           ? images
           : await uploadPostImage(imageFile, location);
-      console.log(
-        content,
-        ",",
-        url,
-        ",",
-        userInfo.id,
-        ",",
-        postAreaId,
-        ",",
-        area
-      );
       if (content && url && userInfo.id && postAreaId && area) {
         alert("success");
         if (editMode && postId) {
