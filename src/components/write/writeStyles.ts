@@ -24,6 +24,12 @@ export const Profile = styled.img`
   margin: 8px 10px;
 `;
 
+export const LocationSelect = styled.select`
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 3px;
+`;
+
 export const Cancel = styled.button`
   position: absolute;
   right: 10px;
@@ -53,7 +59,7 @@ export const SliderBox = styled(Slider)`
   }
   div {
     // width: 100%;
-    height:100%;
+    height: 100%;
   }
   .slick-prev {
     left: 0;
@@ -62,16 +68,16 @@ export const SliderBox = styled(Slider)`
     right: 0;
   }
   .slick-slide {
-    background-color : black;
+    background-color: black;
     width: 485px;
     height: 325px;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    img{
-      height:100%;
-      border-radius:0px;
+    img {
+      height: 100%;
+      border-radius: 0px;
     }
   }
 `;

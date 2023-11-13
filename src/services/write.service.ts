@@ -17,20 +17,17 @@ export const getAllLocation = async (): Promise<Location[]> => {
 
 export const uploadPostImage = async (
   files: File[],
-  area: string,
-  editMode: boolean
+  area: string
 ): Promise<string[]> => {
   const images: string[] = [];
 
-  console.log(files, area, editMode);
+  console.log(files, area);
 
   await Promise.all(
     files.map(async (file) => {
       const formData = new FormData();
       formData.append("image", file);
-      const res = editMode
-        ? await uploadApi(formData, area, "PUT")
-        : await uploadApi(formData, area);
+      const res = await uploadApi(formData, area);
       images.push(res.pathF);
     })
   );

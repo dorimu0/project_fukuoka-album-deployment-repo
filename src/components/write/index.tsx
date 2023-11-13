@@ -14,6 +14,7 @@ import {
   Count,
   Address,
   AddressBox,
+  LocationSelect,
 } from "./writeStyles";
 import { MenuItem } from "../layout/header/HeaderStyles";
 import { PostMenuItem } from "../post/modal/ModalStyles";
@@ -51,20 +52,29 @@ const Write = ({ editMode, postId }: WriteProps) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    let slLocation: Location[];
     getAllLocation().then((data) => {
       setLocations(data);
+      slLocation = data;
     });
     if (editMode && postId) {
       getEditPost(postId).then((data) => {
+        console.log(data);
+        const removeWord = slLocation.find(
+          (location) => location.id === data.postAreaId
+        )?.area;
+        console.log(removeWord);
+        if (removeWord) {
+          setLocation(removeWord);
+        }
         setContent(data.content);
         setPostAreaId(data.postAreaId);
-
-        setArea(data.area);
+        setAddress(data.area.replace(`${removeWord} `, ""));
         setImages(data.image);
+        setArea(data.area);
       });
     }
-  }, [editMode, postId]);
-  console.log(location);
+  }, []);
 
   // 값 불러오기
   const handleChangeLocation = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -78,16 +88,18 @@ const Write = ({ editMode, postId }: WriteProps) => {
     setAddress(e.target.value);
   };
 
+  useEffect(() => {
+    console.log(area, location, address);
+    setArea(`${location} ${address}`);
+  }, [location, address]);
+
   const handleInputText = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setInputCount(e.target.value.length);
     setContent(e.target.value);
   };
 
   useEffect(() => {
-    if (!editMode) {
-      setArea(`${location} ${address}`);
-    }
-  }, [location, address, editMode]);
+    setInputCount(content.length);
+  }, [content]);
 
   // MODAL
   const onModal = () => {
@@ -144,9 +156,18 @@ const Write = ({ editMode, postId }: WriteProps) => {
       const url =
         editMode && imageFile.length === 0
           ? images
-          : await uploadPostImage(imageFile, location, editMode);
-
-      console.log(content, url, userInfo.id, postAreaId, area);
+          : await uploadPostImage(imageFile, location);
+      console.log(
+        content,
+        ",",
+        url,
+        ",",
+        userInfo.id,
+        ",",
+        postAreaId,
+        ",",
+        area
+      );
       if (content && url && userInfo.id && postAreaId && area) {
         alert("success");
         if (editMode && postId) {
@@ -209,7 +230,7 @@ const Write = ({ editMode, postId }: WriteProps) => {
               src={userInfo.imageUrl ? userInfo.imageUrl : ""}
               alt="image"
             />
-            <select
+            <LocationSelect
               className="location"
               onChange={handleChangeLocation}
               value={postAreaId}
@@ -221,7 +242,7 @@ const Write = ({ editMode, postId }: WriteProps) => {
                     </option>
                   ))
                 : ""}
-            </select>
+            </LocationSelect>
             <Cancel onClick={closeModal}>
               <img src="./cancel.svg" alt="X" />
             </Cancel>
