@@ -106,6 +106,13 @@ const Header = () => {
               <>
                 <MenuItem
                   onClick={() => {
+                    navigate("/team");
+                  }}
+                >
+                  팀원 소개
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
                     navigate("/mypage");
                   }}
                 >
