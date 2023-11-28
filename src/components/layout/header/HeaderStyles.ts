@@ -31,7 +31,7 @@ export const SearchBox = styled.div`
   border-radius: 20px;
   overflow: hidden;
 
-  @media (max-width: 767px){
+  @media (max-width: 767px) {
     display: none;
   }
 `;
@@ -88,14 +88,4 @@ export const MenuItem = styled.li`
   &:hover {
     background-color: rgb(200, 200, 200);
   }
-`;
-
-export const FakeBox = styled.div`
-  opacity: 0;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 40px;
-  overflow-x: hidden;
 `;
