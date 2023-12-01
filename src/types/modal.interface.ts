@@ -5,3 +5,10 @@ export type ModalType = {
   id: number;
   email: string;
 };
+
+export type MemberModalType = {
+  name: string;
+  position: string;
+  imgUrl: string;
+  id: number;
+};
