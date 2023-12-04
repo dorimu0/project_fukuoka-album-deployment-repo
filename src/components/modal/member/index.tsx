@@ -59,16 +59,14 @@ export const MemberModal = ({
         imageUrlToUpdate = await uploadProfileImage(selectedFile);
       }
 
-      const prevImage = imageUrlToUpdate ? imageUrl : undefined;
-
       const updatedMember = await updateMember(
-        id,
         {
+          id,
           name,
           position,
-          imageUrl: imageUrlToUpdate || imageUrl,
+          imageUrl,
         },
-        prevImage
+        imageUrlToUpdate
       );
 
       if (!updatedMember) {
