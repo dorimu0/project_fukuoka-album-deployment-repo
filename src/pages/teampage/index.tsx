@@ -1,90 +1,84 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Container, CardContainer } from "../../components/mypage/MyPageStyles";
 import Card from "../../components/card";
 import { User } from "../../types/user.interface";
-
-const mockUsers: User[] = [
-  {
-    id: 1,
-    email: "test1@test.com",
-    name: "Test User 1",
-    comment: "This is test user 1.",
-    imageUrl: "https://example.com/test1.jpg",
-    isSignIn: false,
-  },
-  {
-    id: 2,
-    email: "test2@test.com",
-    name: "Test User 2",
-    comment: "This is test user 2.",
-    imageUrl: "https://example.com/test2.jpg",
-    isSignIn: false,
-  },
-  {
-    id: 3,
-    email: "test3@test.com",
-    name: "Test User 3",
-    comment: "This is test user 3.",
-    imageUrl: "https://example.com/test3.jpg",
-    isSignIn: false,
-  },
-  {
-    id: 4,
-    email: "test4@test.com",
-    name: "Test User 4",
-    comment: "This is test user 4.",
-    imageUrl: "https://example.com/test4.jpg",
-    isSignIn: false,
-  },
-  {
-    id: 5,
-    email: "test5@test.com",
-    name: "Test User 5",
-    comment: "This is test user 5.",
-    imageUrl: "https://example.com/test5.jpg",
-    isSignIn: false,
-  },
-];
+import {
+  createMember,
+  deleteMember,
+  getMembers,
+  updateMember,
+} from "../../services/member.service";
+import { Member, MemberWithoutId } from "../../types/member.interface";
 
 const TeamPage = () => {
-  // const [users, setUsers] = useState<User[]>([]); // 여러 사용자를 관리하도록 변경
-  const [users, setUsers] = useState<User[]>(mockUsers);
+  const [members, setMembers] = useState<Member[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0); // 현재 표시되는 카드의 인덱스
 
-  // useEffect(() => {
-  //   (async () => {
-  //     const user = await getUser(userInfo?.id);
-  //     setUsers([...users, user]); // 여러 사용자를 관리하도록 변경
-  //   })();
-  // }, []);
+  useEffect(() => {
+    (async () => {
+      const membersData = await getMembers();
+
+      setMembers(membersData);
+
+      /**
+       * Create Test
+       *
+       * const testData: MemberWithoutId = {
+       * name: "testName",
+       * position: "testPosition",
+       * imageUrl: "testImageUrl",
+       * };
+       *
+       * const createTest = await createMember(testData);
+       */
+
+      /**
+       * Update Test
+       * const testData: Member = {
+       * id: 7,
+       * name: "updateName",
+       * position: "updatePosition",
+       * imageUrl: "updateImageUrl",
+       * };
+       *
+       * const updateTest = await updateMember(testData);
+       */
+
+      /** Delete Test
+       * const testData: number = 7;
+       *
+       * const deleteTest = await deleteMember(testData);
+       */
+    })();
+  }, []);
 
   // if (!users) return null;
 
   return (
     <Container>
       <CardContainer>
-        {users.length > 0 && ( // users 배열에 값이 있는 경우에만 Card 컴포넌트 렌더링
-          <Card
-            user={users[currentIndex]}
-            onUserUpdated={(updatedUser) => {
-              const updatedUsers = [...users];
-              updatedUsers[currentIndex] = updatedUser;
-              setUsers(updatedUsers);
-            }}
-          />
-        )}
+        {/* {users.length > 0 && ( // users 배열에 값이 있는 경우에만 Card 컴포넌트 렌더링
+          // <Card
+          //   user={users[currentIndex]}
+          //   onUserUpdated={(updatedUser) => {
+          //     const updatedUsers = [...users];
+          //     updatedUsers[currentIndex] = updatedUser;
+          //     setUsers(updatedUsers);
+          //   }}
+          // />
+        )} */}
       </CardContainer>
       <button
         onClick={() =>
           setCurrentIndex(
-            currentIndex === 0 ? users.length - 1 : currentIndex - 1
+            currentIndex === 0 ? members.length - 1 : currentIndex - 1
           )
         }
       >
         이전
       </button>
       <button
-        onClick={() => setCurrentIndex((currentIndex + 1) % users.length)}
+        onClick={() => setCurrentIndex((currentIndex + 1) % members.length)}
       >
         다음
       </button>
