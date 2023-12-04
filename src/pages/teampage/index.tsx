@@ -57,36 +57,6 @@ const TeamPage = () => {
         const membersData = await getMembers();
 
         setMembers(membersData);
-
-        /**
-         * Create Test
-         *
-         * const testData: MemberWithoutId = {
-         * name: "testName",
-         * position: "testPosition",
-         * imageUrl: "testImageUrl",
-         * };
-         *
-         * const createTest = await createMember(testData);
-         */
-
-        /**
-         * Update Test
-         * const testData: Member = {
-         * id: 7,
-         * name: "updateName",
-         * position: "updatePosition",
-         * imageUrl: "updateImageUrl",
-         * };
-         *
-         * const updateTest = await updateMember(testData);
-         */
-
-        /** Delete Test
-         * const testData: number = 7;
-         *
-         * const deleteTest = await deleteMember(testData);
-         */
       })();
     }, []);
 
