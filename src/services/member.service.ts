@@ -1,4 +1,4 @@
-import { Member, MemberWithoutId } from "../types/member.interface";
+import { Member, CreateMember } from "../types/member.interface";
 import { api, deleteImageApi, uploadApi } from "./api.service";
 
 /**
@@ -15,8 +15,18 @@ export const getMembers = async (): Promise<Member[]> => {
  * @param {MemberWithoutId} memberInfo - 맴버의 name, position, 값이 필요합니다. imageUrl 값은 필수가 아닙니다.
  */
 export const createMember = async (
-  memberInfo: MemberWithoutId
+  memberInfo: CreateMember
 ): Promise<Member> => {
+  const { imageUrl } = memberInfo;
+
+  if (!imageUrl) {
+    const defaultImageUrl =
+      process.env.REACT_APP_DEFAULT_IMAGE_URL ||
+      "https://static.vecteezy.com/system/resources/previews/013/042/571/non_2x/default-avatar-profile-icon-social-media-user-photo-in-flat-style-vector.jpg";
+
+    memberInfo.imageUrl = defaultImageUrl;
+  }
+
   const res: Member = await api("POST", "member", memberInfo);
 
   return res;
@@ -25,21 +35,28 @@ export const createMember = async (
 /**
  * 맴버 수정
  * @param {Member} member - 삭제하려는 맴버의 정보가 필요합니다.
- * @param {string} image - 이미지 수정 시 이미지 값이 필요합니다.
+ * @param {string} image - 이미지 수정 시 새롭게 업로드한 이미지 값이 필요합니다.
  */
 export const updateMember = async (
   member: Member,
   image?: string
 ): Promise<Member | undefined> => {
   // 이전 사진 삭제
-  const { imageUrl } = member;
 
-  if (image && imageUrl) {
-    const result = await deleteImageApi([imageUrl]);
+  if (image) {
+    const { imageUrl } = member;
+    const defaultImageUrl =
+      process.env.REACT_APP_DEFAULT_IMAGE_URL ||
+      "https://static.vecteezy.com/system/resources/previews/013/042/571/non_2x/default-avatar-profile-icon-social-media-user-photo-in-flat-style-vector.jpg";
 
-    if (!result.ok) {
-      window.alert("문제가 생겼습니다. 잠시 후 다시 시도하세요.");
-      return;
+    const isNotDefaultImage = imageUrl !== defaultImageUrl;
+
+    if (isNotDefaultImage) {
+      const result = await deleteImageApi([imageUrl]);
+      if (!result.ok) {
+        window.alert("문제가 생겼습니다. 잠시 후 다시 시도하세요.");
+        return;
+      }
     }
 
     member.imageUrl = image;
