@@ -1,8 +1,4 @@
-import {
-  Member,
-  MemberUpdate,
-  MemberWithoutId,
-} from "../types/member.interface";
+import { Member, MemberWithoutId } from "../types/member.interface";
 import { api, deleteImageApi, uploadApi } from "./api.service";
 
 /**
@@ -16,7 +12,7 @@ export const getMembers = async (): Promise<Member[]> => {
 
 /**
  * 맴버 추가
- * @param {MemberWithoutId} memberInfo - 맴버의 name, position, imageUrl 값이 필요합니다.
+ * @param {MemberWithoutId} memberInfo - 맴버의 name, position, 값이 필요합니다. imageUrl 값은 필수가 아닙니다.
  */
 export const createMember = async (
   memberInfo: MemberWithoutId
@@ -28,23 +24,28 @@ export const createMember = async (
 
 /**
  * 맴버 수정
- * @param {number} id - 맴버의 id 값이 필요합니다.
- * @param {MemberUpdate} member - 맴버의 name, position, imageUrl 값이 필요합니다.
- * @param {string} prevImage - 이미지 수정 시 맴버의 이전 이미지 값이 필요합니다.
+ * @param {Member} member - 삭제하려는 맴버의 정보가 필요합니다.
+ * @param {string} image - 이미지 수정 시 이미지 값이 필요합니다.
  */
 export const updateMember = async (
-  id: number,
-  member: MemberUpdate,
-  prevImage?: string
+  member: Member,
+  image?: string
 ): Promise<Member | undefined> => {
   // 이전 사진 삭제
-  if (prevImage) {
-    const result = await deleteImageApi([prevImage]);
+  const { imageUrl } = member;
+
+  if (image && imageUrl) {
+    const result = await deleteImageApi([imageUrl]);
+
     if (!result.ok) {
       window.alert("문제가 생겼습니다. 잠시 후 다시 시도하세요.");
       return;
     }
+
+    member.imageUrl = image;
   }
+
+  const { id } = member;
 
   // 정보 수정
   const data = await api("PUT", `member/${id}`, member);
