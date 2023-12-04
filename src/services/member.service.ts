@@ -45,11 +45,7 @@ export const updateMember = async (
 
   if (image) {
     const { imageUrl } = member;
-    const defaultImageUrl =
-      process.env.REACT_APP_DEFAULT_IMAGE_URL ||
-      "https://static.vecteezy.com/system/resources/previews/013/042/571/non_2x/default-avatar-profile-icon-social-media-user-photo-in-flat-style-vector.jpg";
-
-    const isNotDefaultImage = imageUrl !== defaultImageUrl;
+    const isNotDefaultImage = !isDefaultImage(imageUrl);
 
     if (isNotDefaultImage) {
       const result = await deleteImageApi([imageUrl]);
@@ -91,7 +87,9 @@ export const uploadProfileImage = async (file: File): Promise<string> => {
 export const deleteMember = async (member: Member): Promise<boolean> => {
   const { id, imageUrl } = member;
 
-  if (imageUrl) {
+  const isNotDefaultImage = !isDefaultImage(imageUrl);
+
+  if (isNotDefaultImage) {
     const result = await deleteImageApi([imageUrl]);
     if (!result.ok) {
       window.alert("문제가 생겼습니다. 잠시 후 다시 시도하세요.");
@@ -102,4 +100,12 @@ export const deleteMember = async (member: Member): Promise<boolean> => {
   const res = await api("DELETE", `member/${id}`);
 
   return res ? true : false;
+};
+
+const isDefaultImage = (imageUrl: string): boolean => {
+  const defaultImageUrl =
+    process.env.REACT_APP_DEFAULT_IMAGE_URL ||
+    "https://static.vecteezy.com/system/resources/previews/013/042/571/non_2x/default-avatar-profile-icon-social-media-user-photo-in-flat-style-vector.jpg";
+
+  return imageUrl == defaultImageUrl;
 };
