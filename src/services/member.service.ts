@@ -12,7 +12,7 @@ export const getMembers = async (): Promise<Member[]> => {
 
 /**
  * 맴버 추가
- * @param {MemberWithoutId} memberInfo - 맴버의 name, position, 값이 필요합니다. imageUrl 값은 필수가 아닙니다.
+ * @param {MemberWithoutId} memberInfo - 맴버의 name, position 값이 필요합니다. imageUrl 값은 필수가 아닙니다.
  */
 export const createMember = async (
   memberInfo: CreateMember

@@ -10,11 +10,16 @@ import { Member } from "../../types/member.interface";
 
 export default function MemberCard({
   member,
-  onMemberUpdated,
+  setMembers,
+  setCurrentIndex,
 }: {
   member: Member;
+  setMembers: React.Dispatch<React.SetStateAction<Member[]>>;
   onMemberUpdated: (member: Member) => void;
+  setCurrentIndex: (index: number) => void;
 }) {
+  if (!member) return null;
+
   return (
     <>
       <CardWrapper>
@@ -22,11 +27,16 @@ export default function MemberCard({
         <CardTextWrapper>
           <CardTextTitle>{member.name}</CardTextTitle>
           <MemberModal
-            id={member.id}
-            name={member.name}
-            position={member.position}
-            imgUrl={member.imageUrl}
-            onMemberUpdated={onMemberUpdated}
+            member={member}
+            setMembers={setMembers}
+            onMemberUpdated={(updatedMember) => {
+              setMembers((prevMembers) =>
+                prevMembers.map((m) =>
+                  m.id === updatedMember.id ? updatedMember : m
+                )
+              );
+            }}
+            setCurrentIndex={setCurrentIndex}
           />
           <CardTextBody>{member.position}</CardTextBody>
         </CardTextWrapper>

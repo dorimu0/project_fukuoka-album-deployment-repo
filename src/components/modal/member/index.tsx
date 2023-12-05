@@ -9,32 +9,34 @@ import {
   Label,
 } from "../ModalStyles";
 import { Member } from "../../../types/member.interface";
-import { MemberModalType } from "../../../types/modal.interface";
 import {
+  deleteMember,
   updateMember,
   uploadProfileImage,
 } from "../../../services/member.service";
-import { store } from "../../../store";
-import { setMember } from "../../../store/member";
 
 export const MemberModal = ({
-  id,
-  name: initialName,
-  position: initialPosition,
-  imgUrl,
+  member,
+  setMembers,
   onMemberUpdated,
-}: MemberModalType & { onMemberUpdated?: (member: Member) => void }) => {
-  const [name, setName] = useState(initialName);
-  const [position, setPosition] = useState(initialPosition);
+  setCurrentIndex,
+}: {
+  member: Member;
+  setMembers: React.Dispatch<React.SetStateAction<Member[]>>;
+  onMemberUpdated?: (member: Member) => void;
+  setCurrentIndex: (index: number) => void;
+}) => {
+  const [name, setName] = useState(member.name);
+  const [position, setPosition] = useState(member.position);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [imageUrl, setImageUrl] = useState(imgUrl);
+  const [imageUrl, setImageUrl] = useState(member.imageUrl);
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const openModal = () => {
-    setName(initialName);
-    setPosition(initialPosition);
-    setImageUrl(imgUrl);
+    setName(member.name);
+    setPosition(member.position);
+    setImageUrl(member.imageUrl);
     setModalIsOpen(true);
   };
 
@@ -52,48 +54,49 @@ export const MemberModal = ({
 
   const saveInfo = async () => {
     setIsLoading(true);
-
     try {
-      let imageUrlToUpdate;
+      let imageUrlToUpdate = imageUrl;
       if (selectedFile) {
         imageUrlToUpdate = await uploadProfileImage(selectedFile);
       }
-
-      const updatedMember = await updateMember(
-        {
-          id,
-          name,
-          position,
-          imageUrl,
-        },
-        imageUrlToUpdate
-      );
-
+      const updatedMember = await updateMember({
+        ...member,
+        name,
+        position,
+        imageUrl: imageUrlToUpdate,
+      });
       if (!updatedMember) {
         return;
       }
-
       if (onMemberUpdated) {
         onMemberUpdated(updatedMember);
-        // 디스패치
-        store.dispatch(setMember(updatedMember));
       }
-
       window.alert("수정 완료!");
       closeModal();
     } catch (error) {
       console.error("Failed to update user", error);
     }
-
     setIsLoading(false);
   };
 
-  // TODO: 삭제 로직 추가
   return (
     <>
       <ModalEdit onClick={openModal}>edit</ModalEdit>
       <ModalEdit> </ModalEdit>
-      <ModalEdit onClick={() => {}}>delete</ModalEdit>
+      <ModalEdit
+        onClick={async () => {
+          const deleteSuccess = await deleteMember(member);
+          if (deleteSuccess) {
+            setMembers((prevMembers) =>
+              prevMembers.filter((m) => m.id !== member.id)
+            );
+            window.alert("삭제 완료!");
+            setCurrentIndex(0);
+          }
+        }}
+      >
+        delete
+      </ModalEdit>
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
