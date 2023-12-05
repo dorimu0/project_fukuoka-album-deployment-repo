@@ -1,4 +1,3 @@
-import { stringify } from "querystring";
 import { Location } from "../types/location.interface";
 import { Post } from "../types/post.interface";
 import { api, deleteTempImageFromDb, uploadApi } from "./api.service";
