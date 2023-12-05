@@ -89,7 +89,6 @@ const Write = ({ editMode, postId }: WriteProps) => {
   };
 
   useEffect(() => {
-    console.log(area, location, address);
     setArea(`${location} ${address}`);
   }, [location, address]);
 

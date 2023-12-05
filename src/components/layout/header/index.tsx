@@ -105,6 +105,13 @@ const Header = () => {
                 <>
                   <MenuItem
                     onClick={() => {
+                      navigate("/intro");
+                    }}
+                  >
+                    현지학기
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
                       navigate("/team");
                     }}
                   >
