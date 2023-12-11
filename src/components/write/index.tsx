@@ -36,7 +36,7 @@ import { setModalOpen } from "../../store/modal";
 import { WriteProps } from "../../types/post.interface";
 import { setPosts } from "../../store/search";
 
-const Write = ({ editMode, postId }: WriteProps) => {
+const Write = ({ editMode, postId, onClose }: WriteProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [images, setImages] = useState<string[]>([]); // 이미지 미리보기
   const [imageFile, setImageFile] = useState<File[]>([]); // 이미지 파일
@@ -158,8 +158,9 @@ const Write = ({ editMode, postId }: WriteProps) => {
           : await uploadPostImage(imageFile, location);
       if (content && url && userInfo.id && postAreaId && area) {
         alert("success");
-        if (editMode && postId) {
+        if (editMode && postId && onClose) {
           uploadEditPost(url, postAreaId, content, area, postId);
+          onClose();
         } else {
           const newPost = await postPost(
             url,

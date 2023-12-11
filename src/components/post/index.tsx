@@ -14,6 +14,7 @@ interface Props extends PostType {
 }
 
 const Post: React.FC<Props> = (props) => {
+  console.log(props);
   const firstImage = props.image[0];
   const [modalOpen, setModalOpen] = useState(false);
   const [showInfo, setShowInfo] = useState(false);

@@ -22,4 +22,5 @@ export type Comment = {
 export interface WriteProps {
   editMode: boolean;
   postId?: number;
+  onClose?: () => void;
 }
