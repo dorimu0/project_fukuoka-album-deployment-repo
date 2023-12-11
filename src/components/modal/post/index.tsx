@@ -132,69 +132,64 @@ const Modal: React.FC<ModalProps> = ({
       (c) => c.parentCommentId === comment.id
     );
     let updatedPost = { ...post };
-  
+
     for (let childComment of childComments) {
       if (typeof childComment.id === "number") {
         await deleteComment(childComment.id);
         if (updatedPost.commentId) {
-          updatedPost.commentId =
-            updatedPost.commentId.filter(
-              (id) => id !== childComment.id
+          updatedPost.commentId = updatedPost.commentId.filter(
+            (id) => id !== childComment.id
           );
           await updateCommentId(updatedPost);
         }
       }
     }
     if (typeof comment.id === "number") {
-        await deleteComment(comment.id);
-          
-        let updatedParent = { ...updatedPost };
+      await deleteComment(comment.id);
 
-        if (updatedParent.commentId) {
-          updatedParent.commentId =
-            updatedParent.commentId.filter(
-              (id) => id !== comment.id
-            );
+      let updatedParent = { ...updatedPost };
 
-          setComments(
-            comments.filter(
-              (c) => c.id !== comment.id
-            )
+      if (updatedParent.commentId) {
+        updatedParent.commentId = updatedParent.commentId.filter(
+          (id) => id !== comment.id
+        );
+
+        setComments(comments.filter((c) => c.id !== comment.id));
+
+        const resUpdatedParent = await updateCommentId(updatedParent);
+
+        setPost(resUpdatedParent);
+
+        if (onCommentCountChange) {
+          onCommentCountChange(
+            resUpdatedParent.commentId ? resUpdatedParent.commentId.length : 0
           );
-          
-          const resUpdatedParent =
-            await updateCommentId(updatedParent);
-
-            setPost(resUpdatedParent)
-
-            if (onCommentCountChange) {
-              onCommentCountChange(
-                resUpdatedParent.commentId
-                  ? resUpdatedParent.commentId.length
-                  : 0
-              );
-            }
         }
       }
+    }
     let latestPost = await getPost(post.id);
     setPost(latestPost);
-  }
+  };
 
   useEffect(() => {
     let isCancelled = false;
-  
+
     const fetchCommentUsers = async () => {
       try {
-        const usersData = await Promise.all(comments.map((comment) => getUser(Number(comment.userId))));
+        const usersData = await Promise.all(
+          comments.map((comment) => getUser(Number(comment.userId)))
+        );
         if (!isCancelled) setUsers(usersData);
       } catch (err) {
         console.error(err);
       }
-    }
-  
+    };
+
     fetchCommentUsers();
-  
-    return () => { isCancelled = true; };
+
+    return () => {
+      isCancelled = true;
+    };
   }, [comments]);
 
   useEffect(() => {
@@ -239,9 +234,7 @@ const Modal: React.FC<ModalProps> = ({
           )}
           <div>
             <h2>{user.name}</h2>
-            <p>
-              {post.area}
-            </p>
+            <p>{post.area}</p>
           </div>
         </div>
         {post.image && post.image?.length !== 0 ? (
@@ -271,7 +264,7 @@ const Modal: React.FC<ModalProps> = ({
               {menuCheck ? ( // 모달 창 수정
                 <PostMenu>
                   <div>
-                    <Write editMode={true} postId={post.id} />
+                    <Write editMode={true} postId={post.id} onClose={onClose} />
                   </div>
                   <PostMenuItem
                     onClick={async () => {
@@ -406,62 +399,61 @@ const Modal: React.FC<ModalProps> = ({
           onClick={(e) => e.stopPropagation()}
         >
           {comments.map((comment) => {
-          if (
+            if (
               comment.parentCommentId === null ||
               comment.parentCommentId === undefined
-          ) {
+            ) {
               return (
-                  <div key={comment.id}>
-                      <CommentComponent 
-                          comment={comment}
-                          users={users}
-                          loggedInUserId={loggedInUserId}
-                          post={post}
-                          deleteCommentWithChildren={deleteCommentWithChildren}
-                          getCommentsByPostId={getCommentsByPostId}
-                          comments={comments}
-                          createComment={createComment}
-                          setComments={setComments}
-                          updateCommentId={updateCommentId}
-                          setPost={setPost}
-                          onCommentCountChange={onCommentCountChange}
-                          isSignIn={isSignIn}
-                          showReplyInput={showReplyInput}
-                          setShowReplyInput={setShowReplyInput}
-                          setCommentInput={setCommentInput}
-                          setEditingCommentId={setEditingCommentId}
-                      />
+                <div key={comment.id}>
+                  <CommentComponent
+                    comment={comment}
+                    users={users}
+                    loggedInUserId={loggedInUserId}
+                    post={post}
+                    deleteCommentWithChildren={deleteCommentWithChildren}
+                    getCommentsByPostId={getCommentsByPostId}
+                    comments={comments}
+                    createComment={createComment}
+                    setComments={setComments}
+                    updateCommentId={updateCommentId}
+                    setPost={setPost}
+                    onCommentCountChange={onCommentCountChange}
+                    isSignIn={isSignIn}
+                    showReplyInput={showReplyInput}
+                    setShowReplyInput={setShowReplyInput}
+                    setCommentInput={setCommentInput}
+                    setEditingCommentId={setEditingCommentId}
+                  />
 
-                      {comments
-                          .filter((reply) => reply.parentCommentId === comment.id)
-                          .map((reply) => (
-                              <ReplyComponent 
-                                  key={reply.id}
-                                  reply={reply}
-                                  users={users}
-                                  loggedInUserId={loggedInUserId}
-                                  post={post}
-                                  deleteComment={deleteComment}
-                                  setComments={setComments}
-                                  comments={comments}
-                                  updateCommentId={updateCommentId}
-                                  setPost={setPost}
-                                  onCommentCountChange={onCommentCountChange}
-                                  setCommentInput={setCommentInput}
-                                  setEditingCommentId={setEditingCommentId}
-                                  getCommentsByPostId={getCommentsByPostId}
-                                  isSignIn={isSignIn}
-                                  showReplyInput={showReplyInput}
-                                  setShowReplyInput={setShowReplyInput}
-                              />
-                          ))
-                      }
-                  </div>
+                  {comments
+                    .filter((reply) => reply.parentCommentId === comment.id)
+                    .map((reply) => (
+                      <ReplyComponent
+                        key={reply.id}
+                        reply={reply}
+                        users={users}
+                        loggedInUserId={loggedInUserId}
+                        post={post}
+                        deleteComment={deleteComment}
+                        setComments={setComments}
+                        comments={comments}
+                        updateCommentId={updateCommentId}
+                        setPost={setPost}
+                        onCommentCountChange={onCommentCountChange}
+                        setCommentInput={setCommentInput}
+                        setEditingCommentId={setEditingCommentId}
+                        getCommentsByPostId={getCommentsByPostId}
+                        isSignIn={isSignIn}
+                        showReplyInput={showReplyInput}
+                        setShowReplyInput={setShowReplyInput}
+                      />
+                    ))}
+                </div>
               );
-          } else {
+            } else {
               return null;
-          }
-        })}
+            }
+          })}
           <div className="blank"></div>
         </div>
       </div>
