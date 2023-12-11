@@ -11,25 +11,37 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 
 const Profile = () => {
-  const [user, setUser] = useState<User>(); // API로 받아온 위치 정보
+  const [user, setUser] = useState<User>();
   const [posts, setPosts] = useState<PostType[]>([]);
+  const [pageEndIndex, setPageEndIndex] = useState<number>(8);
   const userInfo = useSelector((state: RootState) => state.user);
   const postsInfo = useSelector((state: RootState) => state.search.posts);
 
-  // API로부터 위치 정보를 받아옴
   useEffect(() => {
     (async () => {
       const user = await getUser(userInfo?.id);
       setUser(user);
     })();
-  }, []);
+  }, [userInfo?.id]);
 
   useEffect(() => {
     (async () => {
       const usersPosts = await getPostByUserId(userInfo?.id);
-      setPosts(usersPosts);
+      setPosts(usersPosts.slice(0, pageEndIndex));
     })();
-  }, [postsInfo]);
+  }, [postsInfo, pageEndIndex, userInfo?.id]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+        setPageEndIndex((prevEndIndex) => prevEndIndex + 8);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   if (!user) return null;
 
