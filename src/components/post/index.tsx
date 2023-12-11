@@ -6,6 +6,8 @@ import Modal from "../modal/post";
 import likeIcon from "../post/like.svg";
 import commentIcon from "../post/comment.svg";
 import likeCheckedIcon from "../post/likeChecked.svg";
+import { RootState } from "../../store";
+import { useSelector } from "react-redux";
 
 interface Props extends PostType {
   isLoading?: boolean;
@@ -18,6 +20,7 @@ const Post: React.FC<Props> = (props) => {
   const firstImage = props.image[0];
   const [modalOpen, setModalOpen] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+  const loggedInUserId = useSelector((state: RootState) => state.user.id);
 
   useEffect(() => {
     (async () => {
@@ -30,11 +33,19 @@ const Post: React.FC<Props> = (props) => {
   const [commentCount, setCommentCount] = useState(
     props.commentId?.length || 0
   );
+  const [likeStatus, setLikeStatus] = useState(false);
 
   useEffect(() => {
     setLikeCount(props.likeChecked?.length || 0);
     setCommentCount(props.commentId?.length || 0);
   }, [props.likeChecked, props.commentId]);
+
+  useEffect(() => {
+    const hasLiked = loggedInUserId
+      ? props.likeChecked?.includes(loggedInUserId) ?? false
+      : false;
+    setLikeStatus(hasLiked);
+  }, [props.likeChecked, loggedInUserId]);
 
   const handleLikeCountChange = (newLikeCount: number) => {
     setLikeCount(newLikeCount);
@@ -60,7 +71,7 @@ const Post: React.FC<Props> = (props) => {
           <div className="info">
             <p>
               <img
-                src={likeCount ? likeCheckedIcon : likeIcon}
+                src={likeStatus ? likeCheckedIcon : likeIcon}
                 alt="Likes"
                 style={{
                   width: "30px",
@@ -91,6 +102,7 @@ const Post: React.FC<Props> = (props) => {
           onClose={() => setModalOpen(false)}
           onLikeCountChange={handleLikeCountChange}
           onCommentCountChange={handleCommentCountChange}
+          onLikeStatusChange={setLikeStatus}
         />
       )}
     </>
