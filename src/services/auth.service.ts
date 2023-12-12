@@ -17,10 +17,14 @@ export const checkId = async (email: string) => {
 
 // 회원 가입
 export const register = async (registerInfo: RegisterInfo) => {
+  const defaultImageUrl =
+    process.env.REACT_APP_DEFAULT_IMAGE_URL ||
+    "https://static.vecteezy.com/system/resources/previews/013/042/571/non_2x/default-avatar-profile-icon-social-media-user-photo-in-flat-style-vector.jpg";
+
   const res = await api("POST", "user", {
     ...registerInfo,
     comment: "",
-    imageUrl: "",
+    imageUrl: defaultImageUrl,
   });
 
   return res;
