@@ -25,7 +25,7 @@ export const updateUser = async (
   }
 
   // 정보 수정
-  const data = await api("PUT", `user/${user.id}`, user);
+  const data = await api("PATCH", `user/${user.id}`, user);
 
   return data;
 };
