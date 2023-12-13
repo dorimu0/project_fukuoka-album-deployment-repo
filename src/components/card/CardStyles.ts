@@ -21,11 +21,12 @@ export const CardImage = styled.div<{ background: string }>`
   background-image: url(${({ background }) => background});
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
-  background-size: cover;
+  background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
   height: 30vh;
   max-height: 210px;
+  margin: 10px;
 `;
 
 export const CardTextWrapper = styled.div`
