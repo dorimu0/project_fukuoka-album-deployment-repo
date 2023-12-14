@@ -3,14 +3,7 @@ import { Post } from "../types/post.interface";
 import { api, deleteTempImageFromDb, uploadApi } from "./api.service";
 
 export const getAllLocation = async (): Promise<Location[]> => {
-  const res = await fetch(`http://localhost:3004/location`);
-
-  if (!res.ok) {
-    throw new Error("エラーが発生しました。");
-  }
-
-  const locations = await res.json();
-
+  const locations = await api("GET", "location");
   return locations;
 };
 
@@ -64,13 +57,7 @@ export const postPost = async (
 };
 
 export const getEditPost = async (userId: number): Promise<Post> => {
-  const res = await fetch(`http://localhost:3004/post/${userId}`);
-
-  if (!res.ok) {
-    throw new Error("エラーが発生しました。");
-  }
-
-  const post = await res.json();
+  const post = await api("GET", `post?userId=${userId}`);
   return post;
 };
 
@@ -88,15 +75,5 @@ export const uploadEditPost = async (
     area: area,
   };
 
-  const res = await fetch(`http://localhost:3004/post/${postId}`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(editPost),
-  });
-
-  if (!res.ok) {
-    throw new Error("エラーが発生しました。");
-  }
+  await api("PATCH", `post/${postId}`, editPost);
 };

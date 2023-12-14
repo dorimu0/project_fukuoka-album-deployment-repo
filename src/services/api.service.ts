@@ -30,7 +30,9 @@ export const api = async (
 ) => {
   const options = fetchOptions(method, body);
 
-  const url = `http://localhost:3004/${endpoint}`;
+  const port = process.env.REACT_APP_PORT || 3300;
+
+  const url = `http://localhost:${port}/${endpoint}`;
   let res = await fetch(url, options);
 
   if (!res.ok) {

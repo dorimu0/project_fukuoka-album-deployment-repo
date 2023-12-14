@@ -42,6 +42,7 @@ interface ModalProps {
   onClose: () => void;
   onLikeCountChange?: (likeCheckedLength: number) => void;
   onCommentCountChange?: (commentIdLength: number) => void;
+  onLikeStatusChange?: (newStatus: boolean) => void;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -49,6 +50,7 @@ const Modal: React.FC<ModalProps> = ({
   onClose,
   onLikeCountChange,
   onCommentCountChange,
+  onLikeStatusChange,
 }) => {
   const [user, setUser] = useState({ name: "", imageUrl: "" });
   const [users, setUsers] = useState<User[]>([]);
@@ -64,7 +66,6 @@ const Modal: React.FC<ModalProps> = ({
   const [likeCount, setLikeCount] = useState(post.likeChecked?.length || 0);
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [showReplyInput, setShowReplyInput] = useState<number | null>(null);
-  const [replyInput, setReplyInput] = useState("");
   const [location, setLocation] = useState<{ area: string; id: number | null }>(
     { area: "", id: null }
   );
@@ -111,6 +112,10 @@ const Modal: React.FC<ModalProps> = ({
       const updatedLike = await updateLike(checkLike.id, checkLike);
 
       setPost(updatedLike);
+
+      if (onLikeStatusChange) {
+        onLikeStatusChange(newLikeStatus);
+      }
 
       if (onLikeCountChange) {
         onLikeCountChange(

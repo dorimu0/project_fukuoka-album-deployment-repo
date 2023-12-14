@@ -2,17 +2,14 @@ import styled from "styled-components";
 
 export const CardContainer = styled.div`
   width: 100%;
-  height: 65vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  margin: 20px;
 `;
 
 export const Container = styled.div`
   width: 100%;
-  height: 100vh;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
 `;
