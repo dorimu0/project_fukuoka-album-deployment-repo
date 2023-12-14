@@ -109,6 +109,8 @@ const Write = ({ editMode, postId, onClose }: WriteProps) => {
     setModalIsOpen(false);
     setInputCount(0);
     setImages([]);
+    setContent("");
+    setAddress("");
     dispatch(setModalOpen(false));
   };
 
@@ -190,6 +192,8 @@ const Write = ({ editMode, postId, onClose }: WriteProps) => {
 
       <Modal
         isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        shouldCloseOnOverlayClick={true}
         style={{
           overlay: {
             backgroundColor: " rgba(0, 0, 0, 0.4)",
