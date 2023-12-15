@@ -57,7 +57,7 @@ export const postPost = async (
 };
 
 export const getEditPost = async (userId: number): Promise<Post> => {
-  const post = await api("GET", `post?userId=${userId}`);
+  const post = await api("GET", `post/${userId}`);
   return post;
 };
 
