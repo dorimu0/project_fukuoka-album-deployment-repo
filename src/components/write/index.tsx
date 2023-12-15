@@ -59,11 +59,13 @@ const Write = ({ editMode, postId, onClose }: WriteProps) => {
     });
     if (editMode && postId) {
       getEditPost(postId).then((data) => {
-        console.log(data);
-        const removeWord = slLocation.find(
-          (location) => location.id === data.postAreaId
-        )?.area;
-        console.log(removeWord);
+        let removeWord;
+        if(slLocation){
+          removeWord = slLocation.find(
+            (location) => location.id === data.postAreaId
+          )?.area;
+          console.log(removeWord);
+        }
         if (removeWord) {
           setLocation(removeWord);
         }
